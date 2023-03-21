@@ -154,6 +154,29 @@ export default function TaskView() {
             console.log(
                 `Moved ${active.id} over ${over.id}. Moving from index ${oldIndex} to ${newIndex}`
             );
+
+            for (let i = 0; i < tasks.length; i++) {
+                let newPosition;
+                if (i === oldIndex) {
+                    newPosition = newIndex + 1;
+                } else if (i === newIndex) {
+                    if (newIndex > oldIndex) {
+                        newPosition = (tasks[i].position ?? tasks[i].id) - 1;
+                    } else {
+                        newPosition = (tasks[i].position ?? tasks[i].id) + 1;
+                    }
+                } else if (i > oldIndex && i < newIndex) {
+                    newPosition = (tasks[i].position ?? tasks[i].id) - 1;
+                } else if (i > newIndex && i < oldIndex) {
+                    newPosition = (tasks[i].position ?? tasks[i].id) + 1;
+                }
+
+                if (newPosition !== undefined) {
+                    console.log(`Setting ${tasks[i].title} to position ${newPosition}`);
+                    tasks[i].position = newPosition;
+                }
+            }
+
             if (shouldExpandAfter) {
                 setActiveTask(+active.id);
                 setShouldExpandAfter(false);

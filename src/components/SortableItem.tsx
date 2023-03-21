@@ -44,7 +44,7 @@ export function SortableItem(props: SortableItemProps) {
                             alignContent: "center",
                         }}
                     >
-                        #{props.id}
+                        #{props.position || props.id}
                     </Typography>
                     <Typography
                         sx={{
