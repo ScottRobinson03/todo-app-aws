@@ -20,7 +20,12 @@ import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifi
 
 export default function TaskView() {
     const tasksJson = [
-        { id: 1, title: "Task #1", description: "Description of Task #1" },
+        {
+            id: 1,
+            title: "Task #1",
+            description:
+                "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis unde odio atque culpa magni dolores accusantium. Eius ipsum nobis perferendis libero architecto nihil blanditiis voluptatum, exercitationem quas eos molestiae beatae\nConsequuntur maxime, numquam, totam esse nesciunt quisquam quibusdam nihil consequatur maiores reprehenderit vero perspiciatis mollitia id quidem ut molestias obcaecati quos illo adipisci ex fuga. Commodi adipisci possimus ratione consequatur.",
+        },
         { id: 2, title: "Task #2", description: "Description of Task #2" },
         { id: 3, title: "Task #3", description: "Description of Task #3" },
         { id: 4, title: "Task #4", description: "Description of Task #4" },

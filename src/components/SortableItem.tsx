@@ -13,7 +13,7 @@ export function SortableItem(props: SortableItemProps) {
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        padding: "5px",
+        padding: "3px",
     };
 
     function handleChange(_: SyntheticEvent, isExpanded: boolean) {
@@ -25,7 +25,7 @@ export function SortableItem(props: SortableItemProps) {
     return (
         <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
             <Accordion
-                sx={{ backgroundColor: "lightgrey" }}
+                sx={{ backgroundColor: "#1e5a68" }}
                 expanded={props.activeTask === props.id}
                 onChange={handleChange}
             >
@@ -36,7 +36,7 @@ export function SortableItem(props: SortableItemProps) {
                 >
                     <Typography
                         sx={{
-                            color: "text.secondary",
+                            color: "#cfd0b1e2",
                             width: "5%",
                             flexShrink: 0,
                             boxSizing: "border-box",
@@ -46,12 +46,20 @@ export function SortableItem(props: SortableItemProps) {
                     >
                         #{props.id}
                     </Typography>
-                    <Typography sx={{ textAlign: "center", marginRight: "3%", width: "100%" }}>
+                    <Typography
+                        sx={{
+                            color: "#e0e1c1",
+                            fontSize: "1.1em",
+                            marginRight: "3%",
+                            textAlign: "center",
+                            width: "100%",
+                        }}
+                    >
                         {props.title}
                     </Typography>
                 </AccordionSummary>
-                <AccordionDetails>
-                    <Typography>{props.description}</Typography>
+                <AccordionDetails sx={{ borderTop: "2px #184e57 solid", padding: "8px 16px" }}>
+                    <Typography sx={{ color: "#e0e1c1" }}>{props.description}</Typography>
                 </AccordionDetails>
             </Accordion>
         </div>

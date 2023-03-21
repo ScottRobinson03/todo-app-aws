@@ -1,7 +1,12 @@
+body {
+    background-color: #333D5C;
+    color: #E5E6AE;
+}
 h1 {
     text-align: center;
 }
 
 section#task-container {
-    background-color: darkblue;
+    background-color: #407a7e;
+        padding-bottom: 1px;
 }
