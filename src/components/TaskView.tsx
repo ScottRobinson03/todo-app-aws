@@ -67,26 +67,30 @@ export default function TaskView() {
         console.log(`Set activeTask to ${newValue}`);
 
         if (newValue === null && shouldExpandAfter === true) {
+            // There's no active task so there's no longer a task to expand
             setShouldExpandAfter(false);
             console.log("Forcing shouldExpandAfter back to false");
         }
     }
 
     function handleDragStart(event: DragStartEvent) {
+        // Called whenever the user starts dragging a task.
+        // Even simply clicking on the element counts as dragging.
+
         if (activeTask === event.active.id) {
-            console.log("started dragging an expanded item, so unexpanding it");
+            // Task is currently expanded, so un-expand it whilst dragging (solves visual bug when large expanded content).
+            // We also need to make sure we re-expand it after the user stops dragging it, so we set the shouldExpandAfter state.
             setActiveTask(null);
             setShouldExpandAfter(true);
         }
     }
 
     function handleDragEnd(event: DragEndEvent) {
+        // Called whenever the user finishes dragging a task
         const { active, over } = event;
 
         if (active === null || over === null) {
-            console.log("Either active or over was null so toggling:");
-            console.log(`Active: ${active} | Over: ${over}`);
-
+            // Didn't move, so ensure shouldExpandAfter is false to prevent a 'double-toggle' here
             if (shouldExpandAfter) {
                 setShouldExpandAfter(false);
                 return;
@@ -119,26 +123,22 @@ export default function TaskView() {
             targetClassName.includes("MuiAccordionDetails") ||
             targetClassName.includes("MuiAccordion-region")
         ) {
-            console.log("details so ignoring and stopping propogation");
-            const cellText = document.getSelection();
-            console.log(cellText);
-            event.activatorEvent.stopPropagation();
+            // Handle when clicking on task description
+            setShouldExpandAfter(false); // will be true due to handleDragStart
             return;
         } else {
-            console.log("something else");
             console.log(targetParent);
         }
 
         if (active.id === over.id) {
             // Did move task, but to same position
             if (window.performance.now() - event.activatorEvent.timeStamp > 1_000) {
-                console.log("Pressed for a long amount of time, so NOT toggling");
+                // Task was pressed for a long amount of time, so don't toggle
                 if (shouldExpandAfter) {
                     setActiveTask(+active.id);
                     setShouldExpandAfter(false);
                 }
             } else if (!shouldExpandAfter) {
-                console.log("Moved task to same position so toggling");
                 toggleActiveTask(+active.id);
             } else {
                 setShouldExpandAfter(false);
@@ -146,7 +146,7 @@ export default function TaskView() {
             return;
         }
 
-        // Did move the task, so update accordingly
+        // Moved task to different position, so update accordingly
         setTasks(tasks => {
             const oldIndex = tasks.findIndex(task => active.id === task.id);
             const newIndex = tasks.findIndex(task => over.id === task.id);
@@ -175,7 +175,6 @@ export default function TaskView() {
                 }
 
                 if (newPosition !== undefined) {
-                    console.log(`Setting ${tasks[i].title} to position ${newPosition}`);
                     tasks[i].position = newPosition;
                 }
             }
@@ -183,7 +182,6 @@ export default function TaskView() {
             if (shouldExpandAfter) {
                 setActiveTask(+active.id);
                 setShouldExpandAfter(false);
-                console.log("Set shouldExpandAfter to false");
             }
 
             return arrayMove(tasks, oldIndex, newIndex);
