@@ -7,6 +7,7 @@ import {
     useSensor,
     useSensors,
     DragEndEvent,
+    DragStartEvent,
 } from "@dnd-kit/core";
 import {
     arrayMove,
@@ -33,6 +34,7 @@ export default function TaskView() {
     ];
     const [tasks, setTasks] = useState<Task[]>(tasksJson);
     const [activeTask, setActiveTask] = useState<ActiveTaskState>(null);
+    const [shouldExpandAfter, setShouldExpandAfter] = useState<boolean>(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -46,6 +48,7 @@ export default function TaskView() {
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             >
@@ -58,19 +61,88 @@ export default function TaskView() {
         </section>
     );
 
+    function toggleActiveTask(taskId: Task["id"]) {
+        const newValue = activeTask === taskId ? null : taskId;
+        setActiveTask(newValue);
+        console.log(`Set activeTask to ${newValue}`);
+
+        if (newValue === null && shouldExpandAfter === true) {
+            setShouldExpandAfter(false);
+            console.log("Forcing shouldExpandAfter back to false");
+        }
+    }
+
+    function handleDragStart(event: DragStartEvent) {
+        if (activeTask === event.active.id) {
+            console.log("started dragging an expanded item, so unexpanding it");
+            setActiveTask(null);
+            setShouldExpandAfter(true);
+        }
+    }
+
     function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
 
         if (active === null || over === null) {
-            console.log("Either active or over was null:");
+            console.log("Either active or over was null so toggling:");
             console.log(`Active: ${active} | Over: ${over}`);
+
+            if (shouldExpandAfter) {
+                setShouldExpandAfter(false);
+                return;
+            }
+            toggleActiveTask(+active.id);
             return;
         }
 
+        const targetParent = (event.activatorEvent.target as Element).parentElement;
+        if (!targetParent) {
+            console.log("No parent so ignoring");
+            return;
+        }
+
+        const targetParentName = targetParent.nodeName.toLowerCase();
+        if (targetParentName === "section") {
+            console.log("Clicked on section so ignoring");
+            return;
+        } else if (targetParentName === "svg") {
+            console.log("Clicked on svg so toggling");
+            toggleActiveTask(+active.id);
+            return;
+        }
+
+        const targetClassName = targetParent.className;
+        if (!targetClassName) {
+            console.log("Target class name is falsey so ignoring");
+            console.log(targetParent);
+        } else if (
+            targetClassName.includes("MuiAccordionDetails") ||
+            targetClassName.includes("MuiAccordion-region")
+        ) {
+            console.log("details so ignoring and stopping propogation");
+            const cellText = document.getSelection();
+            console.log(cellText);
+            event.activatorEvent.stopPropagation();
+            return;
+        } else {
+            console.log("something else");
+            console.log(targetParent);
+        }
+
         if (active.id === over.id) {
-            // Didn't move the task, so assume they're trying to open it
-            setActiveTask(activeTask === +active.id ? null : +active.id);
-            console.log(`Toggled task ${active.id}`);
+            // Did move task, but to same position
+            if (window.performance.now() - event.activatorEvent.timeStamp > 1_000) {
+                console.log("Pressed for a long amount of time, so NOT toggling");
+                if (shouldExpandAfter) {
+                    setActiveTask(+active.id);
+                    setShouldExpandAfter(false);
+                }
+            } else if (!shouldExpandAfter) {
+                console.log("Moved task to same position so toggling");
+                toggleActiveTask(+active.id);
+            } else {
+                setShouldExpandAfter(false);
+            }
             return;
         }
 
@@ -82,6 +154,11 @@ export default function TaskView() {
             console.log(
                 `Moved ${active.id} over ${over.id}. Moving from index ${oldIndex} to ${newIndex}`
             );
+            if (shouldExpandAfter) {
+                setActiveTask(+active.id);
+                setShouldExpandAfter(false);
+                console.log("Set shouldExpandAfter to false");
+            }
 
             return arrayMove(tasks, oldIndex, newIndex);
         });
