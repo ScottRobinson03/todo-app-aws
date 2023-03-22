@@ -2,19 +2,13 @@ import { useState } from "react";
 import {
     DndContext,
     closestCenter,
-    KeyboardSensor,
     PointerSensor,
     useSensor,
     useSensors,
     DragEndEvent,
     DragOverEvent,
 } from "@dnd-kit/core";
-import {
-    arrayMove,
-    SortableContext,
-    sortableKeyboardCoordinates,
-    verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableItem } from "./SortableItem";
 import { ActiveTaskState, Task } from "../types";
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
@@ -42,9 +36,6 @@ export default function TaskView() {
                 delay: activeTask === null ? 50 : 3_600_000, // ms
                 tolerance: 5, // px
             },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
         })
     );
 
@@ -153,7 +144,7 @@ export default function TaskView() {
 
             const newTasks = arrayMove(tasks, oldIndex, newIndex);
             // Update the `position` attribute of tasks that got shifted as a result of moving
-            for (let i = Math.min(oldIndex, newIndex); i < newTasks.length; i++) {
+            for (let i = Math.min(oldIndex, newIndex); i <= Math.max(oldIndex, newIndex); i++) {
                 newTasks[i].position = i + 1;
             }
             return newTasks;
