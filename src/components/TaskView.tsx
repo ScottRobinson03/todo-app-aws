@@ -151,31 +151,12 @@ export default function TaskView() {
                 `Moved ${active.id} over ${over.id}. Moving from index ${oldIndex} to ${newIndex}`
             );
 
-            for (let i = Math.min(oldIndex, newIndex); i < tasks.length; i++) {
-                let newPosition;
-                if (i === oldIndex) {
-                    newPosition = newIndex + 1;
-                } else if (i === newIndex) {
-                    if (newIndex > oldIndex) {
-                        newPosition = (tasks[i].position ?? tasks[i].id) - 1;
-                    } else {
-                        newPosition = (tasks[i].position ?? tasks[i].id) + 1;
-                    }
-                } else if (i > oldIndex && i < newIndex) {
-                    newPosition = (tasks[i].position ?? tasks[i].id) - 1;
-                } else if (i > newIndex && i < oldIndex) {
-                    newPosition = (tasks[i].position ?? tasks[i].id) + 1;
-                } else if (i > newIndex && i > oldIndex) {
-                    // Have gone through everything that could possibly change
-                    break;
-                }
-
-                if (newPosition !== undefined) {
-                    tasks[i].position = newPosition;
-                }
+            const newTasks = arrayMove(tasks, oldIndex, newIndex);
+            // Update the `position` attribute of tasks that got shifted as a result of moving
+            for (let i = Math.min(oldIndex, newIndex); i < newTasks.length; i++) {
+                newTasks[i].position = i + 1;
             }
-
-            return arrayMove(tasks, oldIndex, newIndex);
+            return newTasks;
         });
     }
 }
