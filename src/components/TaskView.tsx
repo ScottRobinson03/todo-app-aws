@@ -7,7 +7,7 @@ import {
     useSensor,
     useSensors,
     DragEndEvent,
-    DragStartEvent,
+    DragOverEvent,
 } from "@dnd-kit/core";
 import {
     arrayMove,
@@ -33,11 +33,16 @@ export default function TaskView() {
         { id: 5, title: "Task #5", description: "Description of Task #5" },
     ];
     const [tasks, setTasks] = useState<Task[]>(tasksJson);
+    const [changedPos, setChangedPos] = useState<boolean>(false);
     const [activeTask, setActiveTask] = useState<ActiveTaskState>(null);
-    const [shouldExpandAfter, setShouldExpandAfter] = useState<boolean>(false);
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                delay: activeTask === null ? 50 : 3_600_000, // ms
+                tolerance: 5, // px
+            },
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -48,7 +53,7 @@ export default function TaskView() {
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
-                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             >
@@ -62,26 +67,25 @@ export default function TaskView() {
     );
 
     function toggleActiveTask(taskId: Task["id"]) {
+        // Toggles the active task between `taskId` and null
         const newValue = activeTask === taskId ? null : taskId;
         setActiveTask(newValue);
         console.log(`Set activeTask to ${newValue}`);
-
-        if (newValue === null && shouldExpandAfter === true) {
-            // There's no active task so there's no longer a task to expand
-            setShouldExpandAfter(false);
-            console.log("Forcing shouldExpandAfter back to false");
-        }
     }
 
-    function handleDragStart(event: DragStartEvent) {
-        // Called whenever the user starts dragging a task.
-        // Even simply clicking on the element counts as dragging.
-
-        if (activeTask === event.active.id) {
-            // Task is currently expanded, so un-expand it whilst dragging (solves visual bug when large expanded content).
-            // We also need to make sure we re-expand it after the user stops dragging it, so we set the shouldExpandAfter state.
-            setActiveTask(null);
-            setShouldExpandAfter(true);
+    function handleDragOver(event: DragOverEvent) {
+        if (!event.over) {
+            return;
+        }
+        if (event.active.id === event?.over.id) {
+            // When you start dragging a task, it triggers a dragOver event
+            // on itself which we don't want to count as changing position
+            return;
+        }
+        // Ensure changedPos is true since we moved over a different item
+        if (!changedPos) {
+            setChangedPos(true);
+            console.log("changedPos set to true");
         }
     }
 
@@ -90,11 +94,7 @@ export default function TaskView() {
         const { active, over } = event;
 
         if (active === null || over === null) {
-            // Didn't move, so ensure shouldExpandAfter is false to prevent a 'double-toggle' here
-            if (shouldExpandAfter) {
-                setShouldExpandAfter(false);
-                return;
-            }
+            // Didn't move *at all*, so toggle
             toggleActiveTask(+active.id);
             return;
         }
@@ -117,14 +117,12 @@ export default function TaskView() {
 
         const targetClassName = targetParent.className;
         if (!targetClassName) {
-            console.log("Target class name is falsey so ignoring");
-            console.log(targetParent);
+            console.log("Target class name is falsey so ignoring", targetParent);
         } else if (
             targetClassName.includes("MuiAccordionDetails") ||
             targetClassName.includes("MuiAccordion-region")
         ) {
             // Handle when clicking on task description
-            setShouldExpandAfter(false); // will be true due to handleDragStart
             return;
         } else {
             console.log(targetParent);
@@ -132,21 +130,19 @@ export default function TaskView() {
 
         if (active.id === over.id) {
             // Did move task, but to same position
-            if (window.performance.now() - event.activatorEvent.timeStamp > 1_000) {
-                // Task was pressed for a long amount of time, so don't toggle
-                if (shouldExpandAfter) {
-                    setActiveTask(+active.id);
-                    setShouldExpandAfter(false);
-                }
-            } else if (!shouldExpandAfter) {
+
+            if (!changedPos) {
+                // Didn't at any point change the position, so toggle task
                 toggleActiveTask(+active.id);
             } else {
-                setShouldExpandAfter(false);
+                // Changed the position when dragging, so DON'T toggle task
+                setChangedPos(false);
             }
             return;
         }
 
         // Moved task to different position, so update accordingly
+        setChangedPos(false); // reset for the next drag
         setTasks(tasks => {
             const oldIndex = tasks.findIndex(task => active.id === task.id);
             const newIndex = tasks.findIndex(task => over.id === task.id);
@@ -177,11 +173,6 @@ export default function TaskView() {
                 if (newPosition !== undefined) {
                     tasks[i].position = newPosition;
                 }
-            }
-
-            if (shouldExpandAfter) {
-                setActiveTask(+active.id);
-                setShouldExpandAfter(false);
             }
 
             return arrayMove(tasks, oldIndex, newIndex);
