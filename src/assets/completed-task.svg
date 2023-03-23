@@ -1,0 +1,7 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="task-icon-completed" height="32" width="32">
+    <circle cx="12" cy="12" r="10" class="uim-tertiary" fill="#000"/>
+    <circle cx="12" cy="16" r="1" class="uim-primary" fill="#000" style=""/>
+    <path class="uim-primary" d="M12,13a1,1,0,0,1-1-1V8a1,1,0,0,1,2,0v4A1,1,0,0,1,12,13Z" fill="#000"/>
+</svg>
