@@ -96,6 +96,8 @@ export default function TaskView() {
             if (targetParent.classList.contains("MuiSvgIcon-root")) {
                 // Clicked on the dropdown svg (we assume any mui icon is the dropdown icon)
                 toggleActiveTask(+active.id);
+            } else if (targetParent.id === "task-icon-completed" && activeTask !== +active.id) {
+                setActiveTask(+active.id);
             }
             return;
         }

@@ -2,6 +2,16 @@ body {
     background-color: #333D5C;
     color: #E5E6AE;
 }
+div.subtasks-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+}
+
+div.subtask-container {
+    margin-top: 10px;
+}
 div.task-icon-container>svg {
     margin-top: 10px;
 }

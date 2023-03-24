@@ -14,5 +14,8 @@ export interface Task {
     title: string;
     description: string;
     position?: number;
-    completedAt: Date | null;
+    completedAt: string | null;
+    children: Subtask[];
 }
+
+export type Subtask = Omit<Task, "description" | "children">;
