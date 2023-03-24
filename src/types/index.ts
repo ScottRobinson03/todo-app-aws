@@ -18,4 +18,4 @@ export interface Task {
     children: Subtask[];
 }
 
-export type Subtask = Omit<Task, "description" | "children">;
+export type Subtask = Omit<Task, "children" | "description" | "position">;

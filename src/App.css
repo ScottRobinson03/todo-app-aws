@@ -10,6 +10,7 @@ div.subtasks-container {
 }
 
 div.subtask-container {
+    display: flex;
     margin-top: 10px;
 }
 div.task-icon-container>svg {
@@ -20,5 +21,6 @@ h1 {
 }
 section#task-container {
     background-color: #407a7e;
-        padding: 10px 0px;
+    border-radius: 4px;
+    padding: 10px 0px;
 }

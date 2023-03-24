@@ -145,7 +145,7 @@ export function SortableItem(props: SortableItemProps) {
             </div>
             <div style={{ flexGrow: 2, paddingRight: "32px" }}>
                 <Accordion
-                    sx={{ backgroundColor: "#1e5a68" }}
+                    sx={{ backgroundColor: "#1e5a68", paddingBottom: "5px" }}
                     expanded={props.activeTask === props.id}
                     onChange={handleChange}
                 >
@@ -157,11 +157,8 @@ export function SortableItem(props: SortableItemProps) {
                         <Typography
                             sx={{
                                 color: "#cfd0b1e2",
-                                width: "5%",
-                                flexShrink: 0,
-                                boxSizing: "border-box",
                                 textAlign: "center",
-                                alignContent: "center",
+                                width: "5%",
                             }}
                         >
                             #{props.position || props.id}
@@ -178,18 +175,18 @@ export function SortableItem(props: SortableItemProps) {
                             {props.title}
                         </Typography>
                     </AccordionSummary>
-                    <AccordionDetails sx={{ borderTop: "2px #184e57 solid", padding: "8px 16px" }}>
+                    <AccordionDetails
+                        sx={{
+                            borderBottom: "2px #184e57 solid",
+                            borderTop: "2px #184e57 solid",
+                            padding: "8px 16px",
+                        }}
+                    >
                         <Typography sx={{ color: "#e0e1c1", textAlign: "center" }}>
                             {props.description}
                         </Typography>
                         {props.children.length ? (
-                            <div
-                                className="subtasks-container"
-                                style={{
-                                    borderBottom: "2px #184e57 solid",
-                                    borderTop: "2px #184e57 solid",
-                                }}
-                            >
+                            <div className="subtasks-container">
                                 <Typography
                                     sx={{
                                         color: "#e0e1c1",
@@ -201,11 +198,7 @@ export function SortableItem(props: SortableItemProps) {
                                 </Typography>
                                 {props.children.map(subtask => {
                                     return (
-                                        <div
-                                            className="subtask-container"
-                                            key={subtask.id}
-                                            style={{ display: "flex" }}
-                                        >
+                                        <div className="subtask-container" key={subtask.id}>
                                             <div
                                                 id={`subtask-${subtask.id}-icon-container`}
                                                 className={`subtask-icon-container ${
@@ -227,7 +220,6 @@ export function SortableItem(props: SortableItemProps) {
                                                         color: "#e0e1c1",
                                                         fontSize: "1.1em",
                                                         marginRight: "3%",
-                                                        // textAlign: "center",
                                                         width: "100%",
                                                     }}
                                                 >
