@@ -65,7 +65,6 @@ export default function TaskView() {
         // Toggles the active task between `taskId` and null
         const newValue = activeTask === taskId ? null : taskId;
         setActiveTask(newValue);
-        console.log(`Set activeTask to ${newValue}`);
     }
 
     function handleDragOver(event: DragOverEvent) {
@@ -80,7 +79,6 @@ export default function TaskView() {
         // Ensure changedPos is true since we moved over a different item
         if (!changedPos) {
             setChangedPos(true);
-            console.log("changedPos set to true");
         }
     }
 
@@ -96,13 +94,13 @@ export default function TaskView() {
 
         const targetParent = (event.activatorEvent.target as Element).parentElement;
         if (!targetParent) {
-            console.log("No parent so ignoring");
+            // No parent so ignore
             return;
         }
 
         const targetParentName = targetParent.nodeName.toLowerCase();
         if (targetParentName === "section") {
-            console.log("Clicked on section so ignoring");
+            // Clicked on section so ignore
             return;
         } else if (targetParentName === "svg") {
             // We only want to toggle if the svg is the dropdown svg
@@ -115,16 +113,13 @@ export default function TaskView() {
         }
 
         const targetClassName = targetParent.className;
-        if (!targetClassName) {
-            console.log("Target class name is falsey so ignoring", targetParent);
-        } else if (
-            targetClassName.includes("MuiAccordionDetails") ||
-            targetClassName.includes("MuiAccordion-region")
+        if (
+            targetClassName &&
+            (targetClassName.includes("MuiAccordionDetails") ||
+                targetClassName.includes("MuiAccordion-region"))
         ) {
-            // Handle when clicking on task description
+            // Clicked on task description so ignore
             return;
-        } else {
-            console.log(targetParent);
         }
 
         if (active.id === over.id) {
@@ -145,10 +140,6 @@ export default function TaskView() {
         setTasks(tasks => {
             const oldIndex = tasks.findIndex(task => active.id === task.id);
             const newIndex = tasks.findIndex(task => over.id === task.id);
-
-            console.log(
-                `Moved ${active.id} over ${over.id}. Moving from index ${oldIndex} to ${newIndex}`
-            );
 
             const newTasks = arrayMove(tasks, oldIndex, newIndex);
             // Update the `position` attribute of tasks that got shifted as a result of moving

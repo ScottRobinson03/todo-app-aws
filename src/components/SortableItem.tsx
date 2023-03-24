@@ -21,7 +21,6 @@ export function SortableItem(props: SortableItemProps) {
 
     function handleChange(_: SyntheticEvent, isExpanded: boolean) {
         const newActiveTask = isExpanded ? props.id : null;
-        console.log(`Setting active task to ${newActiveTask}`);
         props.setActiveTask(newActiveTask);
     }
 
