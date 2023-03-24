@@ -1,9 +1,9 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { SortableItemProps, Subtask, Task } from "../types";
-import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from "@mui/material";
 import { SyntheticEvent } from "react";
+import { SortableItemProps, Subtask, Task } from "../types";
 const { ReactComponent: IncompleteTaskIcon } = require("../assets/incomplete-task.svg");
 const { ReactComponent: CompletedTaskIcon } = require("../assets/completed-task.svg");
 

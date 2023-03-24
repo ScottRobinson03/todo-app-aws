@@ -1,18 +1,18 @@
-import { useState } from "react";
 import {
     DndContext,
-    closestCenter,
-    PointerSensor,
-    useSensor,
-    useSensors,
     DragEndEvent,
     DragOverEvent,
+    PointerSensor,
+    closestCenter,
+    useSensor,
+    useSensors,
 } from "@dnd-kit/core";
-import { arrayMove, SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { SortableItem } from "./SortableItem";
-import { ActiveTaskState, Task } from "../types";
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useState } from "react";
 import tasksJson from "../assets/tasks.json";
+import { ActiveTaskState, Task } from "../types";
+import { SortableItem } from "./SortableItem";
 
 export default function TaskView() {
     const [tasks, setTasks] = useState<Task[]>(tasksJson);
