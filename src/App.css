@@ -2,10 +2,12 @@ body {
     background-color: #333D5C;
     color: #E5E6AE;
 }
+div.task-icon-container>svg {
+    margin-top: 10px;
+}
 h1 {
     text-align: center;
 }
-
 section#task-container {
     background-color: #407a7e;
         padding: 10px 0px;

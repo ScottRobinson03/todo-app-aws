@@ -20,11 +20,12 @@ export default function TaskView() {
             title: "Task #1",
             description:
                 "Lorem ipsum dolor sit amet consectetur adipisicing elit. Blanditiis unde odio atque culpa magni dolores accusantium. Eius ipsum nobis perferendis libero architecto nihil blanditiis voluptatum, exercitationem quas eos molestiae beatae\nConsequuntur maxime, numquam, totam esse nesciunt quisquam quibusdam nihil consequatur maiores reprehenderit vero perspiciatis mollitia id quidem ut molestias obcaecati quos illo adipisci ex fuga. Commodi adipisci possimus ratione consequatur.",
+            completedAt: null,
         },
-        { id: 2, title: "Task #2", description: "Description of Task #2" },
-        { id: 3, title: "Task #3", description: "Description of Task #3" },
-        { id: 4, title: "Task #4", description: "Description of Task #4" },
-        { id: 5, title: "Task #5", description: "Description of Task #5" },
+        { id: 2, title: "Task #2", description: "Description of Task #2", completedAt: null },
+        { id: 3, title: "Task #3", description: "Description of Task #3", completedAt: null },
+        { id: 4, title: "Task #4", description: "Description of Task #4", completedAt: null },
+        { id: 5, title: "Task #5", description: "Description of Task #5", completedAt: new Date() },
     ];
     const [tasks, setTasks] = useState<Task[]>(tasksJson);
     const [changedPos, setChangedPos] = useState<boolean>(false);
@@ -50,7 +51,10 @@ export default function TaskView() {
             >
                 <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
                     {tasks.map(task => (
-                        <SortableItem key={task.id} {...{ ...task, activeTask, setActiveTask }} />
+                        <SortableItem
+                            key={task.id}
+                            {...{ ...task, activeTask, setActiveTask, setTasks }}
+                        />
                     ))}
                 </SortableContext>
             </DndContext>
@@ -101,8 +105,12 @@ export default function TaskView() {
             console.log("Clicked on section so ignoring");
             return;
         } else if (targetParentName === "svg") {
-            console.log("Clicked on svg so toggling");
-            toggleActiveTask(+active.id);
+            // We only want to toggle if the svg is the dropdown svg
+
+            if (targetParent.classList.contains("MuiSvgIcon-root")) {
+                // Clicked on the dropdown svg (we assume any mui icon is the dropdown icon)
+                toggleActiveTask(+active.id);
+            }
             return;
         }
 

@@ -6,6 +6,7 @@ export interface SortableItemProps extends Task {
     key: number;
     activeTask: ActiveTaskState;
     setActiveTask: Dispatch<SetStateAction<ActiveTaskState>>;
+    setTasks: Dispatch<SetStateAction<Task[]>>;
 }
 
 export interface Task {
@@ -13,4 +14,5 @@ export interface Task {
     title: string;
     description: string;
     position?: number;
+    completedAt: Date | null;
 }
