@@ -41,7 +41,7 @@ export default function TaskView() {
                     {tasks.map(task => (
                         <SortableItem
                             key={task.id}
-                            {...{ ...task, activeTask, setActiveTask, setTasks }}
+                            {...{ ...task, tasks, activeTask, setActiveTask, setTasks }}
                         />
                     ))}
                 </SortableContext>
@@ -49,7 +49,7 @@ export default function TaskView() {
         </section>
     );
 
-    function toggleActiveTask(taskId: Task["id"]) {
+    function toggleActiveTask(taskId: string) {
         // Toggles the active task between `taskId` and null
         const newValue = activeTask === taskId ? null : taskId;
         setActiveTask(newValue);
@@ -76,7 +76,7 @@ export default function TaskView() {
 
         if (active === null || over === null) {
             // Didn't move *at all*, so toggle
-            toggleActiveTask(+active.id);
+            toggleActiveTask(active.id.toString());
             return;
         }
 
@@ -95,9 +95,9 @@ export default function TaskView() {
 
             if (targetParent.classList.contains("MuiSvgIcon-root")) {
                 // Clicked on the dropdown svg (we assume any mui icon is the dropdown icon)
-                toggleActiveTask(+active.id);
-            } else if (targetParent.id === "task-icon-completed" && activeTask !== +active.id) {
-                setActiveTask(+active.id);
+                toggleActiveTask(active.id.toString());
+            } else if (targetParent.id === "task-icon-completed" && activeTask !== active.id) {
+                setActiveTask(active.id.toString());
             }
             return;
         }
@@ -117,7 +117,7 @@ export default function TaskView() {
 
             if (!changedPos) {
                 // Didn't at any point change the position, so toggle task
-                toggleActiveTask(+active.id);
+                toggleActiveTask(active.id.toString());
             } else {
                 // Changed the position when dragging, so DON'T toggle task
                 setChangedPos(false);
