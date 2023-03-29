@@ -12,10 +12,10 @@ export interface SortableItemProps extends Task {
 export interface Task {
     id: number;
     title: string;
-    description: string;
-    position?: number;
+    description: string | null;
+    position: number;
     completedAt: string | null;
     children: Subtask[];
 }
 
-export type Subtask = Omit<Task, "children" | "description" | "position">;
+export type Subtask = Omit<Task, "children" | "position">;
