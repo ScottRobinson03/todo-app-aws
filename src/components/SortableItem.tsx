@@ -217,7 +217,7 @@ export function SortableItem(props: SortableItemProps) {
                         }}
                     >
                         <Typography sx={{ color: "#e0e1c1", textAlign: "center" }}>
-                            {props.description}
+                            {props.description || "(No Task Description Provided)"}
                         </Typography>
                         {props.children.length ? (
                             <div className="subtasks-container">
