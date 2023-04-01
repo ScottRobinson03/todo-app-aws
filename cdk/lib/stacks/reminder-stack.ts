@@ -59,7 +59,7 @@ export class ReminderCdkStack extends Stack {
         });
 
         // A role with the policy that can be assumed by the AWS scheduler service
-        const role = new iam.Role(this, "SchedulerToSQSReminderQueueRole", {
+        const role = new iam.Role(this, "SchedulerToSqsReminderQueueRole", {
             assumedBy: new iam.ServicePrincipal("scheduler.amazonaws.com"),
             description: "Role assumed by the reminders scheduler",
             roleName: "SchedulerToSqsReminderQueueRole",
