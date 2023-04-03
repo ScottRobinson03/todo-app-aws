@@ -41,7 +41,7 @@ export default function TaskView() {
                     {tasks.map(task => (
                         <SortableItem
                             key={task.id}
-                            {...{ ...task, tasks, activeTask, setActiveTask, setTasks }}
+                            {...{ task, tasks, activeTask, setActiveTask, setTasks }}
                         />
                     ))}
                 </SortableContext>
