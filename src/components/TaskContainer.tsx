@@ -32,12 +32,10 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                         aria-controls="panel1bh-content"
                         id="panel1bh-header"
                     >
-                        {props.typographyStylePosition ? (
+                        {props.typographyStylePosition && (
                             <Typography sx={props.typographyStylePosition}>
                                 {props.typographyTextPosition}
                             </Typography>
-                        ) : (
-                            <></>
                         )}
                         <Typography sx={props.typographyStyleTitle}>{props.task.title}</Typography>
                     </AccordionSummary>
@@ -52,7 +50,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                         <Typography sx={{ color: "#e0e1c1", textAlign: "center" }}>
                             {props.task.description || "(No Task Description Provided)"}
                         </Typography>
-                        {"children" in props.task && props.task.children.length > 0 ? (
+                        {"children" in props.task && props.task.children.length > 0 && (
                             <div className="subtasks-container">
                                 <Typography
                                     sx={{
@@ -101,8 +99,6 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                         );
                                     })}
                             </div>
-                        ) : (
-                            <></>
                         )}
                     </AccordionDetails>
                 </Accordion>
