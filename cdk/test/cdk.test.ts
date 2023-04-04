@@ -142,31 +142,6 @@ describe("AWS Todo Stack", () => {
                 DefaultEmailOption: "CONFIRM_WITH_CODE",
             });
         });
-        /*
-        UpdateReplacePolicy
-        DeletionPolicy
-        Properties:
-            - AccountRecoverySettings
-            - AdminCreateUserConfig
-            - AliasAttributes
-            - AutoVerifiedAttributes
-            - DeletionProtection
-            - DeviceConfiguration
-            - EmailConfiguration
-            - EmailVerificationMessage
-            - EmailVerificationSubject
-            - EnabledMfas
-            - MfaConfiguration
-            - Policies
-            - Schema
-            - SmsConfiguration
-            - SmsVerificationMessage
-            - UserAttributeUpdateSettings
-            - UserPoolAddOns
-            - UserPoolName
-            - VerificationMessageTemplate
-
-        */
     });
 
     describe("Reminder NestedStack", () => {
