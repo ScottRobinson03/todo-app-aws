@@ -15,7 +15,6 @@ describe("AWS Todo Stack", () => {
     const mainStack = new TodoCDKStack(app, "TodoTestStack");
 
     const mainTemplate = Template.fromStack(mainStack);
-    console.log(mainTemplate.toJSON());
     describe("Cognito", () => {
         const matching = mainTemplate.findResources("AWS::Cognito::UserPool");
         const keys = Object.keys(matching);
@@ -24,7 +23,6 @@ describe("AWS Todo Stack", () => {
         });
         const matchedPool = matching[keys[0]];
         const matchedPoolProps = matchedPool.Properties;
-        console.log(JSON.stringify(matchedPool, undefined, 2));
 
         testPropertiesHaveExpectedValues(matchedPool, {
             UpdateReplacePolicy: "Retain",
@@ -185,13 +183,9 @@ describe("AWS Todo Stack", () => {
                     });
                     const matchedQueue = matching[keys[0]];
                     const matchedQueueProps = matchedQueue.Properties;
-                    test("Has the correct MessageRetentionPeriod", () => {
-                        expect(matchedQueueProps.MessageRetentionPeriod).toBe(
-                            queue.MessageRetentionPeriod
-                        );
-                    });
-                    test("Has the correct VisibilityTimeout", () => {
-                        expect(matchedQueueProps.VisibilityTimeout).toBe(queue.VisibilityTimeout);
+                    testPropertiesHaveExpectedValues(matchedQueueProps, {
+                        MessageRetentionPeriod: queue.MessageRetentionPeriod,
+                        VisibilityTimeout: queue.VisibilityTimeout,
                     });
                 });
             }
@@ -247,16 +241,14 @@ describe("AWS Todo Stack", () => {
                             });
                         }
                     });
-                    test("Has the correct Handler", () => {
-                        expect(matchedFuncProps.Runtime).toBe(func.Runtime);
+                    testPropertiesHaveExpectedValues(matchedFuncProps, {
+                        Handler: func.Handler,
+                        Runtime: func.Runtime,
                     });
                     test("Has the correct Role", () => {
                         expect(matchedFuncProps.Role["Fn::GetAtt"]).toEqual(
                             expect.arrayContaining([expect.stringMatching(func.Role), "Arn"])
                         );
-                    });
-                    test("Has the correct Runtime", () => {
-                        expect(matchedFuncProps.Runtime).toBe(func.Runtime);
                     });
                 });
             }
@@ -286,6 +278,9 @@ describe("AWS Todo Stack", () => {
                     });
                     const matchedRole = matching[keys[0]];
                     const matchedRoleProps = matchedRole.Properties;
+                    testPropertiesHaveExpectedValues(matchedRoleProps, {
+                        Description: role.Description,
+                    });
                     test("Has the correct AssumePolicyDocument", () => {
                         expect(matchedRoleProps.AssumeRolePolicyDocument).toEqual(
                             expect.objectContaining({
@@ -298,9 +293,6 @@ describe("AWS Todo Stack", () => {
                                 ],
                             })
                         );
-                    });
-                    test("Has the correct Description", () => {
-                        expect(matchedRoleProps.Description).toBe(role.Description);
                     });
                     describe("ManagedPolicyArns", () => {
                         for (let ManagedPolicy of role.ManagedPolicyArns) {
