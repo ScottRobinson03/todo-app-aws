@@ -1,4 +1,4 @@
-import { Duration, Stack, StackProps } from "aws-cdk-lib";
+import { Duration, NestedStack, StackProps } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
@@ -9,7 +9,7 @@ import { Construct } from "constructs";
 import * as path from "node:path";
 import { createCfnOutputs } from "../utils";
 
-export class ReminderCdkStack extends Stack {
+export class ReminderCdkStack extends NestedStack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
