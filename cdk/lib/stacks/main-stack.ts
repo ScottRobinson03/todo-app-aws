@@ -5,10 +5,11 @@ import { ReminderCdkStack } from "./reminder-stack";
 import { createCfnOutputs } from "../utils";
 
 export class TodoCDKStack extends Stack {
+    public readonly reminderStack: ReminderCdkStack;
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        const reminderStack = new ReminderCdkStack(this, "ReminderCDKStack");
+        this.reminderStack = new ReminderCdkStack(this, "ReminderCDKStack");
 
         const userPool = new cognito.UserPool(this, "ToDoAppUserPool", {
             userPoolName: "ToDoAppUserPool",
@@ -80,12 +81,12 @@ export class TodoCDKStack extends Stack {
                     "Thanks for signing up to our awesome todo app! Your verification code is {####}",
                 emailStyle: cognito.VerificationEmailStyle.CODE,
                 smsMessage:
-                    "Thanks for signing up to our awesome todo app! Your verificiation code is {####}",
+                    "Thanks for signing up to our awesome todo app! Your verification code is {####}",
             },
         });
 
         createCfnOutputs(this, {
-            reminderStack: reminderStack.stackId,
+            reminderStack: this.reminderStack.stackId,
             userPool: userPool.userPoolArn,
         });
     }
