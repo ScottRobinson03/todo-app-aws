@@ -15,7 +15,7 @@ export function createCfnOutputs(stack: cdk.Stack, outputs: Outputs) {
 export async function getCfnOutput(stackName: string, outputKey: string) {
     const { Stacks: stacks } = await cfClient.send(
         new DescribeStacksCommand({
-            StackName: "ReminderCDKStack",
+            StackName: stackName,
         })
     );
 
