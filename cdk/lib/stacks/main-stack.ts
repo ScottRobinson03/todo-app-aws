@@ -11,8 +11,8 @@ export class TodoCDKStack extends Stack {
 
         this.reminderStack = new ReminderCdkStack(this, "ReminderCDKStack");
 
-        const userPool = new cognito.UserPool(this, "ToDoAppUserPool", {
-            userPoolName: "ToDoAppUserPool",
+        const userPool = new cognito.UserPool(this, "TodoAppUserPool", {
+            userPoolName: "TodoAppUserPool",
             accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
             advancedSecurityMode: cognito.AdvancedSecurityMode.OFF,
             autoVerify: {
@@ -85,9 +85,17 @@ export class TodoCDKStack extends Stack {
             },
         });
 
+        const userPoolAdminsGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminsGroup", {
+            userPoolId: userPool.userPoolId,
+            description: "A group for admins of the todo application",
+            groupName: "Admins",
+            precedence: 0, // 0 is the highest possible precedence
+        });
+
         createCfnOutputs(this, {
             reminderStack: this.reminderStack.stackId,
             userPool: userPool.userPoolArn,
+            adminsGroup: userPoolAdminsGroup.groupName!,
         });
     }
 }
