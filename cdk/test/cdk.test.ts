@@ -16,128 +16,148 @@ describe("AWS Todo Stack", () => {
 
     const mainTemplate = Template.fromStack(mainStack);
     describe("Cognito", () => {
-        const matching = mainTemplate.findResources("AWS::Cognito::UserPool");
-        const keys = Object.keys(matching);
-        test("Exists", () => {
-            expect(keys).toHaveLength(1);
-        });
-        const matchedPool = matching[keys[0]];
-        const matchedPoolProps = matchedPool.Properties;
-
-        testPropertiesHaveExpectedValues(matchedPool, {
-            UpdateReplacePolicy: "Retain",
-            DeletionPolicy: "Retain",
-        });
-
-        testPropertiesHaveExpectedValues(matchedPoolProps, {
-            AccountRecoverySetting: {
-                RecoveryMechanisms: [{ Name: "verified_email", Priority: 1 }],
-            },
-            AliasAttributes: ["email"],
-            AutoVerifiedAttributes: ["email", "phone_number"],
-            DeletionProtection: "ACTIVE",
-            EmailConfiguration: { EmailSendingAccount: "COGNITO_DEFAULT" },
-            EmailVerificationMessage:
-                "Thanks for signing up to our awesome todo app! Your verification code is {####}",
-            EmailVerificationSubject: "Verify your email for our todo app",
-            EnabledMfas: ["SMS_MFA", "SOFTWARE_TOKEN_MFA"],
-            MfaConfiguration: "OPTIONAL",
-            SmsVerificationMessage:
-                "Thanks for signing up to our awesome todo app! Your verification code is {####}",
-        });
-
-        describe("AdminCreateUserConfig", () => {
-            testPropertiesHaveExpectedValues(matchedPoolProps.AdminCreateUserConfig, {
-                AllowAdminCreateUserOnly: false,
+        describe("TodoAppUserPool", () => {
+            const matching = mainTemplate.findResources("AWS::Cognito::UserPool", {
+                Properties: { UserPoolName: "TodoAppUserPool" },
             });
-            describe("InviteMessageTemplate", () => {
-                testPropertiesHaveExpectedValues(
-                    matchedPoolProps.AdminCreateUserConfig.InviteMessageTemplate,
-                    {
-                        EmailMessage:
-                            "Hello {username}, you have been invited to join our awesome todo app! Your temporary password is {####}",
-                        EmailSubject: "Invite to join our todo app!",
-                        SMSMessage:
-                            "Hello {username}, your temporary password for our awesome todo app is {####}",
-                    }
-                );
+            const keys = Object.keys(matching);
+            test("Exists", () => {
+                expect(keys).toHaveLength(1);
             });
-        });
+            const matchedPool = matching[keys[0]];
+            const matchedPoolProps = matchedPool.Properties;
 
-        describe("DeviceConfiguration", () => {
-            testPropertiesHaveExpectedValues(matchedPoolProps.DeviceConfiguration, {
-                ChallengeRequiredOnNewDevice: true,
-                DeviceOnlyRememberedOnUserPrompt: true,
+            testPropertiesHaveExpectedValues(matchedPool, {
+                UpdateReplacePolicy: "Retain",
+                DeletionPolicy: "Retain",
             });
-        });
 
-        describe("Policies", () => {
-            describe("PasswordPolicy", () => {
-                testPropertiesHaveExpectedValues(matchedPoolProps.Policies.PasswordPolicy, {
-                    MinimumLength: 6,
-                    RequireLowercase: true,
-                    RequireNumbers: true,
-                    RequireSymbols: false,
-                    RequireUppercase: true,
-                    TemporaryPasswordValidityDays: 2,
+            testPropertiesHaveExpectedValues(matchedPoolProps, {
+                AccountRecoverySetting: {
+                    RecoveryMechanisms: [{ Name: "verified_email", Priority: 1 }],
+                },
+                AliasAttributes: ["email"],
+                AutoVerifiedAttributes: ["email", "phone_number"],
+                DeletionProtection: "ACTIVE",
+                EmailConfiguration: { EmailSendingAccount: "COGNITO_DEFAULT" },
+                EmailVerificationMessage:
+                    "Thanks for signing up to our awesome todo app! Your verification code is {####}",
+                EmailVerificationSubject: "Verify your email for our todo app",
+                EnabledMfas: ["SMS_MFA", "SOFTWARE_TOKEN_MFA"],
+                MfaConfiguration: "OPTIONAL",
+                SmsVerificationMessage:
+                    "Thanks for signing up to our awesome todo app! Your verification code is {####}",
+            });
+
+            describe("AdminCreateUserConfig", () => {
+                testPropertiesHaveExpectedValues(matchedPoolProps.AdminCreateUserConfig, {
+                    AllowAdminCreateUserOnly: false,
+                });
+                describe("InviteMessageTemplate", () => {
+                    testPropertiesHaveExpectedValues(
+                        matchedPoolProps.AdminCreateUserConfig.InviteMessageTemplate,
+                        {
+                            EmailMessage:
+                                "Hello {username}, you have been invited to join our awesome todo app! Your temporary password is {####}",
+                            EmailSubject: "Invite to join our todo app!",
+                            SMSMessage:
+                                "Hello {username}, your temporary password for our awesome todo app is {####}",
+                        }
+                    );
+                });
+            });
+
+            describe("DeviceConfiguration", () => {
+                testPropertiesHaveExpectedValues(matchedPoolProps.DeviceConfiguration, {
+                    ChallengeRequiredOnNewDevice: true,
+                    DeviceOnlyRememberedOnUserPrompt: true,
+                });
+            });
+
+            describe("Policies", () => {
+                describe("PasswordPolicy", () => {
+                    testPropertiesHaveExpectedValues(matchedPoolProps.Policies.PasswordPolicy, {
+                        MinimumLength: 6,
+                        RequireLowercase: true,
+                        RequireNumbers: true,
+                        RequireSymbols: false,
+                        RequireUppercase: true,
+                        TemporaryPasswordValidityDays: 2,
+                    });
+                });
+            });
+
+            describe("Schema", () => {
+                test("Isn't empty", () => {
+                    expect(matchedPoolProps.Schema.length).toBeGreaterThan(0);
+                });
+                const expectedSchemas: Record<string, Record<"mutable" | "required", boolean>> = {
+                    email: {
+                        mutable: true,
+                        required: true,
+                    },
+                    name: {
+                        mutable: false,
+                        required: true,
+                    },
+                    updated_at: {
+                        mutable: true,
+                        required: true,
+                    },
+                    phone_number: {
+                        mutable: true,
+                        required: true,
+                    },
+                    zoneinfo: {
+                        mutable: true,
+                        required: true,
+                    },
+                };
+                for (const schema of matchedPoolProps.Schema) {
+                    const expectedForSchema = expectedSchemas[schema.Name];
+                    describe(schema.Name, () => {
+                        test(`${expectedForSchema.required ? "Is" : "Isn't"} Required`, () => {
+                            expect(schema.Required).toEqual(expectedForSchema.required);
+                        });
+                        test(`${expectedForSchema.mutable ? "Is" : "Isn't"} Mutable`, () => {
+                            expect(schema.Mutable).toEqual(expectedForSchema.mutable);
+                        });
+                    });
+                }
+            });
+
+            describe("UserAttributeUpdateSettings", () => {
+                testPropertiesHaveExpectedValues(matchedPoolProps.UserAttributeUpdateSettings, {
+                    AttributesRequireVerificationBeforeUpdate: ["email", "phone_number"],
+                });
+            });
+
+            describe("UserPoolAddOns", () => {
+                testPropertiesHaveExpectedValues(matchedPoolProps.UserPoolAddOns, {
+                    AdvancedSecurityMode: "OFF",
+                });
+            });
+
+            describe("VerificationMessageTemplate", () => {
+                testPropertiesHaveExpectedValues(matchedPoolProps.VerificationMessageTemplate, {
+                    DefaultEmailOption: "CONFIRM_WITH_CODE",
                 });
             });
         });
-
-        describe("Schema", () => {
-            test("Isn't empty", () => {
-                expect(matchedPoolProps.Schema.length).toBeGreaterThan(0);
+        describe("'Admins' User Pool Group", () => {
+            const matching = mainTemplate.findResources("AWS::Cognito::UserPoolGroup", {
+                Properties: { GroupName: "Admins" },
             });
-            const expectedSchemas: Record<string, Record<"mutable" | "required", boolean>> = {
-                email: {
-                    mutable: true,
-                    required: true,
-                },
-                name: {
-                    mutable: false,
-                    required: true,
-                },
-                updated_at: {
-                    mutable: true,
-                    required: true,
-                },
-                phone_number: {
-                    mutable: true,
-                    required: true,
-                },
-                zoneinfo: {
-                    mutable: true,
-                    required: true,
-                },
-            };
-            for (const schema of matchedPoolProps.Schema) {
-                const expectedForSchema = expectedSchemas[schema.Name];
-                describe(schema.Name, () => {
-                    test(`${expectedForSchema.required ? "Is" : "Isn't"} Required`, () => {
-                        expect(schema.Required).toEqual(expectedForSchema.required);
-                    });
-                    test(`${expectedForSchema.mutable ? "Is" : "Isn't"} Mutable`, () => {
-                        expect(schema.Mutable).toEqual(expectedForSchema.mutable);
-                    });
-                });
-            }
-        });
-
-        describe("UserAttributeUpdateSettings", () => {
-            testPropertiesHaveExpectedValues(matchedPoolProps.UserAttributeUpdateSettings, {
-                AttributesRequireVerificationBeforeUpdate: ["email", "phone_number"],
+            console.log(JSON.stringify(matching));
+            const keys = Object.keys(matching);
+            test("Exists", () => {
+                expect(keys).toHaveLength(1);
             });
-        });
-
-        describe("UserPoolAddOns", () => {
-            testPropertiesHaveExpectedValues(matchedPoolProps.UserPoolAddOns, {
-                AdvancedSecurityMode: "OFF",
-            });
-        });
-
-        describe("VerificationMessageTemplate", () => {
-            testPropertiesHaveExpectedValues(matchedPoolProps.VerificationMessageTemplate, {
-                DefaultEmailOption: "CONFIRM_WITH_CODE",
+            const matchedGroup = matching[keys[0]];
+            const matchedGroupProps = matchedGroup.Properties;
+            testPropertiesHaveExpectedValues(matchedGroupProps, {
+                Description: "A group for admins of the todo application",
+                Precedence: 0,
             });
         });
     });
