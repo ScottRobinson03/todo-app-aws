@@ -44,7 +44,7 @@ export function SortableItem(props: SortableItemProps) {
             typographyStyleTitle={{
                 color: "#e0e1c1",
                 fontSize: "1.1em",
-                marginRight: "3%",
+                marginRight: "2%",
                 textAlign: "center",
                 width: "100%",
             }}
