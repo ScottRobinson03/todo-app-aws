@@ -7,7 +7,9 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
     let subtaskId: string | null = null;
 
     while (true) {
-        const topLevelTaskMatch = element.id.match(/^task-(\d+)-(?:(?:icon|accordion)-)?container/);
+        const topLevelTaskMatch = element.id.match(
+            /^task-(\d+)-(?:(?:icon|accordion|reminder)-)?container/
+        );
         if (topLevelTaskMatch) {
             topLevelTaskPosition = +topLevelTaskMatch[1];
             break;
@@ -16,7 +18,7 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
         if (!subtaskId) {
             // Haven't already found the subtask, so see if this is the subtask icon container
             const subtaskMatch = element.id.match(
-                /^subtask-(\d+)-(?:(?:icon|accordion)-)?container/
+                /^subtask-(\d+)-(?:(?:icon|accordion|reminder)-)?container/
             );
 
             if (subtaskMatch) {
