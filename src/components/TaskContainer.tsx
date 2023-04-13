@@ -6,6 +6,8 @@ const { ReactComponent: IncompleteTaskIcon } = require("../assets/incomplete-tas
 const { ReactComponent: CompletedTaskIcon } = require("../assets/completed-task.svg");
 
 export default function TaskContainer(props: PropsWithChildren<TaskContainerProps>) {
+    const taskIsComplete = props.task.completedAt !== null;
+    const completedOrIncomplete = taskIsComplete ? "completed" : "incomplete";
     return (
         <div
             id={props.containerId}
@@ -19,7 +21,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                 className={props.iconContainerClass}
                 onClick={props.iconContainerOnClick}
             >
-                {props.task.completedAt === null ? <IncompleteTaskIcon /> : <CompletedTaskIcon />}
+                {taskIsComplete ? <CompletedTaskIcon /> : <IncompleteTaskIcon />}
             </div>
             <div id={props.accordionContainerId} style={props.accordionContainerStyle}>
                 <Accordion
@@ -37,7 +39,12 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                 {props.typographyTextPosition}
                             </Typography>
                         )}
-                        <Typography sx={props.typographyStyleTitle}>{props.task.title}</Typography>
+                        <Typography
+                            className={`${completedOrIncomplete}-task-title`}
+                            sx={props.typographyStyleTitle}
+                        >
+                            {props.task.title}
+                        </Typography>
                     </AccordionSummary>
                     <AccordionDetails
                         sx={{
@@ -47,7 +54,20 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                             margin: "0px 16px",
                         }}
                     >
-                        <Typography sx={{ color: "#e0e1c1", textAlign: "center" }}>
+                        <Typography
+                            className={`${completedOrIncomplete}-task-description`}
+                            sx={{
+                                color: "#e0e1c1",
+                                textAlign: "center",
+                                opacity: props.task.description
+                                    ? taskIsComplete
+                                        ? 0.5 // has description and is complete
+                                        : 0.9 // has description and is NOT complete
+                                    : taskIsComplete
+                                    ? 0.5 // DOESN'T have description and is complete
+                                    : 0.7, // DOESN'T have description and is NOT complete
+                            }}
+                        >
                             {props.task.description || "(No Task Description Provided)"}
                         </Typography>
                         {"children" in props.task && props.task.children.length > 0 && (

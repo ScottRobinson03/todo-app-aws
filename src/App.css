@@ -16,6 +16,14 @@ div.subtasks-container {
     border-top: 2px #184e57 solid;
 }
 
+p.completed-task-description {
+    text-decoration: line-through;
+}
+
+p.completed-task-title {
+    opacity: 0.6;
+    text-decoration: line-through;
+}
 svg#task-icon-incomplete,
 svg#task-icon-completed {
     margin-top: 10px;
