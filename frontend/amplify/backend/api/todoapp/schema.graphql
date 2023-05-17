@@ -1,0 +1,75 @@
+# This "input" configures a global authorization rule to enable public access to
+# all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
+input AMPLIFY {
+    globalAuthRule: AuthRule = { allow: public }
+} # FOR TESTING ONLY!
+type Account
+    @model
+    @auth(
+        rules: [
+            { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
+            { allow: owner, operations: [create, read, update, delete] }
+        ]
+    ) {
+    email: String!
+    hash: String!
+    id: ID!
+    is_admin: Boolean @default(value: "false") # the @default handles type-conversion
+    name: String!
+    tasks: [AccountTask!]!
+    username: String!
+}
+
+type AccountTask {
+    permissions: Int!
+    position: Int!
+    reminder_ids: [ID!]!
+    # reminders: [Reminder] @hasMany(fields: ["reminder_ids"])
+    task_id: ID! # can't use @hasMany since could be a Task or Subtask
+}
+
+type Reminder
+    @model
+    @auth(
+        rules: [
+            { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
+            { allow: owner, operations: [create, read, update, delete] }
+        ]
+    ) {
+    content: String!
+    created_by: ID!
+    due_at: Int!
+    id: ID!
+    subscriber_ids: [ID!]!
+    subscribers: [Account!]! @hasMany(fields: ["subscriber_ids"])
+    task_id: String!
+}
+
+type Subtask {
+    description: String
+    completed_at: Int
+    created_by_id: ID!
+    id: ID!
+    reminder_ids: [ID!]!
+    subscriber_ids: [ID!]!
+    title: String!
+}
+
+type Task
+    @model
+    @auth(
+        rules: [
+            { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
+            { allow: owner, operations: [create, read, update, delete] }
+        ]
+    ) {
+    completed_at: Int
+    created_by_id: ID!
+    created_by: Account @hasOne(fields: ["created_by_id"])
+    description: String
+    id: ID!
+    reminder_ids: [ID!]!
+    reminders: [Reminder!]! @hasMany(fields: ["reminder_ids"])
+    subtasks: [Subtask!]!
+    title: String!
+}

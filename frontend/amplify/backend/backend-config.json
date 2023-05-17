@@ -1,0 +1,102 @@
+{
+  "api": {
+    "todoapp": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId"
+          ],
+          "category": "auth",
+          "resourceName": "todoapp6b1ec4f1"
+        }
+      ],
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_LAMBDA",
+              "lambdaAuthorizerConfig": {
+                "lambdaFunction": "graphQlLambdaAuthorizera661631d",
+                "ttlSeconds": "300"
+              }
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authtodoapp6b1ec4f1"
+            }
+          }
+        }
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "AppSync"
+    }
+  },
+  "auth": {
+    "todoapp6b1ec4f1": {
+      "customAuth": false,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito",
+      "serviceType": "imported"
+    }
+  },
+  "function": {
+    "graphQlLambdaAuthorizera661631d": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_auth_todoapp6b1ec4f1_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp6b1ec4f1"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp6b1ec4f1_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp6b1ec4f1"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp6b1ec4f1_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp6b1ec4f1"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp6b1ec4f1_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp6b1ec4f1"
+        }
+      ]
+    },
+    "AMPLIFY_function_graphQlLambdaAuthorizera661631d_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "graphQlLambdaAuthorizera661631d"
+        }
+      ]
+    },
+    "AMPLIFY_function_graphQlLambdaAuthorizera661631d_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "graphQlLambdaAuthorizera661631d"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "authSelections": "userPoolOnly",
+  "resourceName": "todoapp6b1ec4f1",
+  "serviceType": "imported",
+  "region": "eu-west-2",
+  "aliasAttributes": [
+    "email"
+  ],
+  "authProvidersUserPool": [],
+  "requiredAttributes": [
+    "name",
+    "email",
+    "zoneinfo",
+    "phone_number",
+    "updated_at"
+  ],
+  "passwordPolicyMinLength": 6,
+  "passwordPolicyCharacters": [
+    "Requires Lowercase",
+    "Requires Uppercase",
+    "Requires Numbers"
+  ],
+  "mfaConfiguration": "OPTIONAL",
+  "autoVerifiedAttributes": [
+    "email",
+    "phone_number"
+  ],
+  "mfaTypes": [
+    "SMS Text Message",
+    "TOTP"
+  ]
+}
