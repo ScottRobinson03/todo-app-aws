@@ -1,5 +1,6 @@
 import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { ReminderCdkStack } from "./reminder-stack";
 import { createCfnOutputs } from "../utils";
@@ -10,6 +11,17 @@ export class TodoCDKStack extends Stack {
         super(scope, id, props);
 
         this.reminderStack = new ReminderCdkStack(this, "ReminderCDKStack");
+
+        const amplifyUser = new iam.User(this, "TodoAppAmplifyUser", {
+            userName: "TodoAppAmplifyUser",
+            managedPolicies: [
+                iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess-Amplify"),
+            ],
+        });
+
+        const amplifyUserAccessKey = new iam.AccessKey(this, "AmplifyUserAccessKey", {
+            user: amplifyUser,
+        });
 
         const userPool = new cognito.UserPool(this, "TodoAppUserPool", {
             userPoolName: "TodoAppUserPool",
@@ -85,6 +97,8 @@ export class TodoCDKStack extends Stack {
             },
         });
 
+        userPool.addClient("web-app-client");
+
         const userPoolAdminsGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminsGroup", {
             userPoolId: userPool.userPoolId,
             description: "A group for admins of the todo application",
@@ -93,6 +107,8 @@ export class TodoCDKStack extends Stack {
         });
 
         createCfnOutputs(this, {
+            amplifyUserAccessKeyId: amplifyUserAccessKey.accessKeyId,
+            amplifyUserSecretAccessKey: amplifyUserAccessKey.secretAccessKey.unsafeUnwrap(), // FIXME: This is REALLY insecure
             reminderStack: this.reminderStack.stackId,
             userPool: userPool.userPoolArn,
             adminsGroup: userPoolAdminsGroup.groupName!,
