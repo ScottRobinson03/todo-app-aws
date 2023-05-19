@@ -14,10 +14,10 @@
     "categories": {
       "auth": {
         "todoapp6b1ec4f1": {
-          "userPoolId": "eu-west-2_TXljWqyXf",
+          "userPoolId": "eu-west-2_BjggPbFJz",
           "userPoolName": "TodoAppUserPool",
-          "webClientId": "6ufqemph61nl1gq43pe1d712l9",
-          "nativeClientId": "6ufqemph61nl1gq43pe1d712l9"
+          "webClientId": "5i4ussnav2g2nfmldp000g9643",
+          "nativeClientId": "5i4ussnav2g2nfmldp000g9643"
         }
       },
       "function": {

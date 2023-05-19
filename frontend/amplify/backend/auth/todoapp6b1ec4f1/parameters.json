@@ -10,9 +10,7 @@
   "requiredAttributes": [
     "name",
     "email",
-    "zoneinfo",
-    "phone_number",
-    "updated_at"
+    "phone_number"
   ],
   "passwordPolicyMinLength": 6,
   "passwordPolicyCharacters": [
