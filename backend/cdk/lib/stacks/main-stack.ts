@@ -12,26 +12,16 @@ export class TodoCDKStack extends Stack {
 
         this.reminderStack = new ReminderCdkStack(this, "ReminderCDKStack");
 
-        const amplifyUser = new iam.User(this, "TodoAppAmplifyUser", {
-            userName: "TodoAppAmplifyUser",
-            managedPolicies: [
-                iam.ManagedPolicy.fromAwsManagedPolicyName("AdministratorAccess-Amplify"),
-            ],
-        });
-
-        const amplifyUserAccessKey = new iam.AccessKey(this, "AmplifyUserAccessKey", {
-            user: amplifyUser,
-        });
-
-        const userPool = new cognito.UserPool(this, "TodoAppUserPool", {
-            userPoolName: "TodoAppUserPool",
+        const userPoolName = "TodoAppUserPool";
+        const userPool = new cognito.UserPool(this, userPoolName, {
+            userPoolName,
             accountRecovery: cognito.AccountRecovery.EMAIL_ONLY,
             advancedSecurityMode: cognito.AdvancedSecurityMode.OFF,
             autoVerify: {
                 email: true,
                 phone: true,
             },
-            deletionProtection: true,
+            deletionProtection: false,
             deviceTracking: {
                 challengeRequiredOnNewDevice: true,
                 deviceOnlyRememberedOnUserPrompt: true,
@@ -70,13 +60,7 @@ export class TodoCDKStack extends Stack {
                     required: true,
                     mutable: false,
                 },
-                lastUpdateTime: {
-                    required: true,
-                },
                 phoneNumber: {
-                    required: true,
-                },
-                timezone: {
                     required: true,
                 },
             },
@@ -97,7 +81,7 @@ export class TodoCDKStack extends Stack {
             },
         });
 
-        userPool.addClient("web-app-client");
+        const userPoolClient = userPool.addClient("web-app-client");
 
         const userPoolAdminsGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminsGroup", {
             userPoolId: userPool.userPoolId,
@@ -107,11 +91,12 @@ export class TodoCDKStack extends Stack {
         });
 
         createCfnOutputs(this, {
-            amplifyUserAccessKeyId: amplifyUserAccessKey.accessKeyId,
-            amplifyUserSecretAccessKey: amplifyUserAccessKey.secretAccessKey.unsafeUnwrap(), // FIXME: This is REALLY insecure
-            reminderStack: this.reminderStack.stackId,
-            userPool: userPool.userPoolArn,
             adminsGroup: userPoolAdminsGroup.groupName!,
+            reminderStack: this.reminderStack.stackId,
+            userPoolArn: userPool.userPoolArn,
+            userPoolId: userPool.userPoolId,
+            userPoolName,
+            userPoolClientId: userPoolClient.userPoolClientId,
         });
     }
 }
