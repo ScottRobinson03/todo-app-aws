@@ -1,14 +1,11 @@
-import { Amplify } from "aws-amplify";
-import awsExports from "./aws-exports";
 import TaskView from "./components/TaskView";
-import "./App.css";
 
-Amplify.configure(awsExports);
-
-export default function App() {
+// @ts-ignore
+export default function App({ signOut, user }) {
     return (
         <>
-            <h1>Your Tasks</h1>
+            <h1>{user.username}'s Tasks</h1>
+            <button onClick={signOut}>Sign Out</button>
             <TaskView />
         </>
     );
