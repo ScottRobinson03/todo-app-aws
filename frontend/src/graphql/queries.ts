@@ -36,12 +36,6 @@ export const listAccounts = /* GraphQL */ `
         id
         is_admin
         name
-        tasks {
-          permissions
-          position
-          reminder_ids
-          task_id
-        }
         username
         createdAt
         updatedAt
@@ -60,17 +54,6 @@ export const getReminder = /* GraphQL */ `
       id
       subscriber_ids
       subscribers {
-        items {
-          email
-          hash
-          id
-          is_admin
-          name
-          username
-          createdAt
-          updatedAt
-          owner
-        }
         nextToken
       }
       task_id
@@ -93,9 +76,6 @@ export const listReminders = /* GraphQL */ `
         due_at
         id
         subscriber_ids
-        subscribers {
-          nextToken
-        }
         task_id
         createdAt
         updatedAt
@@ -116,12 +96,6 @@ export const getTask = /* GraphQL */ `
         id
         is_admin
         name
-        tasks {
-          permissions
-          position
-          reminder_ids
-          task_id
-        }
         username
         createdAt
         updatedAt
@@ -131,17 +105,6 @@ export const getTask = /* GraphQL */ `
       id
       reminder_ids
       reminders {
-        items {
-          content
-          created_by
-          due_at
-          id
-          subscriber_ids
-          task_id
-          createdAt
-          updatedAt
-          owner
-        }
         nextToken
       }
       subtasks {
@@ -170,32 +133,9 @@ export const listTasks = /* GraphQL */ `
       items {
         completed_at
         created_by_id
-        created_by {
-          email
-          hash
-          id
-          is_admin
-          name
-          username
-          createdAt
-          updatedAt
-          owner
-        }
         description
         id
         reminder_ids
-        reminders {
-          nextToken
-        }
-        subtasks {
-          description
-          completed_at
-          created_by_id
-          id
-          reminder_ids
-          subscriber_ids
-          title
-        }
         title
         createdAt
         updatedAt
