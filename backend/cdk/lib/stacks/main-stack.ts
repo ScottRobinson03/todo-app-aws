@@ -83,15 +83,15 @@ export class TodoCDKStack extends Stack {
 
         const userPoolClient = userPool.addClient("web-app-client");
 
-        const userPoolAdminsGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminsGroup", {
+        const userPoolAdminGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminGroup", {
             userPoolId: userPool.userPoolId,
             description: "A group for admins of the todo application",
-            groupName: "Admins",
+            groupName: "Admin",
             precedence: 0, // 0 is the highest possible precedence
         });
 
         createCfnOutputs(this, {
-            adminsGroup: userPoolAdminsGroup.groupName!,
+            adminGroup: userPoolAdminGroup.groupName!,
             reminderStack: this.reminderStack.stackId,
             userPoolArn: userPool.userPoolArn,
             userPoolId: userPool.userPoolId,
