@@ -4,8 +4,7 @@
 
 export type CreateAccountInput = {
   email: string,
-  hash: string,
-  id?: string | null,
+  sub: string,
   is_admin: number,
   name: string,
   tasks: Array< AccountTaskInput >,
@@ -21,7 +20,6 @@ export type AccountTaskInput = {
 
 export type ModelAccountConditionInput = {
   email?: ModelStringInput | null,
-  hash?: ModelStringInput | null,
   is_admin?: ModelIntInput | null,
   name?: ModelStringInput | null,
   username?: ModelStringInput | null,
@@ -85,8 +83,7 @@ export type ModelIntInput = {
 export type Account = {
   __typename: "Account",
   email: string,
-  hash: string,
-  id: string,
+  sub: string,
   is_admin: number,
   name: string,
   tasks:  Array<AccountTask >,
@@ -105,8 +102,7 @@ export type AccountTask = {
 
 export type UpdateAccountInput = {
   email?: string | null,
-  hash?: string | null,
-  id: string,
+  sub: string,
   is_admin?: number | null,
   name?: string | null,
   tasks?: Array< AccountTaskInput > | null,
@@ -114,27 +110,24 @@ export type UpdateAccountInput = {
 };
 
 export type DeleteAccountInput = {
-  id: string,
+  sub: string,
 };
 
 export type CreateReminderInput = {
   content: string,
-  created_by_id: string,
   due_at: number,
   id?: string | null,
-  subscriber_ids: Array< string >,
   task_id: string,
+  reminderCreated_bySub?: string | null,
 };
 
 export type ModelReminderConditionInput = {
   content?: ModelStringInput | null,
-  created_by_id?: ModelIDInput | null,
   due_at?: ModelIntInput | null,
-  subscriber_ids?: ModelIDInput | null,
-  task_id?: ModelStringInput | null,
   and?: Array< ModelReminderConditionInput | null > | null,
   or?: Array< ModelReminderConditionInput | null > | null,
   not?: ModelReminderConditionInput | null,
+  reminderCreated_bySub?: ModelIDInput | null,
 };
 
 export type ModelIDInput = {
@@ -156,15 +149,14 @@ export type ModelIDInput = {
 export type Reminder = {
   __typename: "Reminder",
   content: string,
-  created_by_id: string,
   created_by?: Account | null,
   due_at: number,
   id: string,
-  subscriber_ids: Array< string >,
   subscribers?: ModelAccountConnection | null,
   task_id: string,
   createdAt: string,
   updatedAt: string,
+  reminderCreated_bySub?: string | null,
 };
 
 export type ModelAccountConnection = {
@@ -175,32 +167,31 @@ export type ModelAccountConnection = {
 
 export type UpdateReminderInput = {
   content?: string | null,
-  created_by_id?: string | null,
   due_at?: number | null,
   id: string,
-  subscriber_ids?: Array< string > | null,
-  task_id?: string | null,
+  task_id: string,
+  reminderCreated_bySub?: string | null,
 };
 
 export type DeleteReminderInput = {
   id: string,
+  task_id: string,
 };
 
 export type CreateTaskInput = {
   completed_at?: number | null,
-  created_by_id: string,
   description?: string | null,
   id?: string | null,
-  reminder_ids: Array< string >,
   subtasks: Array< SubtaskInput >,
   title: string,
+  taskCreated_bySub?: string | null,
 };
 
 export type SubtaskInput = {
   description?: string | null,
   completed_at?: number | null,
   created_by_id: string,
-  id?: string | null,
+  id: string,
   reminder_ids: Array< string >,
   subscriber_ids: Array< string >,
   title: string,
@@ -208,28 +199,26 @@ export type SubtaskInput = {
 
 export type ModelTaskConditionInput = {
   completed_at?: ModelIntInput | null,
-  created_by_id?: ModelIDInput | null,
   description?: ModelStringInput | null,
-  reminder_ids?: ModelIDInput | null,
   title?: ModelStringInput | null,
   and?: Array< ModelTaskConditionInput | null > | null,
   or?: Array< ModelTaskConditionInput | null > | null,
   not?: ModelTaskConditionInput | null,
+  taskCreated_bySub?: ModelIDInput | null,
 };
 
 export type Task = {
   __typename: "Task",
   completed_at?: number | null,
-  created_by_id: string,
   created_by?: Account | null,
   description?: string | null,
   id: string,
-  reminder_ids: Array< string >,
   reminders?: ModelReminderConnection | null,
   subtasks:  Array<Subtask >,
   title: string,
   createdAt: string,
   updatedAt: string,
+  taskCreated_bySub?: string | null,
 };
 
 export type ModelReminderConnection = {
@@ -251,12 +240,11 @@ export type Subtask = {
 
 export type UpdateTaskInput = {
   completed_at?: number | null,
-  created_by_id?: string | null,
   description?: string | null,
   id: string,
-  reminder_ids?: Array< string > | null,
   subtasks?: Array< SubtaskInput > | null,
   title?: string | null,
+  taskCreated_bySub?: string | null,
 };
 
 export type DeleteTaskInput = {
@@ -265,8 +253,7 @@ export type DeleteTaskInput = {
 
 export type ModelAccountFilterInput = {
   email?: ModelStringInput | null,
-  hash?: ModelStringInput | null,
-  id?: ModelIDInput | null,
+  sub?: ModelIDInput | null,
   is_admin?: ModelIntInput | null,
   name?: ModelStringInput | null,
   username?: ModelStringInput | null,
@@ -275,28 +262,42 @@ export type ModelAccountFilterInput = {
   not?: ModelAccountFilterInput | null,
 };
 
+export enum ModelSortDirection {
+  ASC = "ASC",
+  DESC = "DESC",
+}
+
+
+export type ModelStringKeyConditionInput = {
+  eq?: string | null,
+  le?: string | null,
+  lt?: string | null,
+  ge?: string | null,
+  gt?: string | null,
+  between?: Array< string | null > | null,
+  beginsWith?: string | null,
+};
+
 export type ModelReminderFilterInput = {
   content?: ModelStringInput | null,
-  created_by_id?: ModelIDInput | null,
   due_at?: ModelIntInput | null,
   id?: ModelIDInput | null,
-  subscriber_ids?: ModelIDInput | null,
   task_id?: ModelStringInput | null,
   and?: Array< ModelReminderFilterInput | null > | null,
   or?: Array< ModelReminderFilterInput | null > | null,
   not?: ModelReminderFilterInput | null,
+  reminderCreated_bySub?: ModelIDInput | null,
 };
 
 export type ModelTaskFilterInput = {
   completed_at?: ModelIntInput | null,
-  created_by_id?: ModelIDInput | null,
   description?: ModelStringInput | null,
   id?: ModelIDInput | null,
-  reminder_ids?: ModelIDInput | null,
   title?: ModelStringInput | null,
   and?: Array< ModelTaskFilterInput | null > | null,
   or?: Array< ModelTaskFilterInput | null > | null,
   not?: ModelTaskFilterInput | null,
+  taskCreated_bySub?: ModelIDInput | null,
 };
 
 export type ModelTaskConnection = {
@@ -305,24 +306,8 @@ export type ModelTaskConnection = {
   nextToken?: string | null,
 };
 
-export enum ModelSortDirection {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-
-
-export type ModelIntKeyConditionInput = {
-  eq?: number | null,
-  le?: number | null,
-  lt?: number | null,
-  ge?: number | null,
-  gt?: number | null,
-  between?: Array< number | null > | null,
-};
-
 export type ModelSubscriptionAccountFilterInput = {
   email?: ModelSubscriptionStringInput | null,
-  hash?: ModelSubscriptionStringInput | null,
   is_admin?: ModelSubscriptionIntInput | null,
   name?: ModelSubscriptionStringInput | null,
   username?: ModelSubscriptionStringInput | null,
@@ -361,7 +346,6 @@ export type ModelSubscriptionReminderFilterInput = {
   content?: ModelSubscriptionStringInput | null,
   due_at?: ModelSubscriptionIntInput | null,
   id?: ModelSubscriptionIDInput | null,
-  subscriber_ids?: ModelSubscriptionIDInput | null,
   task_id?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionReminderFilterInput | null > | null,
   or?: Array< ModelSubscriptionReminderFilterInput | null > | null,
@@ -386,7 +370,6 @@ export type ModelSubscriptionTaskFilterInput = {
   completed_at?: ModelSubscriptionIntInput | null,
   description?: ModelSubscriptionStringInput | null,
   id?: ModelSubscriptionIDInput | null,
-  reminder_ids?: ModelSubscriptionIDInput | null,
   title?: ModelSubscriptionStringInput | null,
   and?: Array< ModelSubscriptionTaskFilterInput | null > | null,
   or?: Array< ModelSubscriptionTaskFilterInput | null > | null,
@@ -401,8 +384,7 @@ export type CreateAccountMutation = {
   createAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -427,8 +409,7 @@ export type UpdateAccountMutation = {
   updateAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -453,8 +434,7 @@ export type DeleteAccountMutation = {
   deleteAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -479,12 +459,10 @@ export type CreateReminderMutation = {
   createReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -493,7 +471,6 @@ export type CreateReminderMutation = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -501,6 +478,7 @@ export type CreateReminderMutation = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
@@ -513,12 +491,10 @@ export type UpdateReminderMutation = {
   updateReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -527,7 +503,6 @@ export type UpdateReminderMutation = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -535,6 +510,7 @@ export type UpdateReminderMutation = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
@@ -547,12 +523,10 @@ export type DeleteReminderMutation = {
   deleteReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -561,7 +535,6 @@ export type DeleteReminderMutation = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -569,6 +542,7 @@ export type DeleteReminderMutation = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
@@ -581,12 +555,10 @@ export type CreateTaskMutation = {
   createTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -595,7 +567,6 @@ export type CreateTaskMutation = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -613,6 +584,7 @@ export type CreateTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -625,12 +597,10 @@ export type UpdateTaskMutation = {
   updateTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -639,7 +609,6 @@ export type UpdateTaskMutation = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -657,6 +626,7 @@ export type UpdateTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -669,12 +639,10 @@ export type DeleteTaskMutation = {
   deleteTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -683,7 +651,6 @@ export type DeleteTaskMutation = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -701,19 +668,19 @@ export type DeleteTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
 export type GetAccountQueryVariables = {
-  id: string,
+  sub: string,
 };
 
 export type GetAccountQuery = {
   getAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -730,9 +697,11 @@ export type GetAccountQuery = {
 };
 
 export type ListAccountsQueryVariables = {
+  sub?: string | null,
   filter?: ModelAccountFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
 };
 
 export type ListAccountsQuery = {
@@ -741,8 +710,7 @@ export type ListAccountsQuery = {
     items:  Array< {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -755,18 +723,17 @@ export type ListAccountsQuery = {
 
 export type GetReminderQueryVariables = {
   id: string,
+  task_id: string,
 };
 
 export type GetReminderQuery = {
   getReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -775,7 +742,6 @@ export type GetReminderQuery = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -783,13 +749,17 @@ export type GetReminderQuery = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
 export type ListRemindersQueryVariables = {
+  id?: string | null,
+  task_id?: ModelStringKeyConditionInput | null,
   filter?: ModelReminderFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
+  sortDirection?: ModelSortDirection | null,
 };
 
 export type ListRemindersQuery = {
@@ -798,13 +768,12 @@ export type ListRemindersQuery = {
     items:  Array< {
       __typename: "Reminder",
       content: string,
-      created_by_id: string,
       due_at: number,
       id: string,
-      subscriber_ids: Array< string >,
       task_id: string,
       createdAt: string,
       updatedAt: string,
+      reminderCreated_bySub?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -818,12 +787,10 @@ export type GetTaskQuery = {
   getTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -832,7 +799,6 @@ export type GetTaskQuery = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -850,6 +816,7 @@ export type GetTaskQuery = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -865,92 +832,12 @@ export type ListTasksQuery = {
     items:  Array< {
       __typename: "Task",
       completed_at?: number | null,
-      created_by_id: string,
       description?: string | null,
       id: string,
-      reminder_ids: Array< string >,
       title: string,
       createdAt: string,
       updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type AccountGetTasksQueryVariables = {
-  id: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelAccountFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type AccountGetTasksQuery = {
-  accountGetTasks?:  {
-    __typename: "ModelAccountConnection",
-    items:  Array< {
-      __typename: "Account",
-      email: string,
-      hash: string,
-      id: string,
-      is_admin: number,
-      name: string,
-      username: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type AccountsByAdminStatusQueryVariables = {
-  id: string,
-  is_admin?: ModelIntKeyConditionInput | null,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelAccountFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type AccountsByAdminStatusQuery = {
-  accountsByAdminStatus?:  {
-    __typename: "ModelAccountConnection",
-    items:  Array< {
-      __typename: "Account",
-      email: string,
-      hash: string,
-      id: string,
-      is_admin: number,
-      name: string,
-      username: string,
-      createdAt: string,
-      updatedAt: string,
-    } | null >,
-    nextToken?: string | null,
-  } | null,
-};
-
-export type TasksByAccountQueryVariables = {
-  created_by_id: string,
-  sortDirection?: ModelSortDirection | null,
-  filter?: ModelTaskFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type TasksByAccountQuery = {
-  tasksByAccount?:  {
-    __typename: "ModelTaskConnection",
-    items:  Array< {
-      __typename: "Task",
-      completed_at?: number | null,
-      created_by_id: string,
-      description?: string | null,
-      id: string,
-      reminder_ids: Array< string >,
-      title: string,
-      createdAt: string,
-      updatedAt: string,
+      taskCreated_bySub?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -958,15 +845,14 @@ export type TasksByAccountQuery = {
 
 export type OnCreateAccountSubscriptionVariables = {
   filter?: ModelSubscriptionAccountFilterInput | null,
-  id?: string | null,
+  sub?: string | null,
 };
 
 export type OnCreateAccountSubscription = {
   onCreateAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -984,15 +870,14 @@ export type OnCreateAccountSubscription = {
 
 export type OnUpdateAccountSubscriptionVariables = {
   filter?: ModelSubscriptionAccountFilterInput | null,
-  id?: string | null,
+  sub?: string | null,
 };
 
 export type OnUpdateAccountSubscription = {
   onUpdateAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -1010,15 +895,14 @@ export type OnUpdateAccountSubscription = {
 
 export type OnDeleteAccountSubscriptionVariables = {
   filter?: ModelSubscriptionAccountFilterInput | null,
-  id?: string | null,
+  sub?: string | null,
 };
 
 export type OnDeleteAccountSubscription = {
   onDeleteAccount?:  {
     __typename: "Account",
     email: string,
-    hash: string,
-    id: string,
+    sub: string,
     is_admin: number,
     name: string,
     tasks:  Array< {
@@ -1036,19 +920,17 @@ export type OnDeleteAccountSubscription = {
 
 export type OnCreateReminderSubscriptionVariables = {
   filter?: ModelSubscriptionReminderFilterInput | null,
-  created_by_id?: string | null,
+  reminderCreated_bySub?: string | null,
 };
 
 export type OnCreateReminderSubscription = {
   onCreateReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -1057,7 +939,6 @@ export type OnCreateReminderSubscription = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -1065,24 +946,23 @@ export type OnCreateReminderSubscription = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
 export type OnUpdateReminderSubscriptionVariables = {
   filter?: ModelSubscriptionReminderFilterInput | null,
-  created_by_id?: string | null,
+  reminderCreated_bySub?: string | null,
 };
 
 export type OnUpdateReminderSubscription = {
   onUpdateReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -1091,7 +971,6 @@ export type OnUpdateReminderSubscription = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -1099,24 +978,23 @@ export type OnUpdateReminderSubscription = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
 export type OnDeleteReminderSubscriptionVariables = {
   filter?: ModelSubscriptionReminderFilterInput | null,
-  created_by_id?: string | null,
+  reminderCreated_bySub?: string | null,
 };
 
 export type OnDeleteReminderSubscription = {
   onDeleteReminder?:  {
     __typename: "Reminder",
     content: string,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -1125,7 +1003,6 @@ export type OnDeleteReminderSubscription = {
     } | null,
     due_at: number,
     id: string,
-    subscriber_ids: Array< string >,
     subscribers?:  {
       __typename: "ModelAccountConnection",
       nextToken?: string | null,
@@ -1133,24 +1010,23 @@ export type OnDeleteReminderSubscription = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_bySub?: string | null,
   } | null,
 };
 
 export type OnCreateTaskSubscriptionVariables = {
   filter?: ModelSubscriptionTaskFilterInput | null,
-  created_by_id?: string | null,
+  taskCreated_bySub?: string | null,
 };
 
 export type OnCreateTaskSubscription = {
   onCreateTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -1159,7 +1035,6 @@ export type OnCreateTaskSubscription = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -1177,24 +1052,23 @@ export type OnCreateTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
 export type OnUpdateTaskSubscriptionVariables = {
   filter?: ModelSubscriptionTaskFilterInput | null,
-  created_by_id?: string | null,
+  taskCreated_bySub?: string | null,
 };
 
 export type OnUpdateTaskSubscription = {
   onUpdateTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -1203,7 +1077,6 @@ export type OnUpdateTaskSubscription = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -1221,24 +1094,23 @@ export type OnUpdateTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
 export type OnDeleteTaskSubscriptionVariables = {
   filter?: ModelSubscriptionTaskFilterInput | null,
-  created_by_id?: string | null,
+  taskCreated_bySub?: string | null,
 };
 
 export type OnDeleteTaskSubscription = {
   onDeleteTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by_id: string,
     created_by?:  {
       __typename: "Account",
       email: string,
-      hash: string,
-      id: string,
+      sub: string,
       is_admin: number,
       name: string,
       username: string,
@@ -1247,7 +1119,6 @@ export type OnDeleteTaskSubscription = {
     } | null,
     description?: string | null,
     id: string,
-    reminder_ids: Array< string >,
     reminders?:  {
       __typename: "ModelReminderConnection",
       nextToken?: string | null,
@@ -1265,5 +1136,6 @@ export type OnDeleteTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };

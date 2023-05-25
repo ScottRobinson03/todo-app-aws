@@ -11,21 +11,20 @@ type Account  # TODO: Create accounts on signup and store tasks within the owne
     @auth(
         rules: [
             { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
-            { allow: owner, ownerField: "id", operations: [create, read, update, delete] }
+            { allow: owner, ownerField: "sub", operations: [create, read, update, delete] }
         ]
     ) {
     email: String!
-    hash: String!
-    id: ID!
-        # We edit the indexes below manually in the AWS console to contain only the account id
-        # and its tasks, as it's not possible to specify projection attributes within @index.
-        # See https://github.com/aws-amplify/amplify-category-api/issues/368) for tracking / more info.
-        @index(name: "getTasks", queryField: "accountGetTasks")
-        @index(
-            name: "byAdminStatus"
-            queryField: "accountsByAdminStatus"
-            sortKeyFields: ["is_admin"]
-        )
+    sub: ID! @primaryKey
+    # # We edit the indexes below manually in the AWS console to contain only the account id
+    # # and its tasks, as it's not possible to specify projection attributes within @index.
+    # # See https://github.com/aws-amplify/amplify-category-api/issues/368) for tracking / more info.
+    # @index(name: "getTasks", queryField: "accountGetTasks")
+    # @index(
+    #     name: "byAdminStatus"
+    #     queryField: "accountsByAdminStatus"
+    #     sortKeyFields: ["is_admin"]
+    # )
     is_admin: Int! @default(value: "0") # booleans can't be sortKeys so we use 0 and 1 instead
     name: String!
     tasks: [AccountTask!]!
@@ -47,18 +46,18 @@ type Reminder
             { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
             {
                 allow: owner
-                ownerField: "created_by_id"
+                ownerField: "reminderCreated_bySub"
                 operations: [create, read, update, delete]
             }
         ]
     ) {
     content: String!
-    created_by_id: ID!
-    created_by: Account @hasOne(fields: ["created_by_id"])
+    #created_by_id: ID!
+    created_by: Account @hasOne #(fields: ["created_by_id"])
     due_at: Int!
-    id: ID! # @primaryKey(sortKeyFields: ["task_id"]) # raises error stating 'transformerrootstackReminderReminderTable7BF972F9Ref' not found in stack '...amplify-todoapp-dev-121418-apitodoapp-TN69KKFSYI3L-Reminder-1UIPP0A4BWJ18/d4e5a6e0-f498-11ed-8f4d-02bc2212c484
-    subscriber_ids: [ID!]!
-    subscribers: [Account!]! @hasMany(fields: ["subscriber_ids"])
+    id: ID! @primaryKey(sortKeyFields: ["task_id"]) # raises error stating 'transformerrootstackReminderReminderTable7BF972F9Ref' not found in stack '...amplify-todoapp-dev-121418-apitodoapp-TN69KKFSYI3L-Reminder-1UIPP0A4BWJ18/d4e5a6e0-f498-11ed-8f4d-02bc2212c484
+    #subscriber_ids: [ID!]!
+    subscribers: [Account!]! @hasMany(fields: ["id"])
     task_id: String!
 }
 
@@ -79,20 +78,20 @@ type Task
             { allow: groups, groups: ["Admin"], operations: [create, read, update, delete] }
             {
                 allow: owner
-                ownerField: "created_by_id"
+                ownerField: "taskCreated_bySub"
                 operations: [create, read, update, delete]
             }
         ]
     ) {
     completed_at: Int
     # TODO: Remove index on `created_by_id` since in reality a user's tasks will be fetched from Account table.
-    created_by_id: ID! @index(name: "byAccount", queryField: "tasksByAccount")
+    #created_by_id: ID! @index(name: "byAccount", queryField: "tasksByAccount")
     # TODO: `created_by` shouldn't be nullable once we have tasks stored within Account
-    created_by: Account @hasOne(fields: ["created_by_id"])
+    created_by: Account @hasOne #(fields: ["created_by_id"])
     description: String
     id: ID!
-    reminder_ids: [ID!]!
-    reminders: [Reminder!]! @hasMany(fields: ["reminder_ids"])
+    #reminder_ids: [ID!]!
+    reminders: [Reminder!]! @hasMany(fields: ["id"]) #(fields: ["reminder_ids"])
     subtasks: [Subtask!]!
     title: String!
 }

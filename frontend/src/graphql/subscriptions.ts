@@ -5,12 +5,11 @@
 export const onCreateAccount = /* GraphQL */ `
   subscription OnCreateAccount(
     $filter: ModelSubscriptionAccountFilterInput
-    $id: String
+    $sub: String
   ) {
-    onCreateAccount(filter: $filter, id: $id) {
+    onCreateAccount(filter: $filter, sub: $sub) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -28,12 +27,11 @@ export const onCreateAccount = /* GraphQL */ `
 export const onUpdateAccount = /* GraphQL */ `
   subscription OnUpdateAccount(
     $filter: ModelSubscriptionAccountFilterInput
-    $id: String
+    $sub: String
   ) {
-    onUpdateAccount(filter: $filter, id: $id) {
+    onUpdateAccount(filter: $filter, sub: $sub) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -51,12 +49,11 @@ export const onUpdateAccount = /* GraphQL */ `
 export const onDeleteAccount = /* GraphQL */ `
   subscription OnDeleteAccount(
     $filter: ModelSubscriptionAccountFilterInput
-    $id: String
+    $sub: String
   ) {
-    onDeleteAccount(filter: $filter, id: $id) {
+    onDeleteAccount(filter: $filter, sub: $sub) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -74,15 +71,16 @@ export const onDeleteAccount = /* GraphQL */ `
 export const onCreateReminder = /* GraphQL */ `
   subscription OnCreateReminder(
     $filter: ModelSubscriptionReminderFilterInput
-    $created_by_id: String
+    $reminderCreated_bySub: String
   ) {
-    onCreateReminder(filter: $filter, created_by_id: $created_by_id) {
+    onCreateReminder(
+      filter: $filter
+      reminderCreated_bySub: $reminderCreated_bySub
+    ) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -91,28 +89,29 @@ export const onCreateReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
 export const onUpdateReminder = /* GraphQL */ `
   subscription OnUpdateReminder(
     $filter: ModelSubscriptionReminderFilterInput
-    $created_by_id: String
+    $reminderCreated_bySub: String
   ) {
-    onUpdateReminder(filter: $filter, created_by_id: $created_by_id) {
+    onUpdateReminder(
+      filter: $filter
+      reminderCreated_bySub: $reminderCreated_bySub
+    ) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -121,28 +120,29 @@ export const onUpdateReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
 export const onDeleteReminder = /* GraphQL */ `
   subscription OnDeleteReminder(
     $filter: ModelSubscriptionReminderFilterInput
-    $created_by_id: String
+    $reminderCreated_bySub: String
   ) {
-    onDeleteReminder(filter: $filter, created_by_id: $created_by_id) {
+    onDeleteReminder(
+      filter: $filter
+      reminderCreated_bySub: $reminderCreated_bySub
+    ) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -151,28 +151,26 @@ export const onDeleteReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
 export const onCreateTask = /* GraphQL */ `
   subscription OnCreateTask(
     $filter: ModelSubscriptionTaskFilterInput
-    $created_by_id: String
+    $taskCreated_bySub: String
   ) {
-    onCreateTask(filter: $filter, created_by_id: $created_by_id) {
+    onCreateTask(filter: $filter, taskCreated_bySub: $taskCreated_bySub) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -181,7 +179,6 @@ export const onCreateTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -197,21 +194,20 @@ export const onCreateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;
 export const onUpdateTask = /* GraphQL */ `
   subscription OnUpdateTask(
     $filter: ModelSubscriptionTaskFilterInput
-    $created_by_id: String
+    $taskCreated_bySub: String
   ) {
-    onUpdateTask(filter: $filter, created_by_id: $created_by_id) {
+    onUpdateTask(filter: $filter, taskCreated_bySub: $taskCreated_bySub) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -220,7 +216,6 @@ export const onUpdateTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -236,21 +231,20 @@ export const onUpdateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;
 export const onDeleteTask = /* GraphQL */ `
   subscription OnDeleteTask(
     $filter: ModelSubscriptionTaskFilterInput
-    $created_by_id: String
+    $taskCreated_bySub: String
   ) {
-    onDeleteTask(filter: $filter, created_by_id: $created_by_id) {
+    onDeleteTask(filter: $filter, taskCreated_bySub: $taskCreated_bySub) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -259,7 +253,6 @@ export const onDeleteTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -275,6 +268,7 @@ export const onDeleteTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;

@@ -9,8 +9,7 @@ export const createAccount = /* GraphQL */ `
   ) {
     createAccount(input: $input, condition: $condition) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -32,8 +31,7 @@ export const updateAccount = /* GraphQL */ `
   ) {
     updateAccount(input: $input, condition: $condition) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -55,8 +53,7 @@ export const deleteAccount = /* GraphQL */ `
   ) {
     deleteAccount(input: $input, condition: $condition) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -78,11 +75,9 @@ export const createReminder = /* GraphQL */ `
   ) {
     createReminder(input: $input, condition: $condition) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -91,13 +86,13 @@ export const createReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
@@ -108,11 +103,9 @@ export const updateReminder = /* GraphQL */ `
   ) {
     updateReminder(input: $input, condition: $condition) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -121,13 +114,13 @@ export const updateReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
@@ -138,11 +131,9 @@ export const deleteReminder = /* GraphQL */ `
   ) {
     deleteReminder(input: $input, condition: $condition) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -151,13 +142,13 @@ export const deleteReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
@@ -168,11 +159,9 @@ export const createTask = /* GraphQL */ `
   ) {
     createTask(input: $input, condition: $condition) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -181,7 +170,6 @@ export const createTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -197,6 +185,7 @@ export const createTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;
@@ -207,11 +196,9 @@ export const updateTask = /* GraphQL */ `
   ) {
     updateTask(input: $input, condition: $condition) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -220,7 +207,6 @@ export const updateTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -236,6 +222,7 @@ export const updateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;
@@ -246,11 +233,9 @@ export const deleteTask = /* GraphQL */ `
   ) {
     deleteTask(input: $input, condition: $condition) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -259,7 +244,6 @@ export const deleteTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -275,6 +259,7 @@ export const deleteTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;

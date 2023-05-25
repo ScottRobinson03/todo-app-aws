@@ -14,7 +14,7 @@ async function main() {
     const configPath = path.join(__dirname, "../amplify/team-provider-info.json");
     const contents = fs.readFileSync(configPath);
     const json = JSON.parse(contents);
-    json.dev.categories.auth.todoapp6b1ec4f1 = {
+    json.dev.categories.auth.todoapp7e4d1499 = {
         userPoolId: outputs.userPoolId,
         userPoolName: outputs.userPoolName,
         webClientId: outputs.userPoolClientId,

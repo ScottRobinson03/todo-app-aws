@@ -3,11 +3,10 @@
 // this is an auto generated file. This will be overwritten
 
 export const getAccount = /* GraphQL */ `
-  query GetAccount($id: ID!) {
-    getAccount(id: $id) {
+  query GetAccount($sub: ID!) {
+    getAccount(sub: $sub) {
       email
-      hash
-      id
+      sub
       is_admin
       name
       tasks {
@@ -24,15 +23,22 @@ export const getAccount = /* GraphQL */ `
 `;
 export const listAccounts = /* GraphQL */ `
   query ListAccounts(
+    $sub: ID
     $filter: ModelAccountFilterInput
     $limit: Int
     $nextToken: String
+    $sortDirection: ModelSortDirection
   ) {
-    listAccounts(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listAccounts(
+      sub: $sub
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
       items {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -44,14 +50,12 @@ export const listAccounts = /* GraphQL */ `
   }
 `;
 export const getReminder = /* GraphQL */ `
-  query GetReminder($id: ID!) {
-    getReminder(id: $id) {
+  query GetReminder($id: ID!, $task_id: String!) {
+    getReminder(id: $id, task_id: $task_id) {
       content
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -60,32 +64,41 @@ export const getReminder = /* GraphQL */ `
       }
       due_at
       id
-      subscriber_ids
       subscribers {
         nextToken
       }
       task_id
       createdAt
       updatedAt
+      reminderCreated_bySub
     }
   }
 `;
 export const listReminders = /* GraphQL */ `
   query ListReminders(
+    $id: ID
+    $task_id: ModelStringKeyConditionInput
     $filter: ModelReminderFilterInput
     $limit: Int
     $nextToken: String
+    $sortDirection: ModelSortDirection
   ) {
-    listReminders(filter: $filter, limit: $limit, nextToken: $nextToken) {
+    listReminders(
+      id: $id
+      task_id: $task_id
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+      sortDirection: $sortDirection
+    ) {
       items {
         content
-        created_by_id
         due_at
         id
-        subscriber_ids
         task_id
         createdAt
         updatedAt
+        reminderCreated_bySub
       }
       nextToken
     }
@@ -95,11 +108,9 @@ export const getTask = /* GraphQL */ `
   query GetTask($id: ID!) {
     getTask(id: $id) {
       completed_at
-      created_by_id
       created_by {
         email
-        hash
-        id
+        sub
         is_admin
         name
         username
@@ -108,7 +119,6 @@ export const getTask = /* GraphQL */ `
       }
       description
       id
-      reminder_ids
       reminders {
         nextToken
       }
@@ -124,6 +134,7 @@ export const getTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_bySub
     }
   }
 `;
@@ -136,102 +147,12 @@ export const listTasks = /* GraphQL */ `
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         completed_at
-        created_by_id
         description
         id
-        reminder_ids
         title
         createdAt
         updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const accountGetTasks = /* GraphQL */ `
-  query AccountGetTasks(
-    $id: ID!
-    $sortDirection: ModelSortDirection
-    $filter: ModelAccountFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    accountGetTasks(
-      id: $id
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        email
-        hash
-        id
-        is_admin
-        name
-        username
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const accountsByAdminStatus = /* GraphQL */ `
-  query AccountsByAdminStatus(
-    $id: ID!
-    $is_admin: ModelIntKeyConditionInput
-    $sortDirection: ModelSortDirection
-    $filter: ModelAccountFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    accountsByAdminStatus(
-      id: $id
-      is_admin: $is_admin
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        email
-        hash
-        id
-        is_admin
-        name
-        username
-        createdAt
-        updatedAt
-      }
-      nextToken
-    }
-  }
-`;
-export const tasksByAccount = /* GraphQL */ `
-  query TasksByAccount(
-    $created_by_id: ID!
-    $sortDirection: ModelSortDirection
-    $filter: ModelTaskFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    tasksByAccount(
-      created_by_id: $created_by_id
-      sortDirection: $sortDirection
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        completed_at
-        created_by_id
-        description
-        id
-        reminder_ids
-        title
-        createdAt
-        updatedAt
+        taskCreated_bySub
       }
       nextToken
     }

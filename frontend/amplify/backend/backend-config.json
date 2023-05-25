@@ -7,24 +7,16 @@
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "todoapp6b1ec4f1"
+          "resourceName": "todoapp7e4d1499"
         }
       ],
       "output": {
         "authConfig": {
-          "additionalAuthenticationProviders": [
-            {
-              "authenticationType": "AWS_LAMBDA",
-              "lambdaAuthorizerConfig": {
-                "lambdaFunction": "graphQlLambdaAuthorizera661631d",
-                "ttlSeconds": "300"
-              }
-            }
-          ],
+          "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authtodoapp6b1ec4f1"
+              "userPoolId": "authtodoapp7e4d1499"
             }
           }
         }
@@ -34,7 +26,7 @@
     }
   },
   "auth": {
-    "todoapp6b1ec4f1": {
+    "todoapp7e4d1499": {
       "customAuth": false,
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
@@ -42,59 +34,36 @@
       "serviceType": "imported"
     }
   },
-  "function": {
-    "graphQlLambdaAuthorizera661631d": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    }
-  },
   "parameters": {
-    "AMPLIFY_auth_todoapp6b1ec4f1_nativeClientId": {
+    "AMPLIFY_auth_todoapp7e4d1499_nativeClientId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp6b1ec4f1"
+          "resourceName": "todoapp7e4d1499"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp6b1ec4f1_userPoolId": {
+    "AMPLIFY_auth_todoapp7e4d1499_userPoolId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp6b1ec4f1"
+          "resourceName": "todoapp7e4d1499"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp6b1ec4f1_userPoolName": {
+    "AMPLIFY_auth_todoapp7e4d1499_userPoolName": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp6b1ec4f1"
+          "resourceName": "todoapp7e4d1499"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp6b1ec4f1_webClientId": {
+    "AMPLIFY_auth_todoapp7e4d1499_webClientId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp6b1ec4f1"
-        }
-      ]
-    },
-    "AMPLIFY_function_graphQlLambdaAuthorizera661631d_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "graphQlLambdaAuthorizera661631d"
-        }
-      ]
-    },
-    "AMPLIFY_function_graphQlLambdaAuthorizera661631d_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "graphQlLambdaAuthorizera661631d"
+          "resourceName": "todoapp7e4d1499"
         }
       ]
     }
