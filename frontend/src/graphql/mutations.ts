@@ -22,7 +22,6 @@ export const createAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -46,7 +45,6 @@ export const updateAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -70,7 +68,6 @@ export const deleteAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -81,7 +78,17 @@ export const createReminder = /* GraphQL */ `
   ) {
     createReminder(input: $input, condition: $condition) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -91,7 +98,6 @@ export const createReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -102,7 +108,17 @@ export const updateReminder = /* GraphQL */ `
   ) {
     updateReminder(input: $input, condition: $condition) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -112,7 +128,6 @@ export const updateReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -123,7 +138,17 @@ export const deleteReminder = /* GraphQL */ `
   ) {
     deleteReminder(input: $input, condition: $condition) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -133,7 +158,6 @@ export const deleteReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -154,7 +178,6 @@ export const createTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -174,7 +197,6 @@ export const createTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -195,7 +217,6 @@ export const updateTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -215,7 +236,6 @@ export const updateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -236,7 +256,6 @@ export const deleteTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -256,7 +275,6 @@ export const deleteTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;

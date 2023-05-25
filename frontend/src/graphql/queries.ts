@@ -19,7 +19,6 @@ export const getAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -39,7 +38,6 @@ export const listAccounts = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       nextToken
     }
@@ -49,7 +47,17 @@ export const getReminder = /* GraphQL */ `
   query GetReminder($id: ID!) {
     getReminder(id: $id) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -59,7 +67,6 @@ export const getReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -72,14 +79,13 @@ export const listReminders = /* GraphQL */ `
     listReminders(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         content
-        created_by
+        created_by_id
         due_at
         id
         subscriber_ids
         task_id
         createdAt
         updatedAt
-        owner
       }
       nextToken
     }
@@ -99,7 +105,6 @@ export const getTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -119,7 +124,6 @@ export const getTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;
@@ -139,7 +143,95 @@ export const listTasks = /* GraphQL */ `
         title
         createdAt
         updatedAt
-        owner
+      }
+      nextToken
+    }
+  }
+`;
+export const accountGetTasks = /* GraphQL */ `
+  query AccountGetTasks(
+    $id: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelAccountFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    accountGetTasks(
+      id: $id
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const accountsByAdminStatus = /* GraphQL */ `
+  query AccountsByAdminStatus(
+    $id: ID!
+    $is_admin: ModelIntKeyConditionInput
+    $sortDirection: ModelSortDirection
+    $filter: ModelAccountFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    accountsByAdminStatus(
+      id: $id
+      is_admin: $is_admin
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
+      nextToken
+    }
+  }
+`;
+export const tasksByAccount = /* GraphQL */ `
+  query TasksByAccount(
+    $created_by_id: ID!
+    $sortDirection: ModelSortDirection
+    $filter: ModelTaskFilterInput
+    $limit: Int
+    $nextToken: String
+  ) {
+    tasksByAccount(
+      created_by_id: $created_by_id
+      sortDirection: $sortDirection
+      filter: $filter
+      limit: $limit
+      nextToken: $nextToken
+    ) {
+      items {
+        completed_at
+        created_by_id
+        description
+        id
+        reminder_ids
+        title
+        createdAt
+        updatedAt
       }
       nextToken
     }

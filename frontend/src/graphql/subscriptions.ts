@@ -5,9 +5,9 @@
 export const onCreateAccount = /* GraphQL */ `
   subscription OnCreateAccount(
     $filter: ModelSubscriptionAccountFilterInput
-    $owner: String
+    $id: String
   ) {
-    onCreateAccount(filter: $filter, owner: $owner) {
+    onCreateAccount(filter: $filter, id: $id) {
       email
       hash
       id
@@ -22,16 +22,15 @@ export const onCreateAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onUpdateAccount = /* GraphQL */ `
   subscription OnUpdateAccount(
     $filter: ModelSubscriptionAccountFilterInput
-    $owner: String
+    $id: String
   ) {
-    onUpdateAccount(filter: $filter, owner: $owner) {
+    onUpdateAccount(filter: $filter, id: $id) {
       email
       hash
       id
@@ -46,16 +45,15 @@ export const onUpdateAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onDeleteAccount = /* GraphQL */ `
   subscription OnDeleteAccount(
     $filter: ModelSubscriptionAccountFilterInput
-    $owner: String
+    $id: String
   ) {
-    onDeleteAccount(filter: $filter, owner: $owner) {
+    onDeleteAccount(filter: $filter, id: $id) {
       email
       hash
       id
@@ -70,18 +68,27 @@ export const onDeleteAccount = /* GraphQL */ `
       username
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onCreateReminder = /* GraphQL */ `
   subscription OnCreateReminder(
     $filter: ModelSubscriptionReminderFilterInput
-    $owner: String
+    $created_by_id: String
   ) {
-    onCreateReminder(filter: $filter, owner: $owner) {
+    onCreateReminder(filter: $filter, created_by_id: $created_by_id) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -91,18 +98,27 @@ export const onCreateReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onUpdateReminder = /* GraphQL */ `
   subscription OnUpdateReminder(
     $filter: ModelSubscriptionReminderFilterInput
-    $owner: String
+    $created_by_id: String
   ) {
-    onUpdateReminder(filter: $filter, owner: $owner) {
+    onUpdateReminder(filter: $filter, created_by_id: $created_by_id) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -112,18 +128,27 @@ export const onUpdateReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onDeleteReminder = /* GraphQL */ `
   subscription OnDeleteReminder(
     $filter: ModelSubscriptionReminderFilterInput
-    $owner: String
+    $created_by_id: String
   ) {
-    onDeleteReminder(filter: $filter, owner: $owner) {
+    onDeleteReminder(filter: $filter, created_by_id: $created_by_id) {
       content
-      created_by
+      created_by_id
+      created_by {
+        email
+        hash
+        id
+        is_admin
+        name
+        username
+        createdAt
+        updatedAt
+      }
       due_at
       id
       subscriber_ids
@@ -133,16 +158,15 @@ export const onDeleteReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onCreateTask = /* GraphQL */ `
   subscription OnCreateTask(
     $filter: ModelSubscriptionTaskFilterInput
-    $owner: String
+    $created_by_id: String
   ) {
-    onCreateTask(filter: $filter, owner: $owner) {
+    onCreateTask(filter: $filter, created_by_id: $created_by_id) {
       completed_at
       created_by_id
       created_by {
@@ -154,7 +178,6 @@ export const onCreateTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -174,16 +197,15 @@ export const onCreateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onUpdateTask = /* GraphQL */ `
   subscription OnUpdateTask(
     $filter: ModelSubscriptionTaskFilterInput
-    $owner: String
+    $created_by_id: String
   ) {
-    onUpdateTask(filter: $filter, owner: $owner) {
+    onUpdateTask(filter: $filter, created_by_id: $created_by_id) {
       completed_at
       created_by_id
       created_by {
@@ -195,7 +217,6 @@ export const onUpdateTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -215,16 +236,15 @@ export const onUpdateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;
 export const onDeleteTask = /* GraphQL */ `
   subscription OnDeleteTask(
     $filter: ModelSubscriptionTaskFilterInput
-    $owner: String
+    $created_by_id: String
   ) {
-    onDeleteTask(filter: $filter, owner: $owner) {
+    onDeleteTask(filter: $filter, created_by_id: $created_by_id) {
       completed_at
       created_by_id
       created_by {
@@ -236,7 +256,6 @@ export const onDeleteTask = /* GraphQL */ `
         username
         createdAt
         updatedAt
-        owner
       }
       description
       id
@@ -256,7 +275,6 @@ export const onDeleteTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
-      owner
     }
   }
 `;
