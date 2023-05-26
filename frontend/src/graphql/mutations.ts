@@ -80,6 +80,12 @@ export const createReminder = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -87,6 +93,21 @@ export const createReminder = /* GraphQL */ `
       due_at
       id
       subscribers {
+        items {
+          email
+          sub
+          is_admin
+          name
+          tasks {
+            permissions
+            position
+            reminder_ids
+            task_id
+          }
+          username
+          createdAt
+          updatedAt
+        }
         nextToken
       }
       task_id
@@ -108,6 +129,12 @@ export const updateReminder = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -115,6 +142,21 @@ export const updateReminder = /* GraphQL */ `
       due_at
       id
       subscribers {
+        items {
+          email
+          sub
+          is_admin
+          name
+          tasks {
+            permissions
+            position
+            reminder_ids
+            task_id
+          }
+          username
+          createdAt
+          updatedAt
+        }
         nextToken
       }
       task_id
@@ -136,6 +178,12 @@ export const deleteReminder = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -143,6 +191,21 @@ export const deleteReminder = /* GraphQL */ `
       due_at
       id
       subscribers {
+        items {
+          email
+          sub
+          is_admin
+          name
+          tasks {
+            permissions
+            position
+            reminder_ids
+            task_id
+          }
+          username
+          createdAt
+          updatedAt
+        }
         nextToken
       }
       task_id
@@ -164,6 +227,12 @@ export const createTask = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -171,6 +240,48 @@ export const createTask = /* GraphQL */ `
       description
       id
       reminders {
+        items {
+          content
+          created_by {
+            email
+            sub
+            is_admin
+            name
+            tasks {
+              permissions
+              position
+              reminder_ids
+              task_id
+            }
+            username
+            createdAt
+            updatedAt
+          }
+          due_at
+          id
+          subscribers {
+            items {
+              email
+              sub
+              is_admin
+              name
+              tasks {
+                permissions
+                position
+                reminder_ids
+                task_id
+              }
+              username
+              createdAt
+              updatedAt
+            }
+            nextToken
+          }
+          task_id
+          createdAt
+          updatedAt
+          reminderCreated_bySub
+        }
         nextToken
       }
       subtasks {
@@ -201,6 +312,12 @@ export const updateTask = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -208,6 +325,48 @@ export const updateTask = /* GraphQL */ `
       description
       id
       reminders {
+        items {
+          content
+          created_by {
+            email
+            sub
+            is_admin
+            name
+            tasks {
+              permissions
+              position
+              reminder_ids
+              task_id
+            }
+            username
+            createdAt
+            updatedAt
+          }
+          due_at
+          id
+          subscribers {
+            items {
+              email
+              sub
+              is_admin
+              name
+              tasks {
+                permissions
+                position
+                reminder_ids
+                task_id
+              }
+              username
+              createdAt
+              updatedAt
+            }
+            nextToken
+          }
+          task_id
+          createdAt
+          updatedAt
+          reminderCreated_bySub
+        }
         nextToken
       }
       subtasks {
@@ -238,6 +397,12 @@ export const deleteTask = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -245,6 +410,48 @@ export const deleteTask = /* GraphQL */ `
       description
       id
       reminders {
+        items {
+          content
+          created_by {
+            email
+            sub
+            is_admin
+            name
+            tasks {
+              permissions
+              position
+              reminder_ids
+              task_id
+            }
+            username
+            createdAt
+            updatedAt
+          }
+          due_at
+          id
+          subscribers {
+            items {
+              email
+              sub
+              is_admin
+              name
+              tasks {
+                permissions
+                position
+                reminder_ids
+                task_id
+              }
+              username
+              createdAt
+              updatedAt
+            }
+            nextToken
+          }
+          task_id
+          createdAt
+          updatedAt
+          reminderCreated_bySub
+        }
         nextToken
       }
       subtasks {

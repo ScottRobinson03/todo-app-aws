@@ -41,6 +41,12 @@ export const listAccounts = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -58,6 +64,12 @@ export const getReminder = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -65,6 +77,21 @@ export const getReminder = /* GraphQL */ `
       due_at
       id
       subscribers {
+        items {
+          email
+          sub
+          is_admin
+          name
+          tasks {
+            permissions
+            position
+            reminder_ids
+            task_id
+          }
+          username
+          createdAt
+          updatedAt
+        }
         nextToken
       }
       task_id
@@ -93,8 +120,41 @@ export const listReminders = /* GraphQL */ `
     ) {
       items {
         content
+        created_by {
+          email
+          sub
+          is_admin
+          name
+          tasks {
+            permissions
+            position
+            reminder_ids
+            task_id
+          }
+          username
+          createdAt
+          updatedAt
+        }
         due_at
         id
+        subscribers {
+          items {
+            email
+            sub
+            is_admin
+            name
+            tasks {
+              permissions
+              position
+              reminder_ids
+              task_id
+            }
+            username
+            createdAt
+            updatedAt
+          }
+          nextToken
+        }
         task_id
         createdAt
         updatedAt
@@ -113,6 +173,12 @@ export const getTask = /* GraphQL */ `
         sub
         is_admin
         name
+        tasks {
+          permissions
+          position
+          reminder_ids
+          task_id
+        }
         username
         createdAt
         updatedAt
@@ -120,6 +186,48 @@ export const getTask = /* GraphQL */ `
       description
       id
       reminders {
+        items {
+          content
+          created_by {
+            email
+            sub
+            is_admin
+            name
+            tasks {
+              permissions
+              position
+              reminder_ids
+              task_id
+            }
+            username
+            createdAt
+            updatedAt
+          }
+          due_at
+          id
+          subscribers {
+            items {
+              email
+              sub
+              is_admin
+              name
+              tasks {
+                permissions
+                position
+                reminder_ids
+                task_id
+              }
+              username
+              createdAt
+              updatedAt
+            }
+            nextToken
+          }
+          task_id
+          createdAt
+          updatedAt
+          reminderCreated_bySub
+        }
         nextToken
       }
       subtasks {
@@ -147,8 +255,77 @@ export const listTasks = /* GraphQL */ `
     listTasks(filter: $filter, limit: $limit, nextToken: $nextToken) {
       items {
         completed_at
+        created_by {
+          email
+          sub
+          is_admin
+          name
+          tasks {
+            permissions
+            position
+            reminder_ids
+            task_id
+          }
+          username
+          createdAt
+          updatedAt
+        }
         description
         id
+        reminders {
+          items {
+            content
+            created_by {
+              email
+              sub
+              is_admin
+              name
+              tasks {
+                permissions
+                position
+                reminder_ids
+                task_id
+              }
+              username
+              createdAt
+              updatedAt
+            }
+            due_at
+            id
+            subscribers {
+              items {
+                email
+                sub
+                is_admin
+                name
+                tasks {
+                  permissions
+                  position
+                  reminder_ids
+                  task_id
+                }
+                username
+                createdAt
+                updatedAt
+              }
+              nextToken
+            }
+            task_id
+            createdAt
+            updatedAt
+            reminderCreated_bySub
+          }
+          nextToken
+        }
+        subtasks {
+          description
+          completed_at
+          created_by_id
+          id
+          reminder_ids
+          subscriber_ids
+          title
+        }
         title
         createdAt
         updatedAt
