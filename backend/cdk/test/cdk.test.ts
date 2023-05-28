@@ -144,6 +144,24 @@ describe("AWS Todo Stack", () => {
                 });
             });
         });
+
+        describe("TodoAppUserPoolClient", () => {
+            const matching = mainTemplate.findResources("AWS::Cognito::UserPoolClient", {
+                Properties: { ClientName: "web-app-client" },
+            });
+            const keys = Object.keys(matching);
+            test("Exists", () => {
+                expect(keys).toHaveLength(1);
+            });
+
+            const matchedClient = matching[keys[0]];
+            const properties = matchedClient.Properties;
+
+            test("Is linked to the correct user pool name", () => {
+                expect(properties.UserPoolId.Ref.startsWith("TodoAppUserPool")).toBe(true);
+            });
+        });
+
         describe("'Admin' User Pool Group", () => {
             const matching = mainTemplate.findResources("AWS::Cognito::UserPoolGroup", {
                 Properties: { GroupName: "Admin" },
