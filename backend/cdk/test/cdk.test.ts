@@ -166,7 +166,6 @@ describe("AWS Todo Stack", () => {
             const matching = mainTemplate.findResources("AWS::Cognito::UserPoolGroup", {
                 Properties: { GroupName: "Admin" },
             });
-            console.log(JSON.stringify(matching));
             const keys = Object.keys(matching);
             test("Exists", () => {
                 expect(keys).toHaveLength(1);
