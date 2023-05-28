@@ -81,7 +81,9 @@ export class TodoCDKStack extends Stack {
             },
         });
 
-        const userPoolClient = userPool.addClient("web-app-client");
+        const userPoolClient = userPool.addClient("web-app-client", {
+            userPoolClientName: "web-app-client",
+        });
 
         const userPoolAdminGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminGroup", {
             userPoolId: userPool.userPoolId,
