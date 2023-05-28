@@ -38,7 +38,7 @@ describe("AWS Todo Stack", () => {
                 },
                 AliasAttributes: ["email"],
                 AutoVerifiedAttributes: ["email", "phone_number"],
-                DeletionProtection: "ACTIVE",
+                DeletionProtection: "INACTIVE",
                 EmailConfiguration: { EmailSendingAccount: "COGNITO_DEFAULT" },
                 EmailVerificationMessage:
                     "Thanks for signing up to our awesome todo app! Your verification code is {####}",
@@ -144,9 +144,9 @@ describe("AWS Todo Stack", () => {
                 });
             });
         });
-        describe("'Admins' User Pool Group", () => {
+        describe("'Admin' User Pool Group", () => {
             const matching = mainTemplate.findResources("AWS::Cognito::UserPoolGroup", {
-                Properties: { GroupName: "Admins" },
+                Properties: { GroupName: "Admin" },
             });
             console.log(JSON.stringify(matching));
             const keys = Object.keys(matching);
