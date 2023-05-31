@@ -7,8 +7,10 @@ import {
     ListAccountsQueryVariables,
     ListTasksQuery,
     ListTasksQueryVariables,
+    UpdateAccountMutation,
+    UpdateAccountMutationVariables,
 } from "../API";
-import { createAccount, createTask } from "../graphql/mutations";
+import { createAccount, createTask, updateAccount } from "../graphql/mutations";
 import { listAccounts, listTasks } from "../graphql/queries";
 
 export type GraphQLMutations = {
@@ -19,6 +21,10 @@ export type GraphQLMutations = {
     [createTask]: {
         response: CreateTaskMutation;
         variables: CreateTaskMutationVariables;
+    };
+    [updateAccount]: {
+        response: UpdateAccountMutation;
+        variables: UpdateAccountMutationVariables;
     };
 };
 
