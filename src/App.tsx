@@ -43,15 +43,6 @@ export default function App(props: AppProps) {
     const { signOut, user } = props;
 
     const [account, setAccount] = useState<GraphQLAccount | undefined>(undefined);
-    // const [formState, setFormState] = useState<CreateTaskInput>({
-    //     completed_at: null,
-    //     created_by_id: "",
-    //     description: null,
-    //     id: "",
-    //     reminder_ids: [],
-    //     subtasks: [],
-    //     title: "",
-    // });
     const [tasks, setTasks] = useState<GraphQLTask[]>([]);
     const [tasksOfAccount, setTasksOfAccount] = useState<AccountTask[]>([]);
 
@@ -156,10 +147,6 @@ export default function App(props: AppProps) {
         return <p>'user' is undefined</p>;
     }
 
-    // function setInput<key extends keyof CreateTaskInput>(key: key, value: CreateTaskInput[key]) {
-    //     setFormState({ ...formState, [key]: value });
-    // }
-
     async function getBasicUserInfo(user: AmplifyUser | undefined) {
         if (user === undefined) throw new Error("Attempted to fetch info of an undefined user");
 
@@ -202,11 +189,6 @@ export default function App(props: AppProps) {
                 resolve(userData as CognitoUser);
             });
         }) as Promise<CognitoUser>;
-    }
-
-    async function createAccountFromUser(user: AmplifyUser | undefined, is_admin: 0 | 1 = 0) {
-        const userInfo = await getBasicUserInfo(user);
-        return createAccount({ ...(userInfo as any), tasks: [], is_admin }, false);
     }
 
     async function createAccount(details: CreateAccountInput, validateIdInPool: boolean = true) {
@@ -344,33 +326,7 @@ export default function App(props: AppProps) {
         // NB: Could be an empty array as that's not falsey in JS/TS
         const filteredTasks = removeValuesFromArray(tasks, [null]);
         return filteredTasks;
-
-        // try {
-        //     const response = await (API.graphql(graphqlOperation(listTasksQuery)) as Promise<
-        //         GraphQLResult<ListTasksMutation>
-        //     >);
-        //     const tasks = response.data?.listTasks?.items;
-        //     console.log(JSON.stringify(tasks, null, 2));
-        //     if (tasks === undefined) return;
-
-        //     const filteredTasks = tasks.filter(task => task !== null) as GraphQLTask[];
-        //     setTasks(filteredTasks);
-        // } catch (err) {
-        //     console.log(`error fetching tasks: ${JSON.stringify(err)}`);
-        // }
     }
-
-    // async function addTodo() {
-    //     try {
-    //         if (!formState.name || !formState.description) return;
-    //         const todo = { ...formState };
-    //         setTasks([...tasks, todo]);
-    //         setFormState(initialState);
-    //         await API.graphql(graphqlOperation(createTodo, { input: todo }));
-    //     } catch (err) {
-    //         console.log("error creating todo:", err);
-    //     }
-    // }
 
     return (
         <main>
