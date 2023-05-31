@@ -272,7 +272,7 @@ export default function App(props: AppProps) {
             input: {
                 taskCreated_bySub: account.sub,
                 id: uuid4(),
-                // TODO: Figure out why we can't specify reminder ids. Likely setup relations in gql schema wrong
+                // FIXME: Figure out why we can't specify reminder ids. Likely setup relations in gql schema wrong
                 // reminders: [],
                 subtasks: [],
                 title: "Test Task #1",
