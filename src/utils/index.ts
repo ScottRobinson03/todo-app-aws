@@ -85,7 +85,7 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
 }
 
 export function getUTCTime() {
-    return new Date().toISOString().slice(0, -5).replace("T", " ");
+    return new Date().valueOf() //.toISOString().slice(0, -5).replace("T", " ");
 }
 
 export function isDeeplyEqual(a: any, b: any) {
@@ -93,6 +93,11 @@ export function isDeeplyEqual(a: any, b: any) {
     if (typeof a !== "object") return a === b; // neither values are typeof "object", so return equality
 
     // We now know that both items are `typeof "object"`, however may still be differing (e.g. Date and Array)
+
+    const aIsNull = a === null;
+    const bIsNull = b === null;
+    if ((aIsNull || bIsNull) && !(aIsNull && bIsNull)) return false; // only one is null, so not equal
+    if (aIsNull) return true; // both null, so equal
 
     // Check if both are date
     const aIsDate = a instanceof Date;

@@ -9,6 +9,13 @@ function handleSubArraySorting(y: any, z: any): -1 | 0 | 1 {
     const typeofItemInZ = typeof itemInZ;
     if (typeofItemInY === typeofItemInZ) {
         if (typeofItemInY === "object") {
+            const itemInYIsNull = itemInY === null;
+            const itemInZIsNull = itemInZ === null;
+            if (itemInYIsNull) {
+                if (itemInZIsNull) return 0; // equal
+                return -1; // treat null as less than dates, arrays and objects, so y < z
+            } else if (itemInZIsNull) return 1; // treat null as less than dates, arrays and objects, so z < y
+
             const itemInYIsDate = itemInY instanceof Date;
             const itemInZIsDate = itemInZ instanceof Date;
             if (itemInYIsDate) {
@@ -73,6 +80,13 @@ export function sortFn(y: any, z: any) {
     const typeofZ = typeof z;
     if (typeofY === typeofZ) {
         if (typeofY === "object") {
+            const yIsNull = y === null;
+            const zIsNull = z === null;
+            if (yIsNull) {
+                if (zIsNull) return 0; // equal
+                return -1 // treat null as less than dates, arrays and objects, so y < z
+            } else if (zIsNull) return 1 // treat null as less than dates, arrays and objects, so z < y
+
             const yIsDate = y instanceof Date;
             const zIsDate = z instanceof Date;
             if (yIsDate) {
