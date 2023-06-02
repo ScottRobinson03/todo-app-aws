@@ -212,7 +212,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                     props.subtasks.map(subtask => {
                                         return (
                                             <TaskContainer
-                                                key={subtask.id}
+                                                key={`${subtask.id}-subtask-task-container`}
                                                 activeTask={props.activeTask}
                                                 userTask={subtask}
                                                 containerId={`subtask-${subtask.id}-container`}

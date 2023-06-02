@@ -1,10 +1,8 @@
 import { GraphQLResult } from "@aws-amplify/api-graphql/lib-esm/types/";
-import { AmplifyUser } from "@aws-amplify/ui";
 import { API, graphqlOperation } from "aws-amplify";
 import { AccountTask, Task as GraphQLTask } from "../API";
 import { GraphQLOperations } from "../types/graphql";
 import { sortFn } from "./customSort";
-import { CognitoUser } from "../types";
 
 export function ensureExactKeys<T extends object>(
     obj: T,
@@ -46,51 +44,10 @@ export async function executeGraphQLOperation<Operation extends keyof GraphQLOpe
     operation: Operation,
     variables: GraphQLOperations[Operation]["variables"]
 ) {
-    return API.graphql(graphqlOperation(operation, variables)) as Promise<
-        GraphQLResult<GraphQLOperations[Operation]["response"]>
-    >;
-}
-
-export async function getBasicUserInfo(user: AmplifyUser | undefined) {
-    if (user === undefined) throw new Error("Attempted to fetch info of an undefined user");
-
-    return new Promise((resolve, reject) => {
-        user.getUserData((err, data) => {
-            if (err) {
-                reject(JSON.stringify(err));
-                return;
-            }
-
-            if (data === undefined) {
-                reject(`Failed to fetch user data (was undefined)`);
-                return;
-            }
-
-            // Specify attributes to be set
-            const userData: { [key in keyof CognitoUser]: CognitoUser[key] | undefined } = {
-                sub: undefined,
-                email: undefined,
-                name: undefined,
-                username: undefined,
-            };
-            userData.username = data.Username;
-            // Attempt to set each attribute
-            for (const userAttribute of data.UserAttributes) {
-                if (Object.keys(userData).includes(userAttribute.Name)) {
-                    (userData as any)[userAttribute.Name] = userAttribute.Value;
-                }
-            }
-
-            // Ensure each attribute has been set
-            for (const [k, v] of Object.entries(userData)) {
-                if (v === undefined) {
-                    reject(`Failed to get ${k} of user${user.username ? ` ${user.username}` : ""}`);
-                }
-            }
-
-            resolve(userData as CognitoUser);
-        });
-    }) as Promise<CognitoUser>;
+    return API.graphql({
+        ...graphqlOperation(operation, variables),
+        authMode: "AMAZON_COGNITO_USER_POOLS",
+    }) as Promise<GraphQLResult<GraphQLOperations[Operation]["response"]>>;
 }
 
 export function getNextPosition(tasksOfAccount: AccountTask[]) {
@@ -141,7 +98,7 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
 }
 
 export function getUTCTime() {
-    return new Date().valueOf() //.toISOString().slice(0, -5).replace("T", " ");
+    return new Date().valueOf(); //.toISOString().slice(0, -5).replace("T", " ");
 }
 
 // TODO: Remove if is unused within project. Make sure to also remove the custom sort function logic.

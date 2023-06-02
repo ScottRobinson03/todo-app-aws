@@ -1,16 +1,9 @@
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Dispatch, SetStateAction, SyntheticEvent } from "react";
-import {
-    AccountTask,
-    CreateAccountInput,
-    Subtask as GraphQLSubtask,
-    Task as GraphQLTask,
-} from "../API";
+import { AccountTask, Subtask as GraphQLSubtask, Task as GraphQLTask } from "../API";
 
 export type ActiveTaskState = string | null;
-
-export type CognitoUser = Omit<CreateAccountInput, "is_admin" | "tasks">;
 
 export interface SortableItemProps {
     accountTask: AccountTask;

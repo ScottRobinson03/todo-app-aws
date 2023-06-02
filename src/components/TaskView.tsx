@@ -41,16 +41,38 @@ export default function TaskView(props: TaskViewProps) {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             >
-                <SortableContext items={accountTasks.map(accountTask => {return {id: accountTask.task_id, ...accountTask}})} strategy={verticalListSortingStrategy}>
+                <SortableContext
+                    items={accountTasks.map(accountTask => {
+                        return { id: accountTask.task_id, ...accountTask };
+                    })}
+                    strategy={verticalListSortingStrategy}
+                >
                     {accountTasks.map(accountTask => {
-                        const userTask = userTasks.find((userTask) => userTask.id === accountTask.task_id);
-                        if (!userTask) throw new Error(`Failed to find user task with id ${accountTask.task_id}`);
+                        const userTask = userTasks.find(
+                            userTask => userTask.id === accountTask.task_id
+                        );
+                        if (!userTask)
+                            return (
+                                <p key={`${accountTask.task_id}-usertask-not-found`}>
+                                    Failed to find user task {`${accountTask.task_id}`}
+                                </p>
+                            ); //throw new Error(`Failed to find user task with id ${accountTask.task_id}`);
                         return (
-                        <SortableItem
-                            key={accountTask.task_id}
-                            {...{ accountTask, accountTasks, setAccountTasks, activeTask, setActiveTask, userTask, userTasks, setUserTasks}}
-                        />
-                    )})}
+                            <SortableItem
+                                key={`${accountTask.task_id}-sortable-item`}
+                                {...{
+                                    accountTask,
+                                    accountTasks,
+                                    setAccountTasks,
+                                    activeTask,
+                                    setActiveTask,
+                                    userTask,
+                                    userTasks,
+                                    setUserTasks,
+                                }}
+                            />
+                        );
+                    })}
                 </SortableContext>
             </DndContext>
         </section>

@@ -1,23 +1,24 @@
 import { Button } from "@mui/material";
 import TaskView from "./components/TaskView";
 
-import uuid4 from "uuid4";
-import { useCallback, useEffect, useState } from "react";
 import { AmplifyUser, AuthEventData } from "@aws-amplify/ui";
+import { Auth } from "aws-amplify";
+import { useCallback, useEffect, useState } from "react";
+import uuid4 from "uuid4";
 import {
-    Account as GraphQLAccount,
+    AccountTask,
+    AccountTaskInput,
     CreateAccountInput,
     CreateAccountMutationVariables,
     CreateTaskMutationVariables,
+    DeleteTaskInput,
+    DeleteTaskMutationVariables,
+    Account as GraphQLAccount,
     Task as GraphQLTask,
     ListAccountsQueryVariables,
     ListTasksQueryVariables,
-    AccountTask,
-    UpdateAccountMutationVariables,
     UpdateAccountInput,
-    DeleteTaskInput,
-    DeleteTaskMutationVariables,
-    AccountTaskInput,
+    UpdateAccountMutationVariables,
 } from "./API";
 import {
     createAccount as createAccountMutation,
@@ -26,17 +27,16 @@ import {
     updateAccount as updateAccountMutation,
 } from "./graphql/mutations";
 import { listAccounts as listAccountsQuery, listTasks as listTasksQuery } from "./graphql/queries";
+import { UpdateAccountOptions } from "./types/graphql";
 import {
     ensureExactKeys,
     executeGraphQLOperation,
-    getBasicUserInfo,
     getNextPosition,
     isKeyOf,
     removeTypenameFromObject,
     removeValuesFromArray,
     userTaskToAccountTask,
 } from "./utils";
-import { UpdateAccountOptions } from "./types/graphql";
 
 interface AppProps {
     signOut: ((data?: AuthEventData | undefined) => void) | undefined;
@@ -99,22 +99,37 @@ export default function App(props: AppProps) {
 
         // Ensure signed in user has an account
         fetchAccounts().then(accounts => {
-            getBasicUserInfo(user).then(userInfo => {
-                // See if user already has an account
-                let userHasAccount = false;
+            Auth.currentAuthenticatedUser().then(data => {
+                const { email, sub, name }: { email: string; sub: string; name: string } =
+                    data.attributes;
+                const username: string = data.signInUserSession.accessToken.payload.username;
+                const groups: string[] | undefined =
+                    data.signInUserSession.accessToken.payload["cognito:groups"];
 
+                const userInfo = { email, sub, name, username, groups };
+                for (const [key, value] of Object.entries(userInfo)) {
+                    if (!key) throw new Error(`Account's ${key} is ${value}`);
+                }
+
+                console.log({ userInfo });
+
+                let userHasAccount = false;
                 for (const account of accounts) {
                     if (account.sub === userInfo.sub) {
                         userHasAccount = true;
-                        setTasksOfAccount(_ => account.tasks);
-                        console.log(account.tasks);
-                        setAccount(_ => account);
+                        setTasksOfAccount(account.tasks);
+                        setAccount(account);
                         break;
                     }
                 }
-                // If they don't, create one
+
                 if (!userHasAccount) {
-                    createAccount({ ...userInfo, tasks: [], is_admin: 0 }).then(createdAccount => {
+                    const { groups, ...restOfUserInfo } = userInfo;
+                    createAccount({
+                        ...restOfUserInfo,
+                        tasks: [],
+                        is_admin: groups?.length && groups.includes("Admin") ? 1 : 0,
+                    }).then(createdAccount => {
                         console.log(
                             `Created website account for cognito user ${
                                 userInfo.sub
@@ -131,7 +146,6 @@ export default function App(props: AppProps) {
     useEffect(() => {
         if (!account) return;
 
-        console.log(`User ${account.sub} already has an account`);
         // Fetch all tasks the signed in user can see
         // TODO: Edit logic so there's no need for duplication within if & else branch to preserve order of execution
         fetchTasks().then(tasksOfUser => {
@@ -254,6 +268,10 @@ export default function App(props: AppProps) {
     }
 
     async function deleteAllTasks() {
+        if (!tasksOfAccount.length) {
+            alert("There's no tasks to delete!");
+            return;
+        }
         for (const accountTask of tasksOfAccount) {
             await deleteTask({ id: accountTask.task_id }, false);
         }
@@ -358,6 +376,10 @@ export default function App(props: AppProps) {
             <Button onClick={deleteAllTasks}>Delete all of account's tasks</Button>
             <Button
                 onClick={async () => {
+                    if (!tasksOfAccount.length) {
+                        alert("There's no tasks to delete!");
+                        return;
+                    }
                     await deleteTask({ id: tasksOfAccount[0].task_id });
                 }}
             >
