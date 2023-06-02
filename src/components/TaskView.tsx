@@ -10,12 +10,16 @@ import {
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { useState } from "react";
-import tasksJson from "../assets/tasks.json";
-import { ActiveTaskState, Task } from "../types";
 import { SortableItem } from "./SortableItem";
+import { ActiveTaskState, TaskViewProps } from "../types";
 
-export default function TaskView() {
-    const [tasks, setTasks] = useState<Task[]>(tasksJson);
+export default function TaskView(props: TaskViewProps) {
+    const {
+        accountTasks,
+        setAccountTasks,
+        userTasks,
+        setUserTasks
+    } = props;
     const [changedPos, setChangedPos] = useState<boolean>(false);
     const [activeTask, setActiveTask] = useState<ActiveTaskState>(null);
 
@@ -37,13 +41,16 @@ export default function TaskView() {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             >
-                <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
-                    {tasks.map(task => (
+                <SortableContext items={accountTasks.map(accountTask => {return {id: accountTask.task_id, ...accountTask}})} strategy={verticalListSortingStrategy}>
+                    {accountTasks.map(accountTask => {
+                        const userTask = userTasks.find((userTask) => userTask.id === accountTask.task_id);
+                        if (!userTask) throw new Error(`Failed to find user task with id ${accountTask.task_id}`);
+                        return (
                         <SortableItem
-                            key={task.id}
-                            {...{ task, tasks, activeTask, setActiveTask, setTasks }}
+                            key={accountTask.task_id}
+                            {...{ accountTask, accountTasks, setAccountTasks, activeTask, setActiveTask, userTask, userTasks, setUserTasks}}
                         />
-                    ))}
+                    )})}
                 </SortableContext>
             </DndContext>
         </section>
@@ -127,14 +134,16 @@ export default function TaskView() {
 
         // Moved task to different position, so update accordingly
         setChangedPos(false); // reset for the next drag
-        setTasks(tasks => {
-            const oldIndex = tasks.findIndex(task => active.id === task.id);
-            const newIndex = tasks.findIndex(task => over.id === task.id);
+        setAccountTasks(accountTasks => {
+            console.log("Updating positions of accountTasks")
+            const oldIndex = accountTasks.findIndex(accountTask => active.id === accountTask.task_id);
+            const newIndex = accountTasks.findIndex(accountTask => over.id === accountTask.task_id);
 
-            const newTasks = arrayMove(tasks, oldIndex, newIndex);
+            const newTasks = arrayMove(accountTasks, oldIndex, newIndex);
             // Update the `position` attribute of tasks that got shifted as a result of moving
             for (let i = Math.min(oldIndex, newIndex); i <= Math.max(oldIndex, newIndex); i++) {
                 newTasks[i].position = i + 1;
+                // TODO: Update tasks in accounts database
             }
             return newTasks;
         });

@@ -164,13 +164,13 @@ export function removeValuesFromArray<T, V>(arr: T[], values: V[]) {
 
 export function userTaskToAccountTask(
     userTask: GraphQLTask,
-    { permissions, position }: { permissions?: number; position?: number }
+    { permissions, position }: { permissions?: number; position: number }
 ): AccountTask {
     return {
         __typename: "AccountTask",
         // TODO: Change to utilise permissions enum
         permissions: permissions ?? 2, // default to read-only perms
-        position: position ?? 1, // default to first (top) position
+        position,
         reminder_ids: removeValuesFromArray(userTask.reminders?.items ?? [], [null]).map(
             reminder => reminder.id
         ),

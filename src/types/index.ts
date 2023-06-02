@@ -1,22 +1,26 @@
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Dispatch, SetStateAction, SyntheticEvent } from "react";
+import { AccountTask, Subtask as GraphQLSubtask, Task as GraphQLTask} from "../API";
 
 export type ActiveTaskState = string | null;
 
 export interface SortableItemProps {
-    task: Task;
-    key: number;
+    accountTask: AccountTask;
+    accountTasks: AccountTask[];
+    userTask: Omit<GraphQLTask, "__typename">;
+    key: AccountTask["task_id"];
     activeTask: ActiveTaskState;
     setActiveTask: Dispatch<SetStateAction<ActiveTaskState>>;
-    tasks: Task[];
-    setTasks: Dispatch<SetStateAction<Task[]>>;
+    userTasks: Omit<GraphQLTask, "__typename">[];
+    setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
+    setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
 }
 
 export interface TaskContainerProps {
     activeTask: ActiveTaskState;
-    task: Task | Subtask;
-    subtasks?: Subtask[];
+    userTask: Omit<GraphQLTask, "__typename"> | Omit<GraphQLSubtask, "__typename">;
+    subtasks?: GraphQLSubtask[];
     containerId: string;
     containerStyle: React.CSSProperties;
     containerRef?: (node: HTMLElement | null) => void;
@@ -35,13 +39,9 @@ export interface TaskContainerProps {
     typographyStyleTitle: React.CSSProperties;
 }
 
-export interface Task {
-    id: number;
-    title: string;
-    description: string | null;
-    position: number;
-    completedAt: string | null;
-    children: Subtask[];
+export interface TaskViewProps {
+    accountTasks: AccountTask[];
+    setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>
+    userTasks: Omit<GraphQLTask, "__typename">[];
+    setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>
 }
-
-export type Subtask = Omit<Task, "children" | "position">;

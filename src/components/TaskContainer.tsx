@@ -70,7 +70,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         dayjs(currentDatetime.setHours(currentDatetime.getHours() + 24))
     );
 
-    const taskIsComplete = props.task.completedAt !== null;
+    const taskIsComplete = typeof props.userTask.completed_at === "number";
     const completedOrIncomplete = taskIsComplete ? "completed" : "incomplete";
 
     return (
@@ -108,7 +108,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                             className={`${completedOrIncomplete}-task-title`}
                             sx={props.typographyStyleTitle}
                         >
-                            {props.task.title}
+                            {props.userTask.title}
                         </Typography>
                     </AccordionSummary>
                     <AccordionDetails
@@ -124,7 +124,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                             sx={{
                                 color: "#e0e1c1",
                                 textAlign: "center",
-                                opacity: props.task.description
+                                opacity: props.userTask.description
                                     ? taskIsComplete
                                         ? 0.5 // has description and is complete
                                         : 0.9 // has description and is NOT complete
@@ -133,7 +133,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                     : 0.7, // DOESN'T have description and is NOT complete
                             }}
                         >
-                            {props.task.description || "(No Task Description Provided)"}
+                            {props.userTask.description || "(No Task Description Provided)"}
                         </Typography>
                         {taskIsComplete ? (
                             <></>
@@ -142,7 +142,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                 id={`${
                                     props.typographyTextPosition
                                         ? `task-${props.typographyTextPosition.slice(1)}`
-                                        : `subtask-${props.task.id}`
+                                        : `subtask-${props.userTask.id}`
                                 }-reminder-container`}
                                 style={{
                                     display: "flex",
@@ -196,7 +196,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                 </div>
                             </div>
                         )}
-                        {"children" in props.task && props.task.children.length > 0 && (
+                        {"subtasks" in props.userTask && props.userTask.subtasks.length > 0 && (
                             <div className="subtasks-container">
                                 <Typography
                                     sx={{
@@ -214,14 +214,14 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                             <TaskContainer
                                                 key={subtask.id}
                                                 activeTask={props.activeTask}
-                                                task={subtask}
+                                                userTask={subtask}
                                                 containerId={`subtask-${subtask.id}-container`}
                                                 containerStyle={{ display: "flex" }}
                                                 iconContainerId={`subtask-${subtask.id}-icon-container`}
                                                 iconContainerClass={`subtask-icon-container ${
-                                                    subtask.completedAt === null
-                                                        ? "incomplete"
-                                                        : "completed"
+                                                    typeof subtask.completed_at === "number"
+                                                        ? "completed"
+                                                        : "incomplete"
                                                 }-subtask`}
                                                 iconContainerOnClick={props.iconContainerOnClick}
                                                 accordionContainerId={`subtask-${subtask.id}-accordion-container`}
