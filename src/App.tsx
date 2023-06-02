@@ -330,9 +330,31 @@ export default function App(props: AppProps) {
     }
 
     return isLoading || !account ? (
-        <h1>Loading...</h1>
+        <>
+            <Button
+                color="inherit"
+                onClick={signOut}
+                sx={{
+                    backgroundColor: "#1e5a68",
+                    height: "fit-content",
+                }}
+            >
+                Sign Out
+            </Button>
+            <h1>Loading...</h1>
+        </>
     ) : (
         <>
+            <Button
+                color="inherit"
+                onClick={signOut}
+                sx={{
+                    backgroundColor: "#1e5a68",
+                    height: "fit-content",
+                }}
+            >
+                Sign Out
+            </Button>
             <h1>{account.username}'s Tasks:</h1>
             <Button onClick={deleteAllTasks}>Delete all of account's tasks</Button>
             <Button
