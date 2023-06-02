@@ -16,10 +16,13 @@ import {
 import { createAccount, createTask, deleteTask, updateAccount } from "../graphql/mutations";
 import { listAccounts, listTasks } from "../graphql/queries";
 
-export type UpdateAccountOptions = {
-    taskIdsToRemove?: AccountTask["task_id"][]
-    tasksToAdd?: AccountTask[]
-} | { tasks: AccountTask[] }
+export type UpdateAccountOptions =
+    | {
+          is_admin?: 0 | 1;
+          taskIdsToRemove?: AccountTask["task_id"][];
+          tasksToAdd?: AccountTask[];
+      }
+    | { tasks: AccountTask[]; is_admin?: 0 | 1 };
 
 
 export type GraphQLMutations = {

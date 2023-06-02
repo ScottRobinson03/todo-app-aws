@@ -53,8 +53,17 @@ export default function App(props: AppProps) {
     const [tasksOfAccount, setTasksOfAccount] = useState<AccountTask[]>([]);
 
     const updateAccount = useCallback(
-        async (options: UpdateAccountOptions) => {
-            if (!account) throw new Error(`Attempted to update account with no account set`);
+        async (options: UpdateAccountOptions, acc?: GraphQLAccount) => {
+            if (!acc) {
+                if (!account) throw new Error(`Attempted to update account with no account set`);
+                acc = account;
+            }
+
+            const nonTaskOptions = Object.fromEntries(
+                Object.entries(options).filter(
+                    ([k, _]) => !["tasks", "tasksToAdd", "taskIdsToRemove"].includes(k)
+                )
+            );
 
             let accountTasksNotBeingRemoved: AccountTask[] | null = null;
             if ("taskIdsToRemove" in options && options.taskIdsToRemove !== undefined) {
@@ -67,7 +76,7 @@ export default function App(props: AppProps) {
             const input: Omit<
                 Partial<GraphQLAccount> & { sub: string },
                 "updatedAt" | "createdAt" | "__typename"
-            > = { sub: account.sub };
+            > = { sub: acc.sub, ...nonTaskOptions };
             if (accountTasksNotBeingRemoved !== null) {
                 input["tasks"] = accountTasksNotBeingRemoved;
             }
@@ -99,7 +108,7 @@ export default function App(props: AppProps) {
 
         // Ensure signed in user has an account
         fetchAccounts().then(accounts => {
-            Auth.currentAuthenticatedUser().then(data => {
+            Auth.currentAuthenticatedUser({ bypassCache: false }).then(data => {
                 const { email, sub, name }: { email: string; sub: string; name: string } =
                     data.attributes;
                 const username: string = data.signInUserSession.accessToken.payload.username;
@@ -111,14 +120,22 @@ export default function App(props: AppProps) {
                     if (!key) throw new Error(`Account's ${key} is ${value}`);
                 }
 
+                const isAdmin = groups?.length && groups.includes("Admin") ? true : false;
+
                 console.log({ userInfo });
 
                 let userHasAccount = false;
-                for (const account of accounts) {
-                    if (account.sub === userInfo.sub) {
+                for (const acc of accounts) {
+                    if (acc.sub === userInfo.sub) {
                         userHasAccount = true;
-                        setTasksOfAccount(account.tasks);
-                        setAccount(account);
+                        setTasksOfAccount(acc.tasks);
+                        setAccount(acc);
+                        if (+isAdmin !== acc.is_admin) {
+                            console.log(
+                                `Updating is_admin status of account ${acc.sub} to ${+isAdmin}`
+                            );
+                            updateAccount({ is_admin: +isAdmin as 0 | 1 }, acc);
+                        }
                         break;
                     }
                 }
