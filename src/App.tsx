@@ -29,14 +29,14 @@ import { listAccounts as listAccountsQuery, listTasks as listTasksQuery } from "
 import {
     ensureExactKeys,
     executeGraphQLOperation,
+    getBasicUserInfo,
+    getNextPosition,
     isKeyOf,
     removeTypenameFromObject,
     removeValuesFromArray,
     userTaskToAccountTask,
 } from "./utils";
 import { UpdateAccountOptions } from "./types/graphql";
-
-type CognitoUser = Omit<CreateAccountInput, "is_admin" | "tasks">;
 
 interface AppProps {
     signOut: ((data?: AuthEventData | undefined) => void) | undefined;
@@ -124,7 +124,7 @@ export default function App(props: AppProps) {
                             {
                                 // TODO: Change to utilise permissions enum
                                 permissions: 1, // admin perms
-                                position: getNextPosition()
+                                position: getNextPosition(tasksOfAccount),
                             }
                         );
                         tasksOfAccount.push(userTaskAsAccountTask);
@@ -152,62 +152,6 @@ export default function App(props: AppProps) {
         return <p>'user' is undefined</p>;
     }
 
-    function getNextPosition() {
-        const takenPositions = [...new Set(tasksOfAccount.map(accountTask => accountTask.position))];
-        takenPositions.sort((a, b) => a < b ? -1 : a === b ? 0 : 1);
-
-        let prevPosition = 0;
-        for (const takenPosition of takenPositions.values()) {
-            if (takenPosition !== prevPosition + 1) break; // next position is free
-            prevPosition += 1; // next position isn't free
-        }
-        return prevPosition + 1
-    }
-
-    async function getBasicUserInfo(user: AmplifyUser | undefined) {
-        if (user === undefined) throw new Error("Attempted to fetch info of an undefined user");
-
-        return new Promise((resolve, reject) => {
-            user.getUserData((err, data) => {
-                if (err) {
-                    reject(JSON.stringify(err));
-                    return;
-                }
-
-                if (data === undefined) {
-                    reject(`Failed to fetch user data (was undefined)`);
-                    return;
-                }
-
-                // Specify attributes to be set
-                const userData: { [key in keyof CognitoUser]: CognitoUser[key] | undefined } = {
-                    sub: undefined,
-                    email: undefined,
-                    name: undefined,
-                    username: undefined,
-                };
-                userData.username = data.Username;
-                // Attempt to set each attribute
-                for (const userAttribute of data.UserAttributes) {
-                    if (Object.keys(userData).includes(userAttribute.Name)) {
-                        (userData as any)[userAttribute.Name] = userAttribute.Value;
-                    }
-                }
-
-                // Ensure each attribute has been set
-                for (const [k, v] of Object.entries(userData)) {
-                    if (v === undefined) {
-                        reject(
-                            `Failed to get ${k} of user${user.username ? ` ${user.username}` : ""}`
-                        );
-                    }
-                }
-
-                resolve(userData as CognitoUser);
-            });
-        }) as Promise<CognitoUser>;
-    }
-
     async function createAccount(details: CreateAccountInput, validateIdInPool: boolean = true) {
         // TODO: Ensure there isn't already an account with the id (*appears* to be done automatically)
 
@@ -220,90 +164,10 @@ export default function App(props: AppProps) {
         return executeGraphQLOperation(createAccountMutation, variables);
     }
 
-    async function deleteTask(input: DeleteTaskInput, callUpdateAccount: boolean = true) {
-        // FIXME: When a task is deleted, the positions of other tasks needs to be recalculated
-
-        if (!account) throw new Error(`Attempted to delete task ${input.id} without an account set.`);
-
-        const exactInput = ensureExactKeys(input, ["id"]);
-        const variables: DeleteTaskMutationVariables = {input: exactInput};
-        const response = await executeGraphQLOperation(deleteTaskMutation, variables);
-        console.log(`Deleted task ${exactInput.id}: ${JSON.stringify(response, null, 2)}`);
-
-        if (callUpdateAccount) await updateAccount({taskIdsToRemove: [exactInput.id]});
-        setTasks(prevTasks => prevTasks.filter(task => task.id !== exactInput.id));
-        setTasksOfAccount(prevAccountTasks => prevAccountTasks.filter(accountTask => accountTask.task_id !== exactInput.id));
-        return exactInput.id;
-    }
-
-    async function fetchAccounts(variables: ListAccountsQueryVariables = {}) {
-        const response = await executeGraphQLOperation(listAccountsQuery, variables);
-        if (response.errors)
-            throw new Error(
-                `Got unexpected error(s) when fetching tasks: ${JSON.stringify(
-                    response.errors,
-                    null,
-                    2
-                )}`
-            );
-
-        const accounts = response.data?.listAccounts?.items;
-        if (!accounts)
-            throw new Error(
-                `Received falsey value for accounts from response ${JSON.stringify(
-                    response,
-                    null,
-                    2
-                )}`
-            );
-
-        // NB: Could be an empty array as that's not falsey in JS/TS
-        const filteredAccounts = removeValuesFromArray(accounts, [null]);
-        return filteredAccounts;
-    }
-
-    async function updateAccount(options: UpdateAccountOptions) {
-        if (!account) throw new Error(`Attempted to update account with no account set`);
-
-        let accountTasksNotBeingRemoved: AccountTask[] | null = null;
-        if ("taskIdsToRemove" in options && options.taskIdsToRemove !== undefined) {
-            const {taskIdsToRemove }= options;
-            accountTasksNotBeingRemoved = tasksOfAccount.filter(accountTask => !taskIdsToRemove.includes(accountTask.task_id))
-        }
-
-        const input: Omit<Partial<GraphQLAccount> & {sub: string}, "updatedAt" | "createdAt" | "__typename"> = {sub: account.sub};
-        if (accountTasksNotBeingRemoved !== null) {
-            input["tasks"] = accountTasksNotBeingRemoved
-        }
-        if ("tasksToAdd" in options && options.tasksToAdd?.length) {
-            input["tasks"] = [...input["tasks"] ?? tasksOfAccount, ...options.tasksToAdd]
-        }
-        else if ("tasks" in options) input["tasks"] = options.tasks;
-
-        const tasksWithoutTypename: AccountTaskInput[] = input.tasks?.map(removeTypenameFromObject) ?? [];
-
-        const exactInput: UpdateAccountInput & {tasks?: AccountTask[]} = ensureExactKeys(input, [
-            "email?",
-            "sub",
-            "is_admin?",
-            "name?",
-            "tasks?",
-            "username?",
-        ]);
-        const exactInputWithCorrectTasks: UpdateAccountInput = {...exactInput};
-        if (exactInput.tasks) {
-            exactInputWithCorrectTasks.tasks = tasksWithoutTypename;
-        }
-
-        const variables: UpdateAccountMutationVariables = { input: exactInputWithCorrectTasks };
-        console.log(`updateAccount Variables: ${JSON.stringify(variables, null, 2)}`);
-        await executeGraphQLOperation(updateAccountMutation, variables);
-    }
-
-    async function addTask() {
+    async function createTask() {
         if (!account) throw new Error(`Attempted to create a task without an account set in state`);
 
-        const taskId = uuid4()
+        const taskId = uuid4();
         console.log(`Creating a task for account '${account.sub}' with id '${taskId}'`);
 
         // TODO: Validate task
@@ -339,12 +203,65 @@ export default function App(props: AppProps) {
         // TODO: Test the task is added to the account's `.tasks` attribute
         const newTaskAsAccountTask = userTaskToAccountTask(newTask, {
             permissions: 1,
-            position: getNextPosition()
+            position: getNextPosition(tasksOfAccount),
         });
         await updateAccount({
-            tasksToAdd: [newTaskAsAccountTask]
+            tasksToAdd: [newTaskAsAccountTask],
         });
-        setTasksOfAccount(prevAccountTasks => [...prevAccountTasks, newTaskAsAccountTask])
+        setTasksOfAccount(prevAccountTasks => [...prevAccountTasks, newTaskAsAccountTask]);
+    }
+
+    async function deleteAllTasks() {
+        for (const accountTask of tasksOfAccount) {
+            await deleteTask({ id: accountTask.task_id }, false);
+        }
+        await updateAccount({ tasks: [] });
+        setTasksOfAccount([]);
+    }
+
+    async function deleteTask(input: DeleteTaskInput, callUpdateAccount: boolean = true) {
+        // FIXME: When a task is deleted, the positions of other tasks needs to be recalculated
+
+        if (!account)
+            throw new Error(`Attempted to delete task ${input.id} without an account set.`);
+
+        const exactInput = ensureExactKeys(input, ["id"]);
+        const variables: DeleteTaskMutationVariables = { input: exactInput };
+        const response = await executeGraphQLOperation(deleteTaskMutation, variables);
+        console.log(`Deleted task ${exactInput.id}: ${JSON.stringify(response, null, 2)}`);
+
+        if (callUpdateAccount) await updateAccount({ taskIdsToRemove: [exactInput.id] });
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== exactInput.id));
+        setTasksOfAccount(prevAccountTasks =>
+            prevAccountTasks.filter(accountTask => accountTask.task_id !== exactInput.id)
+        );
+        return exactInput.id;
+    }
+
+    async function fetchAccounts(variables: ListAccountsQueryVariables = {}) {
+        const response = await executeGraphQLOperation(listAccountsQuery, variables);
+        if (response.errors)
+            throw new Error(
+                `Got unexpected error(s) when fetching tasks: ${JSON.stringify(
+                    response.errors,
+                    null,
+                    2
+                )}`
+            );
+
+        const accounts = response.data?.listAccounts?.items;
+        if (!accounts)
+            throw new Error(
+                `Received falsey value for accounts from response ${JSON.stringify(
+                    response,
+                    null,
+                    2
+                )}`
+            );
+
+        // NB: Could be an empty array as that's not falsey in JS/TS
+        const filteredAccounts = removeValuesFromArray(accounts, [null]);
+        return filteredAccounts;
     }
 
     async function fetchTasks(variables: ListTasksQueryVariables = {}) {
@@ -369,25 +286,75 @@ export default function App(props: AppProps) {
         return filteredTasks;
     }
 
-    async function deleteAllTasks() {
-        for (const accountTask of tasksOfAccount) {
-            await deleteTask({id: accountTask.task_id}, false);
+    async function updateAccount(options: UpdateAccountOptions) {
+        if (!account) throw new Error(`Attempted to update account with no account set`);
+
+        let accountTasksNotBeingRemoved: AccountTask[] | null = null;
+        if ("taskIdsToRemove" in options && options.taskIdsToRemove !== undefined) {
+            const { taskIdsToRemove } = options;
+            accountTasksNotBeingRemoved = tasksOfAccount.filter(
+                accountTask => !taskIdsToRemove.includes(accountTask.task_id)
+            );
         }
-        await updateAccount({tasks: []});
-        setTasksOfAccount([]);
+
+        const input: Omit<
+            Partial<GraphQLAccount> & { sub: string },
+            "updatedAt" | "createdAt" | "__typename"
+        > = { sub: account.sub };
+        if (accountTasksNotBeingRemoved !== null) {
+            input["tasks"] = accountTasksNotBeingRemoved;
+        }
+        if ("tasksToAdd" in options && options.tasksToAdd?.length) {
+            input["tasks"] = [...(input["tasks"] ?? tasksOfAccount), ...options.tasksToAdd];
+        } else if ("tasks" in options) input["tasks"] = options.tasks;
+
+        const tasksWithoutTypename: AccountTaskInput[] =
+            input.tasks?.map(removeTypenameFromObject) ?? [];
+
+        const exactInput: UpdateAccountInput & { tasks?: AccountTask[] } = ensureExactKeys(input, [
+            "email?",
+            "sub",
+            "is_admin?",
+            "name?",
+            "tasks?",
+            "username?",
+        ]);
+        const exactInputWithCorrectTasks: UpdateAccountInput = { ...exactInput };
+        if (exactInput.tasks) {
+            exactInputWithCorrectTasks.tasks = tasksWithoutTypename;
+        }
+
+        const variables: UpdateAccountMutationVariables = { input: exactInputWithCorrectTasks };
+        console.log(`updateAccount Variables: ${JSON.stringify(variables, null, 2)}`);
+        await executeGraphQLOperation(updateAccountMutation, variables);
     }
 
-    return isLoading || !account ? <h1>Loading...</h1> : (
+    return isLoading || !account ? (
+        <h1>Loading...</h1>
+    ) : (
         <>
-        <h1>{account.username}'s Tasks:</h1>
-        <Button onClick={deleteAllTasks}>Delete all of account's tasks</Button>
-            <Button onClick={async () => {
-                await deleteTask({id: tasksOfAccount[0].task_id})
-            }}>Delete next of account's tasks</Button>
-            <Button onClick={async () => {
-                return addTask()
-            }}>Add Task</Button>
-        <TaskView accountTasks={tasksOfAccount} setAccountTasks={setTasksOfAccount} userTasks={tasks} setUserTasks={setTasks}/>
+            <h1>{account.username}'s Tasks:</h1>
+            <Button onClick={deleteAllTasks}>Delete all of account's tasks</Button>
+            <Button
+                onClick={async () => {
+                    await deleteTask({ id: tasksOfAccount[0].task_id });
+                }}
+            >
+                Delete next of account's tasks
+            </Button>
+            <Button
+                onClick={async () => {
+                    return createTask();
+                }}
+            >
+                Add Task
+            </Button>
+            <TaskView
+                accountTasks={tasksOfAccount}
+                setAccountTasks={setTasksOfAccount}
+                userTasks={tasks}
+                setUserTasks={setTasks}
+            />
         </>
-    )
+    );
 }

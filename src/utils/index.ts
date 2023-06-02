@@ -1,8 +1,10 @@
 import { GraphQLResult } from "@aws-amplify/api-graphql/lib-esm/types/";
+import { AmplifyUser } from "@aws-amplify/ui";
 import { API, graphqlOperation } from "aws-amplify";
+import { AccountTask, Task as GraphQLTask } from "../API";
 import { GraphQLOperations } from "../types/graphql";
 import { sortFn } from "./customSort";
-import { AccountTask, Task as GraphQLTask } from "../API";
+import { CognitoUser } from "../types";
 
 export function ensureExactKeys<T extends object>(
     obj: T,
@@ -49,6 +51,60 @@ export async function executeGraphQLOperation<Operation extends keyof GraphQLOpe
     >;
 }
 
+export async function getBasicUserInfo(user: AmplifyUser | undefined) {
+    if (user === undefined) throw new Error("Attempted to fetch info of an undefined user");
+
+    return new Promise((resolve, reject) => {
+        user.getUserData((err, data) => {
+            if (err) {
+                reject(JSON.stringify(err));
+                return;
+            }
+
+            if (data === undefined) {
+                reject(`Failed to fetch user data (was undefined)`);
+                return;
+            }
+
+            // Specify attributes to be set
+            const userData: { [key in keyof CognitoUser]: CognitoUser[key] | undefined } = {
+                sub: undefined,
+                email: undefined,
+                name: undefined,
+                username: undefined,
+            };
+            userData.username = data.Username;
+            // Attempt to set each attribute
+            for (const userAttribute of data.UserAttributes) {
+                if (Object.keys(userData).includes(userAttribute.Name)) {
+                    (userData as any)[userAttribute.Name] = userAttribute.Value;
+                }
+            }
+
+            // Ensure each attribute has been set
+            for (const [k, v] of Object.entries(userData)) {
+                if (v === undefined) {
+                    reject(`Failed to get ${k} of user${user.username ? ` ${user.username}` : ""}`);
+                }
+            }
+
+            resolve(userData as CognitoUser);
+        });
+    }) as Promise<CognitoUser>;
+}
+
+export function getNextPosition(tasksOfAccount: AccountTask[]) {
+    const takenPositions = [...new Set(tasksOfAccount.map(accountTask => accountTask.position))];
+    takenPositions.sort((a, b) => (a < b ? -1 : a === b ? 0 : 1));
+
+    let prevPosition = 0;
+    for (const takenPosition of takenPositions.values()) {
+        if (takenPosition !== prevPosition + 1) break; // next position is free
+        prevPosition += 1; // next position isn't free
+    }
+    return prevPosition + 1;
+}
+
 export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
     let topLevelTaskPosition: number;
     let subtaskId: string | null = null;
@@ -88,6 +144,7 @@ export function getUTCTime() {
     return new Date().valueOf() //.toISOString().slice(0, -5).replace("T", " ");
 }
 
+// TODO: Remove if is unused within project. Make sure to also remove the custom sort function logic.
 export function isDeeplyEqual(a: any, b: any) {
     if (typeof a !== typeof b) return false;
     if (typeof a !== "object") return a === b; // neither values are typeof "object", so return equality
