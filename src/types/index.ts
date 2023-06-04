@@ -2,6 +2,7 @@ import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Dispatch, SetStateAction, SyntheticEvent } from "react";
 import {
+    Account as GraphQLAccount,
     AccountTask,
     DeleteTaskInput,
     Subtask as GraphQLSubtask,
@@ -9,6 +10,7 @@ import {
     UpdateTaskInput,
     UpdateTaskMutation,
 } from "../API";
+import { UpdateAccountOptions } from "./graphql";
 
 export type ActiveTaskState = string | null;
 
@@ -73,6 +75,7 @@ export interface TaskViewProps {
     setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
     userTasks: Omit<GraphQLTask, "__typename">[];
     setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
+    updateAccount: (options: UpdateAccountOptions, acc?: GraphQLAccount) => Promise<void>;
     deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
     updateTask: (
         input: Omit<

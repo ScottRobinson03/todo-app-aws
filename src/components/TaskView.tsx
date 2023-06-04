@@ -163,8 +163,8 @@ export default function TaskView(props: TaskViewProps) {
             // Update the `position` attribute of tasks that got shifted as a result of moving
             for (let i = Math.min(oldIndex, newIndex); i <= Math.max(oldIndex, newIndex); i++) {
                 newTasks[i].position = i + 1;
-                // TODO: Update tasks in accounts database
             }
+            props.updateAccount({ tasks: newTasks });
             return newTasks;
         });
     }

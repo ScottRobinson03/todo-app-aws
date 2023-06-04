@@ -460,6 +460,7 @@ export default function App(props: AppProps) {
                 setAccountTasks={setTasksOfAccount}
                 userTasks={tasks}
                 setUserTasks={setTasks}
+                updateAccount={updateAccount}
                 deleteTask={deleteTask}
                 updateTask={updateTask}
             />
