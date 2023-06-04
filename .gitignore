@@ -1,3 +1,6 @@
+# VSC config
+.vscode
+
 # Logs
 logs
 *.log

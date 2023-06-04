@@ -207,7 +207,6 @@ export default function App(props: AppProps) {
                         tasksOfAccount.push(userTaskAsAccountTask);
                     }
                 }
-                // TODO: Update account in database (WIP)
                 console.log(
                     `Tasks of account (initialised): ${JSON.stringify(tasksOfAccount, null, 2)}`
                 );
