@@ -1,7 +1,14 @@
 import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Dispatch, SetStateAction, SyntheticEvent } from "react";
-import { AccountTask, Subtask as GraphQLSubtask, Task as GraphQLTask } from "../API";
+import {
+    AccountTask,
+    DeleteTaskInput,
+    Subtask as GraphQLSubtask,
+    Task as GraphQLTask,
+    UpdateTaskInput,
+    UpdateTaskMutation,
+} from "../API";
 
 export type ActiveTaskState = string | null;
 
@@ -15,6 +22,17 @@ export interface SortableItemProps {
     userTasks: Omit<GraphQLTask, "__typename">[];
     setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
     setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
+    deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+    updateTask: (
+        input: Omit<
+            {
+                [k in keyof UpdateTaskInput]: k extends "description"
+                    ? string | null
+                    : NonNullable<Required<UpdateTaskInput>[k]>;
+            },
+            "taskCreated_bySub"
+        >
+    ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
 }
 
 export interface TaskContainerProps {
@@ -37,11 +55,33 @@ export interface TaskContainerProps {
     typographyStylePosition?: React.CSSProperties;
     typographyTextPosition?: string;
     typographyStyleTitle: React.CSSProperties;
+    deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+    updateTask: (
+        input: Omit<
+            {
+                [k in keyof UpdateTaskInput]: k extends "description"
+                    ? string | null
+                    : NonNullable<Required<UpdateTaskInput>[k]>;
+            },
+            "taskCreated_bySub"
+        >
+    ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
 }
 
 export interface TaskViewProps {
     accountTasks: AccountTask[];
-    setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>
+    setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
     userTasks: Omit<GraphQLTask, "__typename">[];
-    setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>
+    setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
+    deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+    updateTask: (
+        input: Omit<
+            {
+                [k in keyof UpdateTaskInput]: k extends "description"
+                    ? string | null
+                    : NonNullable<Required<UpdateTaskInput>[k]>;
+            },
+            "taskCreated_bySub"
+        >
+    ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
 }

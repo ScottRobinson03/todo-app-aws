@@ -17,14 +17,18 @@ import {
     Task as GraphQLTask,
     ListAccountsQueryVariables,
     ListTasksQueryVariables,
+    Subtask as GraphQLSubtask,
     UpdateAccountInput,
     UpdateAccountMutationVariables,
+    UpdateTaskInput,
+    UpdateTaskMutationVariables,
 } from "./API";
 import {
     createAccount as createAccountMutation,
     createTask as createTaskMutation,
     deleteTask as deleteTaskMutation,
     updateAccount as updateAccountMutation,
+    updateTask as updateTaskMutation,
 } from "./graphql/mutations";
 import { listAccounts as listAccountsQuery, listTasks as listTasksQuery } from "./graphql/queries";
 import { UpdateAccountOptions } from "./types/graphql";
@@ -363,6 +367,49 @@ export default function App(props: AppProps) {
         return filteredTasks;
     }
 
+    async function updateTask(
+        options: Omit<
+            {
+                [k in keyof UpdateTaskInput]: k extends "description"
+                    ? string | null
+                    : NonNullable<Required<UpdateTaskInput>[k]>;
+            },
+            "taskCreated_bySub"
+        >
+    ) {
+        const variables: UpdateTaskMutationVariables = { input: options };
+        const response = await executeGraphQLOperation(updateTaskMutation, variables);
+        if (!response.data?.updateTask)
+            throw new Error(
+                `Failed to update task ${options.id}: ${JSON.stringify(response, null, 2)}`
+            );
+
+        console.log(`Updated task: ${JSON.stringify(response.data.updateTask, null, 2)}`);
+        setTasks(oldTasks => {
+            return oldTasks.map(oldTask => {
+                if (oldTask.id !== options.id) return oldTask;
+                return {
+                    ...oldTask,
+                    ...(Object.fromEntries(
+                        Object.entries(options).map(([k, v]) => {
+                            return k === "subtasks"
+                                ? [
+                                      k,
+                                      (v as NonNullable<(typeof options)["subtasks"]>).map(
+                                          subtask => {
+                                              return { ...subtask, __typename: "Subtask" };
+                                          }
+                                      ) as GraphQLSubtask[],
+                                  ]
+                                : [k, v];
+                        })
+                    ) as Omit<GraphQLTask, "__typename">),
+                };
+            });
+        });
+        return response.data.updateTask;
+    }
+
     return isLoading || !account ? (
         <>
             <Button
@@ -414,6 +461,8 @@ export default function App(props: AppProps) {
                 setAccountTasks={setTasksOfAccount}
                 userTasks={tasks}
                 setUserTasks={setTasks}
+                deleteTask={deleteTask}
+                updateTask={updateTask}
             />
         </>
     );

@@ -28,7 +28,9 @@ export function SortableItem(props: SortableItemProps) {
             containerRef={setNodeRef}
             containerListeners={listeners}
             containerAttributes={attributes}
-            iconContainerId={`task-${props.accountTask.position || props.userTask.id}-icon-container`}
+            iconContainerId={`task-${
+                props.accountTask.position || props.userTask.id
+            }-icon-container`}
             iconContainerClass={`task-icon-container ${
                 typeof props.userTask.completed_at === "number" ? "completed" : "incomplete"
             }-task`}
@@ -49,6 +51,8 @@ export function SortableItem(props: SortableItemProps) {
                 textAlign: "center",
                 width: "100%",
             }}
+            deleteTask={props.deleteTask}
+            updateTask={props.updateTask}
         />
     );
 
