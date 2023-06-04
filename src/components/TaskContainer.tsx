@@ -148,7 +148,6 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     }
 
     function handleReminderClick(event: SyntheticEvent) {
-        // FIXME: Clicking underneath reminder svg when edit modal is active, results in reminder modal activiting?
         let target = event.target as Element;
         if (target.nodeName.toLowerCase() === "path") {
             // Get the svg by getting the parent
@@ -158,36 +157,24 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         const targetNodeNameLowercase = target.nodeName.toLocaleLowerCase();
 
         let reminderIcon: Element;
-        if (targetNodeNameLowercase === "div") {
-            const temp = target.children.namedItem("reminder-icon");
-            if (!temp) {
-                // Clicked on a div, but it doesn't have a
-                // child element with the id 'reminder-icon', so ignore
-                return;
-            }
-            reminderIcon = temp;
-        } else if (targetNodeNameLowercase === "svg") {
-            if (target.id !== "reminder-icon") {
-                // Clicked on an svg, but not the reminder icon svg, so ignore
-                return;
-            }
-            reminderIcon = target;
-        } else {
-            // Didn't click on an svg/div, so ignore
+        if (targetNodeNameLowercase !== "svg") {
+            // Didn't click on an svg, so ignore
             return;
         }
+        if (target.id !== "reminder-icon") {
+            // Clicked on an svg, but not the reminder icon svg, so ignore
+            return;
+        }
+        reminderIcon = target;
+
         const reminderIconContainer = reminderIcon.parentElement;
         if (!reminderIconContainer || !reminderIconContainer.id.endsWith("reminder-container")) {
             // Doesn't have a reminder-container parent, so ignore
             return;
         }
-        // Toggle reminder modal
 
-        if (activeModal === "reminder") {
-            setActiveModal(null);
-            return;
-        }
-        setActiveModal("reminder");
+        // Toggle reminder modal
+        setActiveModal(prevActiveModal => (prevActiveModal === "reminder" ? null : "reminder"));
     }
 
     function createReminder(event: SyntheticEvent) {
