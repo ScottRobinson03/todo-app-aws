@@ -402,7 +402,7 @@ export default function App(props: AppProps) {
                                   ]
                                 : [k, v];
                         })
-                    ) as Omit<GraphQLTask, "__typename">),
+                    ) as Omit<GraphQLTask, "__typename" | "created_by">),
                 };
             });
         });
