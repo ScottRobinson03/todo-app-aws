@@ -184,7 +184,7 @@ export type CreateTaskInput = {
   id?: string | null,
   subtasks: Array< SubtaskInput >,
   title: string,
-  taskCreated_bySub?: string | null,
+  taskCreated_bySub: string,
 };
 
 export type SubtaskInput = {
@@ -210,7 +210,7 @@ export type ModelTaskConditionInput = {
 export type Task = {
   __typename: "Task",
   completed_at?: number | null,
-  created_by?: Account | null,
+  created_by: Account,
   description?: string | null,
   id: string,
   reminders?: ModelReminderConnection | null,
@@ -218,7 +218,7 @@ export type Task = {
   title: string,
   createdAt: string,
   updatedAt: string,
-  taskCreated_bySub?: string | null,
+  taskCreated_bySub: string,
 };
 
 export type ModelReminderConnection = {
@@ -627,7 +627,7 @@ export type CreateTaskMutation = {
   createTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -643,7 +643,7 @@ export type CreateTaskMutation = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -711,7 +711,7 @@ export type CreateTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };
 
@@ -724,7 +724,7 @@ export type UpdateTaskMutation = {
   updateTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -740,7 +740,7 @@ export type UpdateTaskMutation = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -808,7 +808,7 @@ export type UpdateTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };
 
@@ -821,7 +821,7 @@ export type DeleteTaskMutation = {
   deleteTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -837,7 +837,7 @@ export type DeleteTaskMutation = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -905,7 +905,7 @@ export type DeleteTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };
 
@@ -1093,7 +1093,7 @@ export type GetTaskQuery = {
   getTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -1109,7 +1109,7 @@ export type GetTaskQuery = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -1177,7 +1177,7 @@ export type GetTaskQuery = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };
 
@@ -1193,7 +1193,7 @@ export type ListTasksQuery = {
     items:  Array< {
       __typename: "Task",
       completed_at?: number | null,
-      created_by?:  {
+      created_by:  {
         __typename: "Account",
         email: string,
         sub: string,
@@ -1209,7 +1209,7 @@ export type ListTasksQuery = {
         username: string,
         createdAt: string,
         updatedAt: string,
-      } | null,
+      },
       description?: string | null,
       id: string,
       reminders?:  {
@@ -1277,7 +1277,7 @@ export type ListTasksQuery = {
       title: string,
       createdAt: string,
       updatedAt: string,
-      taskCreated_bySub?: string | null,
+      taskCreated_bySub: string,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -1535,7 +1535,7 @@ export type OnCreateTaskSubscription = {
   onCreateTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -1551,7 +1551,7 @@ export type OnCreateTaskSubscription = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -1619,7 +1619,7 @@ export type OnCreateTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };
 
@@ -1632,7 +1632,7 @@ export type OnUpdateTaskSubscription = {
   onUpdateTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -1648,7 +1648,7 @@ export type OnUpdateTaskSubscription = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -1716,7 +1716,7 @@ export type OnUpdateTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };
 
@@ -1729,7 +1729,7 @@ export type OnDeleteTaskSubscription = {
   onDeleteTask?:  {
     __typename: "Task",
     completed_at?: number | null,
-    created_by?:  {
+    created_by:  {
       __typename: "Account",
       email: string,
       sub: string,
@@ -1745,7 +1745,7 @@ export type OnDeleteTaskSubscription = {
       username: string,
       createdAt: string,
       updatedAt: string,
-    } | null,
+    },
     description?: string | null,
     id: string,
     reminders?:  {
@@ -1813,6 +1813,6 @@ export type OnDeleteTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub?: string | null,
+    taskCreated_bySub: string,
   } | null,
 };

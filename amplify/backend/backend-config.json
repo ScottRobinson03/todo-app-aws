@@ -7,7 +7,7 @@
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "todoapp7e4d1499"
+          "resourceName": "todoapp46bca424"
         }
       ],
       "output": {
@@ -16,7 +16,7 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authtodoapp7e4d1499"
+              "userPoolId": "authtodoapp46bca424"
             }
           }
         }
@@ -26,7 +26,7 @@
     }
   },
   "auth": {
-    "todoapp7e4d1499": {
+    "todoapp46bca424": {
       "customAuth": false,
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
@@ -35,35 +35,35 @@
     }
   },
   "parameters": {
-    "AMPLIFY_auth_todoapp7e4d1499_nativeClientId": {
+    "AMPLIFY_auth_todoapp46bca424_nativeClientId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp7e4d1499"
+          "resourceName": "todoapp46bca424"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp7e4d1499_userPoolId": {
+    "AMPLIFY_auth_todoapp46bca424_userPoolId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp7e4d1499"
+          "resourceName": "todoapp46bca424"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp7e4d1499_userPoolName": {
+    "AMPLIFY_auth_todoapp46bca424_userPoolName": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp7e4d1499"
+          "resourceName": "todoapp46bca424"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp7e4d1499_webClientId": {
+    "AMPLIFY_auth_todoapp46bca424_webClientId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp7e4d1499"
+          "resourceName": "todoapp46bca424"
         }
       ]
     }

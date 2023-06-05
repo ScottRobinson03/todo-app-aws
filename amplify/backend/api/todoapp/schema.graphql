@@ -6,7 +6,7 @@
 input AMPLIFY {
     globalAuthRule: AuthRule = { allow: public }
 } # FOR TESTING ONLY!
-type Account  # TODO: Create accounts on signup and store tasks within the owner account in addition to Tasks table
+type Account
     @model
     @auth(
         rules: [
@@ -16,15 +16,6 @@ type Account  # TODO: Create accounts on signup and store tasks within the owne
     ) {
     email: String!
     sub: ID! @primaryKey
-    # # We edit the indexes below manually in the AWS console to contain only the account id
-    # # and its tasks, as it's not possible to specify projection attributes within @index.
-    # # See https://github.com/aws-amplify/amplify-category-api/issues/368) for tracking / more info.
-    # @index(name: "getTasks", queryField: "accountGetTasks")
-    # @index(
-    #     name: "byAdminStatus"
-    #     queryField: "accountsByAdminStatus"
-    #     sortKeyFields: ["is_admin"]
-    # )
     is_admin: Int! @default(value: "0") # booleans can't be sortKeys so we use 0 and 1 instead
     name: String!
     tasks: [AccountTask!]!
@@ -84,10 +75,8 @@ type Task
         ]
     ) {
     completed_at: Int
-    # TODO: Remove index on `created_by_id` since in reality a user's tasks will be fetched from Account table.
-    #created_by_id: ID! @index(name: "byAccount", queryField: "tasksByAccount")
-    # TODO: `created_by` shouldn't be nullable once we have tasks stored within Account
-    created_by: Account @hasOne #(fields: ["created_by_id"])
+    #created_by_id: ID!
+    created_by: Account! @hasOne #(fields: ["created_by_id"])
     description: String
     id: ID!
     #reminder_ids: [ID!]!
