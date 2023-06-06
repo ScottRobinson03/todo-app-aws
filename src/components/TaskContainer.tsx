@@ -157,12 +157,13 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         }
 
         if (!hasChanges) {
-            console.log("Nothing to update in task");
+            alert("Nothing changed :(");
             return;
         }
 
         console.log(`Task data to update: ${JSON.stringify(toChange)}`);
         await props.updateTask({ id: props.userTask.id, ...toChange });
+        setActiveModal(null);
     }
 
     function handleReminderClick(event: SyntheticEvent) {
