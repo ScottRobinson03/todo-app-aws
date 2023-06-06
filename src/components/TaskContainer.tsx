@@ -22,7 +22,7 @@ const { ReactComponent: IncompleteTaskIcon } = require("../assets/incomplete-tas
 const { ReactComponent: ReminderIcon } = require("../assets/reminder.svg");
 
 export default function TaskContainer(props: PropsWithChildren<TaskContainerProps>) {
-    const [activeModal, setActiveModal] = useState<"edit" | "reminder" | null>(null);
+    const [activeModal, setActiveModal] = useState<"edit" | "delete" | "reminder" | null>(null);
 
     type UpdatableTaskValues = Omit<
         {
@@ -43,11 +43,39 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     );
 
     async function handleDeleteClick(event: SyntheticEvent) {
-        console.log({ handleDeleteClick: event });
-        setActiveModal(null);
+        let target = event.target as Element;
+        if (target.nodeName.toLowerCase() === "path") {
+            // Get the svg by getting the parent
+            if (!target.parentElement) return;
+            target = target.parentElement;
+        }
+        const targetNodeNameLowercase = target.nodeName.toLocaleLowerCase();
 
-        // TODO: Maybe add a confirmation?
+        let deleteIcon: Element;
+        if (targetNodeNameLowercase !== "svg") {
+            // Didn't click on an svg, so ignore
+            return;
+        }
+        if (target.id !== "delete-icon") {
+            // Clicked on an svg, but not the delete icon svg, so ignore
+            return;
+        }
+        deleteIcon = target;
+
+        const deleteIconContainer = deleteIcon.parentElement;
+        if (!deleteIconContainer || !deleteIconContainer.id.endsWith("delete-container")) {
+            // Doesn't have a delete-container parent, so ignore
+            return;
+        }
+
+        setActiveModal(prevActiveModal => (prevActiveModal === "delete" ? null : "delete"));
+    }
+
+    async function handleDeleteConfirm(event: SyntheticEvent) {
+        console.log({ handleDeleteClick: event });
+
         await props.deleteTask({ id: props.userTask.id });
+        setActiveModal(null);
     }
 
     function handleEditClick(event: SyntheticEvent) {
@@ -79,11 +107,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
 
         console.log({ handleEditClick: event });
 
-        if (activeModal === "edit") {
-            setActiveModal(null);
-            return;
-        }
-        setActiveModal("edit");
+        setActiveModal(prevActiveModal => (prevActiveModal === "edit" ? null : "edit"));
     }
 
     function handleEditInputBlur(
@@ -285,6 +309,31 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                     onClick={handleDeleteClick}
                                 >
                                     <DeleteIcon />
+                                    <div
+                                        id="delete-modal"
+                                        style={{
+                                            alignItems: "center",
+                                            backgroundColor: "#1c5260",
+                                            display: activeModal === "delete" ? "flex" : "none",
+                                            flexDirection: "column",
+                                            textAlign: "center",
+                                            zIndex: 1,
+                                        }}
+                                    >
+                                        <Typography
+                                            sx={{
+                                                color: "#e0e1c1",
+                                                paddingLeft: "10px",
+                                                paddingRight: "10px",
+                                                paddingTop: "5px",
+                                                textAlign: "center",
+                                            }}
+                                        >
+                                            Are you sure you want to delete this task?
+                                        </Typography>
+                                        <Button onClick={handleDeleteConfirm}>Yes</Button>
+                                        <Button onClick={() => setActiveModal(null)}>Cancel</Button>
+                                    </div>
                                 </div>
                                 <div
                                     id={`${
@@ -312,7 +361,27 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                             zIndex: 1,
                                         }}
                                     >
-                                        <Box component="form" noValidate autoComplete="off">
+                                        <Box
+                                            component="form"
+                                            noValidate
+                                            autoComplete="off"
+                                            sx={{
+                                                "& .MuiInputLabel-outlined.MuiInputLabel-shrink": {
+                                                    opacity: 0.9,
+                                                },
+                                                "& .MuiInputLabel-outlined": {
+                                                    WebkitTextFillColor: "#e0e1c1",
+                                                    opacity: 0.7,
+                                                },
+                                                "& .MuiInputBase-input.Mui-disabled": {
+                                                    WebkitTextFillColor: "#e0e1c1", // need to duplicate
+                                                    opacity: 0.7,
+                                                },
+                                                "& .MuiInputBase-input": {
+                                                    WebkitTextFillColor: "#e0e1c1",
+                                                },
+                                            }}
+                                        >
                                             <TextField
                                                 disabled
                                                 fullWidth
