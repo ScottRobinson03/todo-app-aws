@@ -130,11 +130,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
             if (!newValue && label !== "description") {
                 // Only description is optional, so when anything else is empty it's invalid
                 alert(`New ${label} cannot be empty!`);
-
-                // BUG: For some reason the label drops into the input despite there being text
-                // Possible Solution: Setting `InputLabelProps={{shrink: true}}` on the TextField
                 target.value = formValues[label];
-
                 return;
             }
 
@@ -397,6 +393,9 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                                 label="title"
                                                 defaultValue={formValues.title}
                                                 onBlur={handleEditInputBlur}
+                                                InputLabelProps={{
+                                                    shrink: true, // force to always be shrunk since title cannot be empty
+                                                }}
                                             />
                                             <TextField
                                                 fullWidth
