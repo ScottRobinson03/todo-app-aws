@@ -132,6 +132,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                 alert(`New ${label} cannot be empty!`);
 
                 // BUG: For some reason the label drops into the input despite there being text
+                // Possible Solution: Setting `InputLabelProps={{shrink: true}}` on the TextField
                 target.value = formValues[label];
 
                 return;
