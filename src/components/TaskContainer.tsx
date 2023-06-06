@@ -60,24 +60,17 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         const targetNodeNameLowercase = target.nodeName.toLocaleLowerCase();
 
         let editIcon: Element;
-        if (targetNodeNameLowercase === "div") {
-            const temp = target.children.namedItem("edit-icon");
-            if (!temp) {
-                // Clicked on a div, but it doesn't have a
-                // child element with the id 'edit-icon', so ignore
-                return;
-            }
-            editIcon = temp;
-        } else if (targetNodeNameLowercase === "svg") {
-            if (target.id !== "edit-icon") {
-                // Clicked on an svg, but not the edit icon svg, so ignore
-                return;
-            }
-            editIcon = target;
-        } else {
-            // Didn't click on an svg/div, so ignore
+        if (targetNodeNameLowercase !== "svg") {
+            // Didn't click on an svg, so ignore
             return;
         }
+
+        if (target.id !== "edit-icon") {
+            // Clicked on an svg, but not the edit icon svg, so ignore
+            return;
+        }
+
+        editIcon = target;
         const editIconContainer = editIcon.parentElement;
         if (!editIconContainer || !editIconContainer.id.endsWith("edit-container")) {
             // Doesn't have a edit-container parent, so ignore
