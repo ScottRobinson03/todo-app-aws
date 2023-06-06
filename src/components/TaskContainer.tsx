@@ -371,7 +371,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                             flexDirection: "column",
                                             padding: "15px 0",
                                             textAlign: "center",
-                                            width: "50%",
+                                            width: "100%",
                                             zIndex: 1,
                                         }}
                                     >
