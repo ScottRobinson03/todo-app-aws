@@ -2,7 +2,6 @@ import { GraphQLResult } from "@aws-amplify/api-graphql/lib-esm/types/";
 import { API, graphqlOperation } from "aws-amplify";
 import { AccountTask, Task as GraphQLTask } from "../API";
 import { GraphQLOperations } from "../types/graphql";
-import { sortFn } from "./customSort";
 
 export function ensureExactKeys<T extends object>(
     obj: T,
@@ -99,67 +98,6 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
 
 export function getUTCTime() {
     return new Date().valueOf(); //.toISOString().slice(0, -5).replace("T", " ");
-}
-
-// TODO: Remove if is unused within project. Make sure to also remove the custom sort function logic.
-export function isDeeplyEqual(a: any, b: any) {
-    if (typeof a !== typeof b) return false;
-    if (typeof a !== "object") return a === b; // neither values are typeof "object", so return equality
-
-    // We now know that both items are `typeof "object"`, however may still be differing (e.g. Date and Array)
-
-    const aIsNull = a === null;
-    const bIsNull = b === null;
-    if ((aIsNull || bIsNull) && !(aIsNull && bIsNull)) return false; // only one is null, so not equal
-    if (aIsNull) return true; // both null, so equal
-
-    // Check if both are date
-    const aIsDate = a instanceof Date;
-    const bIsDate = b instanceof Date;
-    if ((aIsDate || bIsDate) && !(aIsDate && bIsDate)) return false; // only one is a date, so not equal
-    if (aIsDate) return a.valueOf() === b.valueOf();
-
-    // Check if both are array
-    const aIsArray = Array.isArray(a);
-    const bIsArray = Array.isArray(b);
-    if ((aIsArray || bIsArray) && !(aIsArray && bIsArray)) return false; // only one is an array, so not equal
-    if (aIsArray && bIsArray) {
-        if (a.length !== b.length) return false; // have different lengths, so not equal
-
-        const aCopy = a.slice();
-        aCopy.sort(sortFn);
-
-        const bCopy = b.slice();
-        bCopy.sort(sortFn);
-
-        for (let i = 0; i < aCopy.length; i++) {
-            const itemA = aCopy[i];
-            const itemB = bCopy[i];
-
-            if (!isDeeplyEqual(itemA, itemB)) return false; // two subitems aren't equal, so not equal
-        }
-        return true;
-    }
-
-    // Both are objects (the `{key: value}` kind)
-    const keysOfA = Object.keys(a);
-    let keysOfB = Object.keys(b);
-    if (keysOfA.length !== keysOfB.length) return false; // have different amount of keys, so not equal
-
-    for (const keyOfA of keysOfA) {
-        const indexOfKeyInB = keysOfB.indexOf(keyOfA);
-        if (indexOfKeyInB === -1) return false; // key isn't in both objects, so not equal
-
-        // We now know that the key is in both objects
-
-        keysOfB.splice(indexOfKeyInB, 1);
-
-        const valueOfA = a[keyOfA];
-        const valueOfB = b[keyOfA];
-        if (!isDeeplyEqual(valueOfA, valueOfB)) return false; // two sub-objects aren't same, so not equal
-    }
-    if (keysOfB.length) return false; // there are key(s) in second object that aren't in the first, so not equal
-    return true;
 }
 
 export const isKeyOf = <K extends string | number | symbol, Obj extends object>(
