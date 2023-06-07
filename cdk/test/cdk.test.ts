@@ -186,6 +186,16 @@ describe("AWS Todo Stack", () => {
         const { reminderStack } = mainStack;
         const reminderTemplate = Template.fromStack(reminderStack);
 
+        describe("EventBridge Scheduler", () => {
+            const matching = reminderTemplate.findResources("AWS::Scheduler::ScheduleGroup", {
+                Properties: { Name: "ReminderScheduleGroup" },
+            });
+            const keys = Object.keys(matching);
+            test("Exists", () => {
+                expect(keys).toHaveLength(1);
+            });
+        });
+
         describe("SQS", () => {
             const queues = [
                 {
@@ -358,6 +368,10 @@ describe("AWS Todo Stack", () => {
                     Value: /ReminderTopic[0-9A-Z]{8}/,
                 },
                 {
+                    Name: "scheduleGroupName",
+                    Value: "ReminderScheduleGroup",
+                },
+                {
                     Name: "schedulerDlQueueArn",
                     Value: /ReminderSchedulerDLQueue[0-9A-Z]{8}/,
                 },
@@ -388,6 +402,8 @@ describe("AWS Todo Stack", () => {
                             actualValue = matchedOutput.Value["Fn::GetAtt"][0];
                         } else if (keys[0] === "Ref") {
                             actualValue = matchedOutput.Value["Ref"];
+                        } else {
+                            actualValue = matchedOutput.Value;
                         }
                         expect(actualValue).toMatch(output.Value);
                     });

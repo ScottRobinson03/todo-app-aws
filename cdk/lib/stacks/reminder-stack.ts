@@ -100,7 +100,7 @@ export class ReminderCdkStack extends NestedStack {
         createCfnOutputs(this, {
             reminderQueueArn: reminderQueue.queueArn,
             reminderTopicArn: reminderTopic.topicArn,
-            scheduleGroupArn: eventBridgeScheduleGroup.attrArn,
+            scheduleGroupName: eventBridgeScheduleGroup.name!,
             schedulerDlQueueArn: schedulerDlQueue.queueArn,
             schedulerTargetRoleArn: role.roleArn,
             snsDlQueueArn: snsDlQueue.queueArn,
