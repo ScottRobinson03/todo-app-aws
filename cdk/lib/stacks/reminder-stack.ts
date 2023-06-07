@@ -8,17 +8,11 @@ import * as sqs from "aws-cdk-lib/aws-sqs";
 import { Construct } from "constructs";
 import * as path from "node:path";
 import { createCfnOutputs } from "../utils";
+import { CfnScheduleGroup } from "aws-cdk-lib/aws-scheduler";
 
 export class ReminderCdkStack extends NestedStack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
-
-        // cognito (user pool, user pool group)
-        // api gateway -> lambda -> scheduler
-        // scheduler
-        // sqs
-        // lambda(?)
-        // sns
 
         // DeadLetter queue for scheduler -> sqs
         const schedulerDlQueue = new sqs.Queue(this, "ReminderSchedulerDLQueue", {
@@ -71,6 +65,10 @@ export class ReminderCdkStack extends NestedStack {
             topicName: "ReminderTopic",
         });
 
+        const eventBridgeScheduleGroup = new CfnScheduleGroup(this, "ReminderScheduleGroup", {
+            name: "ReminderScheduleGroup",
+        });
+
         // Dead Letter queue for any SNS -> Subscription
         const snsDlQueue = new sqs.Queue(this, "ReminderSnsDLQueue", {
             queueName: "ReminderSnsDLQueue",
@@ -85,9 +83,15 @@ export class ReminderCdkStack extends NestedStack {
             runtime: Runtime.NODEJS_16_X,
         });
         messengerLambda.addEventSource(new SqsEventSource(reminderQueue));
+
         messengerLambda.addToRolePolicy(
             new iam.PolicyStatement({
-                resources: [this.stackId],
+                resources: [
+                    this.nestedStackParent!.stackId,
+                    `${this.nestedStackParent!.stackId}/*`,
+                    this.stackId,
+                    `${this.stackId}/*`,
+                ],
                 actions: ["cloudformation:DescribeStacks"],
             })
         );
@@ -96,102 +100,10 @@ export class ReminderCdkStack extends NestedStack {
         createCfnOutputs(this, {
             reminderQueueArn: reminderQueue.queueArn,
             reminderTopicArn: reminderTopic.topicArn,
+            scheduleGroupArn: eventBridgeScheduleGroup.attrArn,
             schedulerDlQueueArn: schedulerDlQueue.queueArn,
             schedulerTargetRoleArn: role.roleArn,
             snsDlQueueArn: snsDlQueue.queueArn,
         });
-
-        /*
-            "amplify init"
-            "amplify add api"
-            | - graphql or rest: rest
-            | - which template:  serverless express (or CRUD dynamodb)
-            | - name of lambda
-            | - edit code now
-            ...
-            // CANNOT USE AMPLIFY IN SAME WAY FOR CDK
-            // HAVE TO USE APIGATEWAY AND COGNITO DIRECTLY
-        */
-
-        /*
-            USING CDK:
-
-            Create all of the api gateways with their lambdas
-
-                const helloLambdaFunction = new NodejsFunction(this, 'helloLambda');
-                const happyLambdaFunction = new NodejsFunction(this, 'happyLambda');
-
-                const api = new apigateway.RestApi(this, 'hello-api', {
-                description: 'This service is Happy.',
-                });
-
-                const helloLambdaPath = api.root.addResource('helloLambda'); 
-                // path name https://{createdId}.execute-api.{region}.amazonaws.com/prod/helloLambda
-
-                helloLambdaPath.addMethod('GET', new apigateway.LambdaIntegration(helloLambdaFunction));
-
-                const happyLambdaPath = api.root.addResource('happyLambda'); 
-                // path name https://{createdId}.execute-api.{region}.amazonaws.com/prod/happyLambda
-
-                happyLambdaPath.addMethod('GET', new apigateway.LambdaIntegration(happyLambdaFunction));
-
-            create reminderSqsQueue
-            create sqsDocument Policy to be assumed by scheduler
-            create snsTopic
-
-            create relevant CloudFormation (cfn) outputs
-            - reminderSqsQueue
-            - reminderSnsTopic
-            - schedulerToSQSReminderQueueRole
-            - schedulerDlQueue
-            - API Gateway URL
-
-            
-
-
-            USING SDK:
-
-            on account creation:
-                |- subscribe account to snsTopic (get topic arn from cloudformation output)
-                    |- apply a Subscription Filter Policy to the MessageAttributes 
-                        so that only get notifs where account in `send_to` attribute
-
-            on receive reminder:
-            | - ensure a scheduleGroup for the reminder's task exists (can maybe try assuming role on group(?))
-            | - create a scheduler 
-                | 
-                | - set groupName, scheduleExpression, scheduleExpressionTimezone, flexTimeWindow ({mode: "OFF"})
-                | - set target
-                    | - arn points to the reminderSqsQueue (get queue arn from cloudformation stack output)
-                    | - assume the role which gives SendMessage perms to reminderSqsQueue (get role arn from cloudformation stack output)
-                    | - input (the stringified reminder json)
-                    | - deadLetterConfig = schedulerDlQueueARN (get arn from cloudformation stack output)
-                    | - retry policy
-        */
-
-        // THIS NEEDS TO BE CHANGED TO SDK SINCE NEEDS TO BE DYNAMIC
-        // const reminderScheduleGroup = new scheduler.CfnScheduleGroup(this, "task-13-reminders", {name: "task-13-reminders"});
-        // const reminderSchedule = new scheduler.CfnSchedule(
-        //     this,
-        //     "reminder-23",
-        //     {
-        //         groupName: reminderScheduleGroup.name,
-        //         scheduleExpression: "at(2023-04-14T07:36:21)", // env variable(?)
-        //         scheduleExpressionTimezone: "UTC",
-        //         flexibleTimeWindow: {mode: "OFF"},
-        //         target: {
-        //             arn : reminderQueue.queueArn,
-        //             deadLetterConfig: {
-        //                 arn: schedulerDlQueue.queueArn,
-        //             },
-        //             input: JSON.stringify({reminder_id: 23, task_id: 13, content: "Don't forget about task #13!"}),
-
-        //             roleArn : role.roleArn,
-        //             retryPolicy : {
-        //                 maximumEventAgeInSeconds: ...,
-        //                 maximumRetryAttempts: ...
-        //             }
-        //         }
-        //     })
     }
 }

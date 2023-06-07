@@ -26,7 +26,7 @@ export async function handler(event: SQSEvent, context: Context) {
 
         // Convert the reminder data to a message that can be published to SNS
         messages.push({
-            Id: body.reminder_id.toString(),
+            Id: body.reminder_id,
             Message: body.content,
             MessageAttributes: {
                 due_at: {
@@ -34,8 +34,8 @@ export async function handler(event: SQSEvent, context: Context) {
                     StringValue: body.due_at,
                 },
                 task_id: {
-                    DataType: "Number",
-                    StringValue: body.task_id.toString(),
+                    DataType: "String",
+                    StringValue: body.task_id,
                 },
                 send_to: {
                     DataType: "String.Array",
@@ -44,10 +44,13 @@ export async function handler(event: SQSEvent, context: Context) {
             },
         });
     }
+
     console.log(JSON.stringify(messages));
+
+    const reminderStackArn = await getCfnOutput("TodoCDKStack", "reminderStack");
     const result = await snsClient.send(
         new PublishBatchCommand({
-            TopicArn: await getCfnOutput("ReminderCDKStack", "reminderTopicArn"),
+            TopicArn: await getCfnOutput(reminderStackArn.split("/")[1], "reminderTopicArn"),
             PublishBatchRequestEntries: messages,
         })
     );
