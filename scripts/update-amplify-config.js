@@ -24,5 +24,5 @@ async function main() {
 }
 
 main()
-    .then(console.log("Finished updating Amplify team-provider-info config"))
+    .then(() => console.log("Finished updating Amplify team-provider-info config"))
     .catch(console.error);
