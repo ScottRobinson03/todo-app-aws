@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "paths": {
+    "/stackoutputs/{stackName}": {
+      "name": "/stackoutputs/{stackName}",
+      "lambdaFunction": "todoappgetstackoutputs",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/reminder/{reminderId}": {
+      "name": "/reminder/{reminderId}",
+      "lambdaFunction": "todoappreminderschedules",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    },
+    "/reminders": {
+      "name": "/reminders",
+      "lambdaFunction": "todoappreminderschedules",
+      "permissions": {
+        "setting": "private",
+        "auth": [
+          "create",
+          "read",
+          "update",
+          "delete"
+        ]
+      }
+    }
+  }
+}

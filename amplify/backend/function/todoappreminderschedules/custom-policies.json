@@ -1,0 +1,14 @@
+[
+    {
+        "Action": [
+            "cloudformation:DescribeStacks",
+            "scheduler:GetSchedule",
+            "scheduler:UpdateSchedule",
+            "scheduler:CreateSchedule",
+            "scheduler:ListSchedules",
+            "scheduler:ListScheduleGroups",
+            "scheduler:DeleteSchedule"
+        ],
+        "Resource": ["*"]
+    }
+]
