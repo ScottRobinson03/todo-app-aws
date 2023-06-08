@@ -1,5 +1,6 @@
 import { Duration, RemovalPolicy, Stack, StackProps } from "aws-cdk-lib";
 import * as cognito from "aws-cdk-lib/aws-cognito";
+import * as iam from "aws-cdk-lib/aws-iam";
 import { Construct } from "constructs";
 import { ReminderCdkStack } from "./reminder-stack";
 import { createCfnOutputs } from "../utils";
@@ -80,8 +81,80 @@ export class TodoCDKStack extends Stack {
             },
         });
 
-        const userPoolClient = userPool.addClient("web-app-client", {
-            userPoolClientName: "web-app-client",
+        const webClient = new cognito.UserPoolClient(this, "todoapp-web-client", {
+            userPool: userPool,
+            userPoolClientName: "todoapp-web-client",
+        });
+
+        const identityPool = new cognito.CfnIdentityPool(this, "todoapp-identity-pool", {
+            allowUnauthenticatedIdentities: true,
+            cognitoIdentityProviders: [
+                {
+                    clientId: webClient.userPoolClientId,
+                    providerName: userPool.userPoolProviderName,
+                },
+            ],
+            identityPoolName: "todoapp-identity-pool",
+        });
+
+        // Setup unauthenticated role
+        const unauthenticatedRole = new iam.Role(this, "TodoAppUnauthenticatedRole", {
+            assumedBy: new iam.FederatedPrincipal(
+                "cognito-identity.amazonaws.com",
+                {
+                    StringEquals: { "cognito-identity.amazonaws.com:aud": identityPool.ref },
+                    "ForAnyValue:StringLike": {
+                        "cognito-identity.amazonaws.com:amr": "unauthenticated",
+                    },
+                },
+                "sts:AssumeRoleWithWebIdentity"
+            ),
+            roleName: "TodoAppUnauthenticatedRole",
+        });
+        unauthenticatedRole.addToPolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: ["mobileanalytics:PutEvents", "cognito-sync:*"],
+                resources: ["*"],
+            })
+        );
+        unauthenticatedRole.addToPolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: ["cloudformation:DescribeStacks"],
+                resources: [this.stackId, `${this.stackId}/*`],
+            })
+        );
+
+        // Setup authenticated role
+        const authenticatedRole = new iam.Role(this, "TodoAppAuthenticatedRole", {
+            assumedBy: new iam.FederatedPrincipal(
+                "cognito-identity.amazonaws.com",
+                {
+                    StringEquals: { "cognito-identity.amazonaws.com:aud": identityPool.ref },
+                    "ForAnyValue:StringLike": {
+                        "cognito-identity.amazonaws.com:amr": "authenticated",
+                    },
+                },
+                "sts:AssumeRoleWithWebIdentity"
+            ),
+            roleName: "TodoAppAuthenticatedRole",
+        });
+        authenticatedRole.addToPolicy(
+            new iam.PolicyStatement({
+                effect: iam.Effect.ALLOW,
+                actions: ["mobileanalytics:PutEvents", "cognito-sync:*", "cognito-identity:*"],
+                resources: ["*"],
+            })
+        );
+
+        // Add authenticated and unauthenticated roles to identity pool
+        new cognito.CfnIdentityPoolRoleAttachment(this, "DefaultValid", {
+            identityPoolId: identityPool.ref,
+            roles: {
+                unauthenticated: unauthenticatedRole.roleArn,
+                authenticated: authenticatedRole.roleArn,
+            },
         });
 
         const userPoolAdminGroup = new cognito.CfnUserPoolGroup(this, "TodoAppAdminGroup", {
@@ -93,11 +166,18 @@ export class TodoCDKStack extends Stack {
 
         createCfnOutputs(this, {
             adminGroup: userPoolAdminGroup.groupName!,
+            authRoleArn: authenticatedRole.roleArn,
+            authRoleId: authenticatedRole.roleId,
+            identityPoolId: identityPool.ref,
+            identityPoolName: identityPool.identityPoolName!,
+            nativeClientId: webClient.userPoolClientId, // web client is also the native client id
             reminderStack: this.reminderStack.stackId,
+            unathRoleArn: unauthenticatedRole.roleArn,
+            unauthRoleId: unauthenticatedRole.roleId,
             userPoolArn: userPool.userPoolArn,
             userPoolId: userPool.userPoolId,
             userPoolName,
-            userPoolClientId: userPoolClient.userPoolClientId,
+            webClientId: webClient.userPoolClientId,
         });
     }
 }

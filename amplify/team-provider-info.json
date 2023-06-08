@@ -1,27 +1,46 @@
 {
   "dev": {
     "awscloudformation": {
-      "AuthRoleName": "amplify-todoapp-dev-104548-authRole",
-      "UnauthRoleArn": "arn:aws:iam::931458218875:role/amplify-todoapp-dev-104548-unauthRole",
-      "AuthRoleArn": "arn:aws:iam::931458218875:role/amplify-todoapp-dev-104548-authRole",
+      "AuthRoleName": "amplify-todoapp-dev-134741-authRole",
+      "UnauthRoleArn": "arn:aws:iam::931458218875:role/amplify-todoapp-dev-134741-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::931458218875:role/amplify-todoapp-dev-134741-authRole",
       "Region": "eu-west-2",
-      "DeploymentBucketName": "amplify-todoapp-dev-104548-deployment",
-      "UnauthRoleName": "amplify-todoapp-dev-104548-unauthRole",
-      "StackName": "amplify-todoapp-dev-104548",
-      "StackId": "arn:aws:cloudformation:eu-west-2:931458218875:stack/amplify-todoapp-dev-104548/c21cb8e0-0385-11ee-85f1-024ba578fcc0",
-      "AmplifyAppId": "d1vch0wb7zt0ay"
+      "DeploymentBucketName": "amplify-todoapp-dev-134741-deployment",
+      "UnauthRoleName": "amplify-todoapp-dev-134741-unauthRole",
+      "StackName": "amplify-todoapp-dev-134741",
+      "StackId": "arn:aws:cloudformation:eu-west-2:931458218875:stack/amplify-todoapp-dev-134741/a8d15cc0-05fa-11ee-b992-02636e454170",
+      "AmplifyAppId": "d2z7x00z6bslpb",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-todoapp-dev-134741-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
     },
     "categories": {
       "auth": {
-        "todoapp46bca424": {
-          "userPoolId": "eu-west-2_672OW74tl",
+        "todoapp1bc8785b": {
+          "userPoolId": "eu-west-2_J1ynFIiTH",
           "userPoolName": "TodoAppUserPool",
-          "webClientId": "5pue31o6b3um1u4fdqa4b5l1jq",
-          "nativeClientId": "5pue31o6b3um1u4fdqa4b5l1jq"
+          "webClientId": "2mo4hmoi10kvacf5j676ad4d42",
+          "nativeClientId": "2mo4hmoi10kvacf5j676ad4d42",
+          "identityPoolId": "eu-west-2:ec5333cb-fd5b-4787-8fa7-92d45313dec7",
+          "identityPoolName": "todoapp-identity-pool",
+          "allowUnauthenticatedIdentities": true,
+          "authRoleArn": "arn:aws:iam::931458218875:role/TodoAppAuthenticatedRole",
+          "authRoleName": "TodoAppAuthenticatedRole",
+          "unauthRoleArn": "arn:aws:iam::931458218875:role/TodoAppUnauthenticatedRole",
+          "unauthRoleName": "TodoAppUnauthenticatedRole"
         }
       },
       "api": {
-        "todoapp": {}
+        "todoapp": {},
+        "todoapprestapi": {}
+      },
+      "function": {
+        "todoappgetstackoutputs": {
+          "deploymentBucketName": "amplify-todoapp-dev-134741-deployment",
+          "s3Key": "amplify-builds/todoappgetstackoutputs-4952324132432f6f4371-build.zip"
+        },
+        "todoappreminderschedules": {
+          "deploymentBucketName": "amplify-todoapp-dev-134741-deployment",
+          "s3Key": "amplify-builds/todoappreminderschedules-64493374625557704e31-build.zip"
+        }
       }
     }
   }

@@ -83,4 +83,4 @@ type Task
     reminders: [Reminder!]! @hasMany(fields: ["id"]) #(fields: ["reminder_ids"])
     subtasks: [Subtask!]!
     title: String!
-}
+} 

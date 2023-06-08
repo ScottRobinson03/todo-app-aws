@@ -7,7 +7,7 @@
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "todoapp46bca424"
+          "resourceName": "todoapp1bc8785b"
         }
       ],
       "output": {
@@ -16,17 +16,39 @@
           "defaultAuthentication": {
             "authenticationType": "AMAZON_COGNITO_USER_POOLS",
             "userPoolConfig": {
-              "userPoolId": "authtodoapp46bca424"
+              "userPoolId": "authtodoapp1bc8785b"
             }
           }
         }
       },
       "providerPlugin": "awscloudformation",
       "service": "AppSync"
+    },
+    "todoapprestapi": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "todoappgetstackoutputs"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "todoappreminderschedules"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
     }
   },
   "auth": {
-    "todoapp46bca424": {
+    "todoapp1bc8785b": {
       "customAuth": false,
       "dependsOn": [],
       "providerPlugin": "awscloudformation",
@@ -34,36 +56,137 @@
       "serviceType": "imported"
     }
   },
+  "function": {
+    "todoappgetstackoutputs": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "todoappreminderschedules": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
   "parameters": {
-    "AMPLIFY_auth_todoapp46bca424_nativeClientId": {
+    "AMPLIFY_auth_todoapp1bc8785b_allowUnauthenticatedIdentities": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp46bca424"
+          "resourceName": "todoapp1bc8785b"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp46bca424_userPoolId": {
+    "AMPLIFY_auth_todoapp1bc8785b_authRoleArn": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp46bca424"
+          "resourceName": "todoapp1bc8785b"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp46bca424_userPoolName": {
+    "AMPLIFY_auth_todoapp1bc8785b_authRoleName": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp46bca424"
+          "resourceName": "todoapp1bc8785b"
         }
       ]
     },
-    "AMPLIFY_auth_todoapp46bca424_webClientId": {
+    "AMPLIFY_auth_todoapp1bc8785b_identityPoolId": {
       "usedBy": [
         {
           "category": "auth",
-          "resourceName": "todoapp46bca424"
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_identityPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_nativeClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_unauthRoleArn": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_unauthRoleName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_userPoolId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_userPoolName": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_auth_todoapp1bc8785b_webClientId": {
+      "usedBy": [
+        {
+          "category": "auth",
+          "resourceName": "todoapp1bc8785b"
+        }
+      ]
+    },
+    "AMPLIFY_function_todoappgetstackoutputs_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "todoappgetstackoutputs"
+        }
+      ]
+    },
+    "AMPLIFY_function_todoappgetstackoutputs_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "todoappgetstackoutputs"
+        }
+      ]
+    },
+    "AMPLIFY_function_todoappreminderschedules_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "todoappreminderschedules"
+        }
+      ]
+    },
+    "AMPLIFY_function_todoappreminderschedules_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "todoappreminderschedules"
         }
       ]
     }

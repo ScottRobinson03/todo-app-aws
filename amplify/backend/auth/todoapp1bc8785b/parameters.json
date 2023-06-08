@@ -1,6 +1,6 @@
 {
-  "authSelections": "userPoolOnly",
-  "resourceName": "todoapp46bca424",
+  "authSelections": "identityPoolAndUserPool",
+  "resourceName": "todoapp1bc8785b",
   "serviceType": "imported",
   "region": "eu-west-2",
   "aliasAttributes": [
