@@ -10,7 +10,8 @@
       "StackName": "amplify-todoapp-dev-134741",
       "StackId": "arn:aws:cloudformation:eu-west-2:931458218875:stack/amplify-todoapp-dev-134741/a8d15cc0-05fa-11ee-b992-02636e454170",
       "AmplifyAppId": "d2z7x00z6bslpb",
-      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-todoapp-dev-134741-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-todoapp-dev-134741-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json",
+      "UnauthroleName": "TodoAppUnauthenticatedRole"
     },
     "categories": {
       "auth": {

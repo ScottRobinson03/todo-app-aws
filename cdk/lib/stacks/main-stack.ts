@@ -86,8 +86,9 @@ export class TodoCDKStack extends Stack {
             userPoolClientName: "todoapp-web-client",
         });
 
+        const allowUnauthenticatedIdentities = true;
         const identityPool = new cognito.CfnIdentityPool(this, "todoapp-identity-pool", {
-            allowUnauthenticatedIdentities: true,
+            allowUnauthenticatedIdentities,
             cognitoIdentityProviders: [
                 {
                     clientId: webClient.userPoolClientId,
@@ -166,14 +167,15 @@ export class TodoCDKStack extends Stack {
 
         createCfnOutputs(this, {
             adminGroup: userPoolAdminGroup.groupName!,
+            allowUnauthenticatedIdentities: allowUnauthenticatedIdentities ? "true" : "false",
             authRoleArn: authenticatedRole.roleArn,
-            authRoleId: authenticatedRole.roleId,
+            authRoleName: authenticatedRole.roleName,
             identityPoolId: identityPool.ref,
             identityPoolName: identityPool.identityPoolName!,
             nativeClientId: webClient.userPoolClientId, // web client is also the native client id
             reminderStack: this.reminderStack.stackId,
-            unathRoleArn: unauthenticatedRole.roleArn,
-            unauthRoleId: unauthenticatedRole.roleId,
+            unauthRoleArn: unauthenticatedRole.roleArn,
+            unauthRoleName: unauthenticatedRole.roleName,
             userPoolArn: userPool.userPoolArn,
             userPoolId: userPool.userPoolId,
             userPoolName,
