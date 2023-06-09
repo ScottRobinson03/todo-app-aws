@@ -14,8 +14,15 @@ import { SortableItem } from "./SortableItem";
 import { ActiveTaskState, TaskViewProps } from "../types";
 
 export default function TaskView(props: TaskViewProps) {
-    const { accountTasks, setAccountTasks, userTasks, setUserTasks, deleteTask, updateTask } =
-        props;
+    const {
+        accountSignedIn,
+        accountTasks,
+        setAccountTasks,
+        userTasks,
+        setUserTasks,
+        deleteTask,
+        updateTask,
+    } = props;
     const [changedPos, setChangedPos] = useState<boolean>(false);
     const [activeTask, setActiveTask] = useState<ActiveTaskState>(null);
 
@@ -57,6 +64,7 @@ export default function TaskView(props: TaskViewProps) {
                             <SortableItem
                                 key={`${accountTask.task_id}-sortable-item`}
                                 {...{
+                                    accountSignedIn,
                                     accountTask,
                                     accountTasks,
                                     setAccountTasks,

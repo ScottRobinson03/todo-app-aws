@@ -12,17 +12,15 @@ See the License for the specific language governing permissions and limitations 
 Amplify Params - DO NOT EDIT */
 
 import cors from "cors";
-import pkg from "body-parser";
 import express from "express";
 import { eventContext } from "aws-serverless-express/middleware.js";
 import { CloudFormationClient, DescribeStacksCommand } from "@aws-sdk/client-cloudformation";
 
 // declare a new express app
-const { json } = pkg;
 const app = express();
 app.use(cors());
 app.use(eventContext());
-app.use(json());
+app.use(express.json());
 
 const cloudFormationClient = new CloudFormationClient({});
 

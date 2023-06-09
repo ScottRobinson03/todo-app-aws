@@ -186,6 +186,15 @@
                 "*"
               ],
               "Effect": "Allow"
+            },
+            {
+              "Action": [
+                "iam:PassRole"
+              ],
+              "Resource": [
+                "arn:aws:iam::931458218875:role/SchedulerToSqsReminderQueueRole"
+              ],
+              "Effect": "Allow"
             }
           ]
         },

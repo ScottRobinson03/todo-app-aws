@@ -48,6 +48,7 @@ interface AppProps {
 }
 
 export default function App(props: AppProps) {
+    // TODO: Subscribe account to the Reminder SNS Topic
     const { signOut, user } = props;
 
     const [isLoading, setIsLoading] = useState<Boolean>(true);
@@ -250,7 +251,7 @@ export default function App(props: AppProps) {
 
         const createTaskMutationVariables: CreateTaskMutationVariables = {
             input: {
-                taskCreated_bySub: account.sub,
+                taskCreated_byId: account.sub,
                 id: taskId,
                 // FIXME: Figure out why we can't specify reminder ids. Likely setup relations in gql schema wrong
                 // reminders: [],
@@ -456,6 +457,7 @@ export default function App(props: AppProps) {
                 Add Task
             </Button>
             <TaskView
+                accountSignedIn={account}
                 accountTasks={tasksOfAccount}
                 setAccountTasks={setTasksOfAccount}
                 userTasks={tasks}

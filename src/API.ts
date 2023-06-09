@@ -118,7 +118,7 @@ export type CreateReminderInput = {
   due_at: number,
   id?: string | null,
   task_id: string,
-  reminderCreated_bySub?: string | null,
+  reminderCreated_byId?: string | null,
 };
 
 export type ModelReminderConditionInput = {
@@ -127,7 +127,7 @@ export type ModelReminderConditionInput = {
   and?: Array< ModelReminderConditionInput | null > | null,
   or?: Array< ModelReminderConditionInput | null > | null,
   not?: ModelReminderConditionInput | null,
-  reminderCreated_bySub?: ModelIDInput | null,
+  reminderCreated_byId?: ModelIDInput | null,
 };
 
 export type ModelIDInput = {
@@ -156,6 +156,7 @@ export type Reminder = {
   task_id: string,
   createdAt: string,
   updatedAt: string,
+  reminderCreated_byId?: string | null,
   reminderCreated_bySub?: string | null,
 };
 
@@ -170,7 +171,7 @@ export type UpdateReminderInput = {
   due_at?: number | null,
   id: string,
   task_id: string,
-  reminderCreated_bySub?: string | null,
+  reminderCreated_byId?: string | null,
 };
 
 export type DeleteReminderInput = {
@@ -184,7 +185,7 @@ export type CreateTaskInput = {
   id?: string | null,
   subtasks: Array< SubtaskInput >,
   title: string,
-  taskCreated_bySub: string,
+  taskCreated_byId: string,
 };
 
 export type SubtaskInput = {
@@ -204,7 +205,7 @@ export type ModelTaskConditionInput = {
   and?: Array< ModelTaskConditionInput | null > | null,
   or?: Array< ModelTaskConditionInput | null > | null,
   not?: ModelTaskConditionInput | null,
-  taskCreated_bySub?: ModelIDInput | null,
+  taskCreated_byId?: ModelIDInput | null,
 };
 
 export type Task = {
@@ -218,7 +219,8 @@ export type Task = {
   title: string,
   createdAt: string,
   updatedAt: string,
-  taskCreated_bySub: string,
+  taskCreated_byId: string,
+  taskCreated_bySub?: string | null,
 };
 
 export type ModelReminderConnection = {
@@ -244,7 +246,7 @@ export type UpdateTaskInput = {
   id: string,
   subtasks?: Array< SubtaskInput > | null,
   title?: string | null,
-  taskCreated_bySub?: string | null,
+  taskCreated_byId?: string | null,
 };
 
 export type DeleteTaskInput = {
@@ -286,7 +288,7 @@ export type ModelReminderFilterInput = {
   and?: Array< ModelReminderFilterInput | null > | null,
   or?: Array< ModelReminderFilterInput | null > | null,
   not?: ModelReminderFilterInput | null,
-  reminderCreated_bySub?: ModelIDInput | null,
+  reminderCreated_byId?: ModelIDInput | null,
 };
 
 export type ModelTaskFilterInput = {
@@ -297,7 +299,7 @@ export type ModelTaskFilterInput = {
   and?: Array< ModelTaskFilterInput | null > | null,
   or?: Array< ModelTaskFilterInput | null > | null,
   not?: ModelTaskFilterInput | null,
-  taskCreated_bySub?: ModelIDInput | null,
+  taskCreated_byId?: ModelIDInput | null,
 };
 
 export type ModelTaskConnection = {
@@ -502,6 +504,7 @@ export type CreateReminderMutation = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -558,6 +561,7 @@ export type UpdateReminderMutation = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -614,6 +618,7 @@ export type DeleteReminderMutation = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -694,6 +699,7 @@ export type CreateTaskMutation = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -711,7 +717,8 @@ export type CreateTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -791,6 +798,7 @@ export type UpdateTaskMutation = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -808,7 +816,8 @@ export type UpdateTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -888,6 +897,7 @@ export type DeleteTaskMutation = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -905,7 +915,8 @@ export type DeleteTaskMutation = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -1017,6 +1028,7 @@ export type GetReminderQuery = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -1079,6 +1091,7 @@ export type ListRemindersQuery = {
       task_id: string,
       createdAt: string,
       updatedAt: string,
+      reminderCreated_byId?: string | null,
       reminderCreated_bySub?: string | null,
     } | null >,
     nextToken?: string | null,
@@ -1160,6 +1173,7 @@ export type GetTaskQuery = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -1177,7 +1191,8 @@ export type GetTaskQuery = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -1260,6 +1275,7 @@ export type ListTasksQuery = {
           task_id: string,
           createdAt: string,
           updatedAt: string,
+          reminderCreated_byId?: string | null,
           reminderCreated_bySub?: string | null,
         } | null >,
         nextToken?: string | null,
@@ -1277,7 +1293,8 @@ export type ListTasksQuery = {
       title: string,
       createdAt: string,
       updatedAt: string,
-      taskCreated_bySub: string,
+      taskCreated_byId: string,
+      taskCreated_bySub?: string | null,
     } | null >,
     nextToken?: string | null,
   } | null,
@@ -1410,6 +1427,7 @@ export type OnCreateReminderSubscription = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -1466,6 +1484,7 @@ export type OnUpdateReminderSubscription = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -1522,6 +1541,7 @@ export type OnDeleteReminderSubscription = {
     task_id: string,
     createdAt: string,
     updatedAt: string,
+    reminderCreated_byId?: string | null,
     reminderCreated_bySub?: string | null,
   } | null,
 };
@@ -1602,6 +1622,7 @@ export type OnCreateTaskSubscription = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -1619,7 +1640,8 @@ export type OnCreateTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -1699,6 +1721,7 @@ export type OnUpdateTaskSubscription = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -1716,7 +1739,8 @@ export type OnUpdateTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };
 
@@ -1796,6 +1820,7 @@ export type OnDeleteTaskSubscription = {
         task_id: string,
         createdAt: string,
         updatedAt: string,
+        reminderCreated_byId?: string | null,
         reminderCreated_bySub?: string | null,
       } | null >,
       nextToken?: string | null,
@@ -1813,6 +1838,7 @@ export type OnDeleteTaskSubscription = {
     title: string,
     createdAt: string,
     updatedAt: string,
-    taskCreated_bySub: string,
+    taskCreated_byId: string,
+    taskCreated_bySub?: string | null,
   } | null,
 };

@@ -97,6 +97,7 @@ export const getReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -158,6 +159,7 @@ export const listReminders = /* GraphQL */ `
         task_id
         createdAt
         updatedAt
+        reminderCreated_byId
         reminderCreated_bySub
       }
       nextToken
@@ -226,6 +228,7 @@ export const getTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -242,6 +245,7 @@ export const getTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }
@@ -313,6 +317,7 @@ export const listTasks = /* GraphQL */ `
             task_id
             createdAt
             updatedAt
+            reminderCreated_byId
             reminderCreated_bySub
           }
           nextToken
@@ -329,6 +334,7 @@ export const listTasks = /* GraphQL */ `
         title
         createdAt
         updatedAt
+        taskCreated_byId
         taskCreated_bySub
       }
       nextToken

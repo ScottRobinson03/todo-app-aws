@@ -12,9 +12,18 @@ import {
 } from "../API";
 import { UpdateAccountOptions } from "./graphql";
 
+export interface ReminderPayload {
+    reminder_id: string;
+    task_id: string;
+    content: string;
+    due_at: string;
+    send_to: string[];
+}
+
 export type ActiveTaskState = string | null;
 
 export interface SortableItemProps {
+    accountSignedIn: GraphQLAccount;
     accountTask: AccountTask;
     accountTasks: AccountTask[];
     userTask: Omit<GraphQLTask, "__typename">;
@@ -38,6 +47,7 @@ export interface SortableItemProps {
 }
 
 export interface TaskContainerProps {
+    accountSignedIn: GraphQLAccount;
     activeTask: ActiveTaskState;
     userTask: Omit<GraphQLTask, "__typename"> | Omit<GraphQLSubtask, "__typename">;
     subtasks?: GraphQLSubtask[];
@@ -71,6 +81,7 @@ export interface TaskContainerProps {
 }
 
 export interface TaskViewProps {
+    accountSignedIn: GraphQLAccount;
     accountTasks: AccountTask[];
     setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
     userTasks: Omit<GraphQLTask, "__typename">[];

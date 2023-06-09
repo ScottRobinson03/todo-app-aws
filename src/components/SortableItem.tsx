@@ -21,6 +21,7 @@ export function SortableItem(props: SortableItemProps) {
     return (
         <TaskContainer
             activeTask={props.activeTask}
+            accountSignedIn={props.accountSignedIn}
             userTask={props.userTask}
             subtasks={props.userTask.subtasks}
             containerId={`task-${props.accountTask.position || props.userTask.id}-container`}

@@ -7,18 +7,16 @@ See the License for the specific language governing permissions and limitations 
 */
 
 import cors from "cors";
-import pkg from "body-parser";
 import express from "express";
 import { eventContext } from "aws-serverless-express/middleware.js";
 import { CreateScheduleCommand, SchedulerClient } from "@aws-sdk/client-scheduler";
 import { CloudFormationClient, DescribeStacksCommand } from "@aws-sdk/client-cloudformation";
 
 // declare a new express app
-const { json } = pkg;
 const app = express();
 app.use(cors());
 app.use(eventContext());
-app.use(json());
+app.use(express.json());
 
 const cloudFormationClient = new CloudFormationClient({});
 const schedulerClient = new SchedulerClient({});
@@ -26,7 +24,7 @@ const schedulerClient = new SchedulerClient({});
 function getOutputByKey(outputs, outputKey) {
     const output = outputs?.find(o => o.OutputKey === outputKey);
     if (!output || !output.OutputValue) {
-        throw new Error(`Key "${outputKey}"" was not found`);
+        throw new Error(`Key "${outputKey}" was not found`);
     }
     return output.OutputValue;
 }
@@ -73,13 +71,7 @@ app.post("/reminders", async function (req, res) {
             });
             return;
         }
-        const typeofValue = typeof value;
-        if (typeofValue !== "string") {
-            res.status(400).json({
-                message: `Request body key '${requiredBodyKey}' must be of type 'string' (got '${typeofValue}')`,
-            });
-            return;
-        }
+        // TODO: Add proper body validation
     }
 
     let response;
@@ -108,7 +100,7 @@ app.post("/reminders", async function (req, res) {
             new CreateScheduleCommand({
                 GroupName: reminderStackOutputs.scheduleGroupName,
                 FlexibleTimeWindow: { Mode: "OFF" },
-                Name: "",
+                Name: `reminder-${req.body.reminder_id}`,
                 ScheduleExpression: `at(${req.body.due_at})`,
                 ScheduleExpressionTimezone: "UTC",
                 Target: {
@@ -121,12 +113,14 @@ app.post("/reminders", async function (req, res) {
                 },
             })
         );
+        console.log(response);
         if (response.$metadata.httpStatusCode !== 200) {
             res.status(response.$metadata.httpStatusCode ?? 500).json(response);
             return;
         }
     } catch (exc) {
-        res.status(500).json(exc);
+        console.log(exc);
+        res.status(500).json(JSON.stringify(exc));
         return;
     }
     res.send(response);

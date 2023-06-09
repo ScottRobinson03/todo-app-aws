@@ -10,5 +10,9 @@
             "scheduler:DeleteSchedule"
         ],
         "Resource": ["*"]
+    },
+    {
+        "Action": ["iam:PassRole"],
+        "Resource": ["arn:aws:iam::931458218875:role/SchedulerToSqsReminderQueueRole"]
     }
 ]

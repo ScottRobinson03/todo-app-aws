@@ -113,6 +113,7 @@ export const createReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -162,6 +163,7 @@ export const updateReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -211,6 +213,7 @@ export const deleteReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -280,6 +283,7 @@ export const createTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -296,6 +300,7 @@ export const createTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }
@@ -365,6 +370,7 @@ export const updateTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -381,6 +387,7 @@ export const updateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }
@@ -450,6 +457,7 @@ export const deleteTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -466,6 +474,7 @@ export const deleteTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }

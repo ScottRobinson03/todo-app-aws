@@ -116,6 +116,7 @@ export const onCreateReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -168,6 +169,7 @@ export const onUpdateReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -220,6 +222,7 @@ export const onDeleteReminder = /* GraphQL */ `
       task_id
       createdAt
       updatedAt
+      reminderCreated_byId
       reminderCreated_bySub
     }
   }
@@ -289,6 +292,7 @@ export const onCreateTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -305,6 +309,7 @@ export const onCreateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }
@@ -374,6 +379,7 @@ export const onUpdateTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -390,6 +396,7 @@ export const onUpdateTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }
@@ -459,6 +466,7 @@ export const onDeleteTask = /* GraphQL */ `
           task_id
           createdAt
           updatedAt
+          reminderCreated_byId
           reminderCreated_bySub
         }
         nextToken
@@ -475,6 +483,7 @@ export const onDeleteTask = /* GraphQL */ `
       title
       createdAt
       updatedAt
+      taskCreated_byId
       taskCreated_bySub
     }
   }

@@ -35,11 +35,11 @@
       "function": {
         "todoappgetstackoutputs": {
           "deploymentBucketName": "amplify-todoapp-dev-134741-deployment",
-          "s3Key": "amplify-builds/todoappgetstackoutputs-4952324132432f6f4371-build.zip"
+          "s3Key": "amplify-builds/todoappgetstackoutputs-4363375a6658306c7545-build.zip"
         },
         "todoappreminderschedules": {
           "deploymentBucketName": "amplify-todoapp-dev-134741-deployment",
-          "s3Key": "amplify-builds/todoappreminderschedules-64493374625557704e31-build.zip"
+          "s3Key": "amplify-builds/todoappreminderschedules-45334e685539544e646a-build.zip"
         }
       }
     }

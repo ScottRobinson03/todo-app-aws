@@ -12,9 +12,11 @@ import { DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers-pro";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { FocusEvent, PropsWithChildren, SyntheticEvent, useState } from "react";
+import uuid4 from "uuid4";
+import { UpdateTaskInput } from "../API";
 import { TaskContainerProps } from "../types";
 import { getTaskAndSubtaskOf } from "../utils";
-import { UpdateTaskInput } from "../API";
+import { createReminderSchedule } from "../utils/scheduler";
 const { ReactComponent: CompletedTaskIcon } = require("../assets/completed-task.svg");
 const { ReactComponent: DeleteIcon } = require("../assets/delete.svg");
 const { ReactComponent: EditIcon } = require("../assets/edit.svg");
@@ -30,7 +32,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                 ? NonNullable<UpdateTaskInput[key]> | null
                 : NonNullable<UpdateTaskInput[key]>;
         },
-        "completed_at" | "id" | "subtasks" | "taskCreated_bySub"
+        "completed_at" | "id" | "subtasks" | "taskCreated_byId"
     >;
     const [formValues, setFormValues] = useState<UpdatableTaskValues>({
         title: props.userTask.title,
@@ -192,7 +194,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         setActiveModal(prevActiveModal => (prevActiveModal === "reminder" ? null : "reminder"));
     }
 
-    function createReminder(event: SyntheticEvent) {
+    async function createReminder(event: SyntheticEvent) {
         if (!selectedDatetime) {
             alert("Missing date and time for the reminder to be sent.");
             return;
@@ -203,13 +205,15 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
             : taskPosition.toString();
 
         const reminderPayload = {
-            content:
-                `Don't forget about task ${taskPosition}` +
-                (subtaskId ? `'s subtask ${subtaskId}` : ""),
-            sendAt: selectedDatetime.toISOString(), // converts to UTC
-            taskId: formattedTaskId,
+            content: `Don't forget about your task: ${props.userTask.title}`,
+            due_at: selectedDatetime.toISOString().slice(0, -8), // converts to UTC
+            reminder_id: uuid4(),
+            task_id: formattedTaskId,
+            send_to: [props.accountSignedIn.email], // TODO: Use id instead
         };
-        console.log("Fake Reminder Payload:\n" + JSON.stringify(reminderPayload, undefined, 4));
+        console.log("Reminder Payload:\n" + JSON.stringify(reminderPayload, null, 2));
+
+        await createReminderSchedule(reminderPayload);
         setActiveModal(null);
     }
 
@@ -493,6 +497,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                         return (
                                             <TaskContainer
                                                 key={`${subtask.id}-subtask-task-container`}
+                                                accountSignedIn={props.accountSignedIn}
                                                 activeTask={props.activeTask}
                                                 userTask={subtask}
                                                 containerId={`subtask-${subtask.id}-container`}
