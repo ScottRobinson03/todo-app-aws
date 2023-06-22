@@ -278,7 +278,6 @@ export default function App(props: AppProps) {
             );
         setTasks(prevTasks => [...prevTasks, newTask]);
 
-        // TODO: Test the task is added to the account's `.tasks` attribute
         const newTaskAsAccountTask = userTaskToAccountTask(newTask, {
             permissions: 1,
             position: getNextPosition(tasksOfAccount),
