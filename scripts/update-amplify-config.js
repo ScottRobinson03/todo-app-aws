@@ -1,3 +1,4 @@
+import awsmobile from "../src/aws-exports";
 import fs from "fs";
 import path from "path";
 import fetch from "node-fetch";
@@ -5,6 +6,10 @@ import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const apiObj = awsmobile["aws_cloud_logic_custom"].find(obj => obj.name === "todoapprestapi");
+if (!apiObj) throw new Error("Failed to find url for todoapprestapi");
+const rootUrl = apiObj["endpoint"];
 
 function getOutputByKey(outputs, outputKey) {
     const output = outputs?.find(o => o.OutputKey === outputKey);
@@ -15,9 +20,7 @@ function getOutputByKey(outputs, outputKey) {
 }
 
 async function getStackOutputs(stackName) {
-    const response = await fetch(
-        `https://r5puobef37.execute-api.eu-west-2.amazonaws.com/dev/stackoutputs/${stackName}`
-    );
+    const response = await fetch(`${rootUrl}/stackoutputs/${stackName}`);
     const json = await response.json();
     if (!json.stackOutputs) {
         throw new Error(`Failed to get stack outputs. JSON: ${JSON.stringify(json, null, 2)}`);
