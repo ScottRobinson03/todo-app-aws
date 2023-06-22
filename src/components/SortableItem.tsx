@@ -3,7 +3,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { SyntheticEvent } from "react";
 import { SortableItemProps } from "../types";
 import { getTaskAndSubtaskOf, getUTCTime } from "../utils";
-import { Subtask as GraphQLSubtask, Task as GraphQLTask } from "../API";
 import TaskContainer from "./TaskContainer";
 
 export function SortableItem(props: SortableItemProps) {
@@ -57,7 +56,7 @@ export function SortableItem(props: SortableItemProps) {
         />
     );
 
-    function handleTaskIconClick(event: SyntheticEvent) {
+    async function handleTaskIconClick(event: SyntheticEvent) {
         // BUG: The icons can get out-of-sync with the tasks (will mark wrong task as [in]complete)
         console.log({ handleTaskIconClick: event });
         // We can only toggle a tasks completion status if it's the current task.
@@ -87,60 +86,56 @@ export function SortableItem(props: SortableItemProps) {
         const [topLevelTaskPosition, subtaskId] = getTaskAndSubtaskOf(target);
         if (!topLevelTaskPosition) return; // couldn't find the root task
 
-        // Task is active, so toggle the completion status
-        props.setUserTasks(userTasks => {
-            const newTasks: Omit<GraphQLTask, "__typename">[] = [];
-
-            const indexOfTaskToUpdate = topLevelTaskPosition - 1;
-            for (let i = 0; i < userTasks.length; i++) {
-                const userTask = { ...userTasks[i] };
-                if (i === indexOfTaskToUpdate) {
-                    if (subtaskId) {
-                        // Toggling completion status of a subtask
-                        // so find the subtask and update it
-                        const newSubtasks: GraphQLSubtask[] = [];
-
-                        for (let child of userTask.subtasks) {
-                            const subtask = { ...child };
-                            if (subtask.id === subtaskId) {
-                                if (subtask.completed_at === null) {
-                                    // Marking subtask as complete
-                                    subtask.completed_at = getUTCTime();
-                                } else {
-                                    // Marking subtask as incomplete
-                                    // so ensure parent is incomplete too
-                                    subtask.completed_at = null;
-                                    userTask.completed_at = null;
-                                }
-                            }
-                            newSubtasks.push(subtask);
-                        }
-                        userTask.subtasks = newSubtasks;
-                    } else {
-                        // Toggling completion status of a root task
-                        let canToggle = true;
-                        if (typeof userTask.completed_at !== "number") {
-                            // We're trying to mark a root task as complete
-                            // so ensure that all of the subtasks are already completed
-                            for (let subtask of userTask.subtasks) {
-                                if (typeof subtask.completed_at !== "number") {
-                                    alert(
-                                        "You cannot mark a task as complete when it has incomplete subtasks."
-                                    );
-                                    canToggle = false;
-                                    break;
-                                }
-                            }
-                        }
-                        if (canToggle)
-                            userTask.completed_at =
-                                typeof userTask.completed_at === "number" ? null : getUTCTime();
-                    }
+        if (subtaskId) {
+            // Toggling completion status of a subtask
+            let updatedSubtask = null;
+            for (const subtask of props.userTask.subtasks) {
+                if (subtask.id === subtaskId) {
+                    subtask.completed_at =
+                        typeof subtask.completed_at === "number" ? null : getUTCTime();
+                    updatedSubtask = subtask;
+                    break;
                 }
-                newTasks.push(userTask);
             }
-            return newTasks;
-        });
+            if (!updatedSubtask) {
+                console.log("Couldn't find subtask to toggle its completion status");
+                return;
+            }
+            // TODO: See whether we need to update task within props.userTasks (shouldn't need to)
+            console.log(props.userTask);
+            console.log(props.userTasks);
+
+            // TODO: Update task in database
+        } else {
+            // Toggling completion status of a root task
+            const newCompletedAtValue =
+                typeof props.userTask.completed_at === "number" ? null : getUTCTime();
+
+            if (typeof newCompletedAtValue === "number") {
+                // Marking task as complete, so ensure all of the task's subtasks are complete
+                let allSubtasksAreComplete = true;
+
+                props.userTask.subtasks.forEach(subtask => {
+                    if (typeof subtask.completed_at !== "number") {
+                        allSubtasksAreComplete = false;
+                        alert("You cannot mark a task as complete when it has incomplete subtasks");
+                        return;
+                    }
+                });
+                if (!allSubtasksAreComplete) return;
+
+                // All subtasks are complete, so update root task
+                props.userTask.completed_at = newCompletedAtValue; // NB: This automatically updates `props.userTasks`
+                console.log(props.userTask);
+                console.log(props.userTasks);
+            } else {
+                props.userTask.completed_at = newCompletedAtValue; // NB: This automatically updates `props.userTasks`
+            }
+            await props.updateTask({
+                id: props.userTask.id,
+                completed_at: newCompletedAtValue,
+            });
+        }
     }
 
     function handleChange(e: SyntheticEvent, isExpanded: boolean) {

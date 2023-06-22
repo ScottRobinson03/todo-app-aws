@@ -20,6 +20,17 @@ export interface ReminderPayload {
     send_to: string[];
 }
 
+type UpdateTask = (
+    options: Omit<
+        {
+            [k in keyof UpdateTaskInput]: k extends "completed_at" | "description"
+                ? UpdateTaskInput[k]
+                : NonNullable<Required<UpdateTaskInput>[k]>;
+        },
+        "taskCreated_bySub" | "taskCreated_byId"
+    >
+) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
+
 export type ActiveTaskState = string | null;
 
 export interface SortableItemProps {
@@ -34,16 +45,7 @@ export interface SortableItemProps {
     setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
     setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
     deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
-    updateTask: (
-        input: Omit<
-            {
-                [k in keyof UpdateTaskInput]: k extends "description"
-                    ? string | null
-                    : NonNullable<Required<UpdateTaskInput>[k]>;
-            },
-            "taskCreated_bySub"
-        >
-    ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
+    updateTask: UpdateTask;
 }
 
 export interface TaskContainerProps {
@@ -68,16 +70,7 @@ export interface TaskContainerProps {
     typographyTextPosition?: string;
     typographyStyleTitle: React.CSSProperties;
     deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
-    updateTask: (
-        input: Omit<
-            {
-                [k in keyof UpdateTaskInput]: k extends "description"
-                    ? string | null
-                    : NonNullable<Required<UpdateTaskInput>[k]>;
-            },
-            "taskCreated_bySub"
-        >
-    ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
+    updateTask: UpdateTask;
 }
 
 export interface TaskViewProps {
@@ -88,14 +81,5 @@ export interface TaskViewProps {
     setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
     updateAccount: (options: UpdateAccountOptions, acc?: GraphQLAccount) => Promise<void>;
     deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
-    updateTask: (
-        input: Omit<
-            {
-                [k in keyof UpdateTaskInput]: k extends "description"
-                    ? string | null
-                    : NonNullable<Required<UpdateTaskInput>[k]>;
-            },
-            "taskCreated_bySub"
-        >
-    ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
+    updateTask: UpdateTask;
 }

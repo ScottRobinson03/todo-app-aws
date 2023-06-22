@@ -41,8 +41,6 @@ import {
     removeValuesFromArray,
     userTaskToAccountTask,
 } from "./utils";
-import { arrayMove } from "@dnd-kit/sortable";
-import { NatRounded } from "@mui/icons-material";
 
 interface AppProps {
     signOut: ((data?: AuthEventData | undefined) => void) | undefined;
@@ -392,11 +390,11 @@ export default function App(props: AppProps) {
     async function updateTask(
         options: Omit<
             {
-                [k in keyof UpdateTaskInput]: k extends "description"
-                    ? string | null
+                [k in keyof UpdateTaskInput]: k extends "completed_at" | "description"
+                    ? UpdateTaskInput[k]
                     : NonNullable<Required<UpdateTaskInput>[k]>;
             },
-            "taskCreated_bySub"
+            "taskCreated_bySub" | "taskCreated_byId"
         >
     ) {
         const variables: UpdateTaskMutationVariables = { input: options };

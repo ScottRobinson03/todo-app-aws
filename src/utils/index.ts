@@ -97,7 +97,7 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
 }
 
 export function getUTCTime() {
-    return new Date().valueOf(); //.toISOString().slice(0, -5).replace("T", " ");
+    return Math.floor(new Date().valueOf() / 1000);
 }
 
 export const isKeyOf = <K extends string | number | symbol, Obj extends object>(
