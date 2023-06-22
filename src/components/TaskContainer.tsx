@@ -195,6 +195,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     }
 
     async function createReminder(event: SyntheticEvent) {
+        // TODO: Have user account subscribe to the reminders topic if they haven't already
         if (!selectedDatetime) {
             alert("Missing date and time for the reminder to be sent.");
             return;
@@ -215,6 +216,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
 
         await createReminderSchedule(reminderPayload);
         setActiveModal(null);
+        // TODO: Add feedback stating the reminder has been scheduled
     }
 
     const taskIsComplete = typeof props.userTask.completed_at === "number";
@@ -301,6 +303,10 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                 }}
                                 className="icons-container"
                             >
+                                {/* TODO: Add modal for the ability to create subtasks*/}
+                                {/* TODO: Add modal for adding extra users to task (specifying their perms)*/}
+                                {/* TODO: Add modal for removing self from the task (delete task if only user who can view)*/}
+                                {/* TODO: As owner/admin of task, display modal for viewing & updating perms of people who can see task*/}
                                 <div
                                     id={`${
                                         props.typographyTextPosition
@@ -384,6 +390,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                                 },
                                             }}
                                         >
+                                            {/* TODO: Decide whether we actually need to display the task id */}
                                             <TextField
                                                 disabled
                                                 fullWidth

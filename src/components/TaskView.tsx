@@ -44,6 +44,7 @@ export default function TaskView(props: TaskViewProps) {
                 onDragEnd={handleDragEnd}
                 modifiers={[restrictToVerticalAxis, restrictToParentElement]}
             >
+                {/* TODO: Display a message when user has no tasks (instead of an empty task list which looks weird) */}
                 <SortableContext
                     items={accountTasks.map(accountTask => {
                         return { id: accountTask.task_id, ...accountTask };
@@ -51,6 +52,7 @@ export default function TaskView(props: TaskViewProps) {
                     strategy={verticalListSortingStrategy}
                 >
                     {accountTasks.map(accountTask => {
+                        // TODO: Distinguish between own tasks and tasks created by others that user can view
                         const userTask = userTasks.find(
                             userTask => userTask.id === accountTask.task_id
                         );
@@ -59,7 +61,7 @@ export default function TaskView(props: TaskViewProps) {
                                 <p key={`${accountTask.task_id}-usertask-not-found`}>
                                     Failed to find user task {`${accountTask.task_id}`}
                                 </p>
-                            ); //throw new Error(`Failed to find user task with id ${accountTask.task_id}`);
+                            );
                         return (
                             <SortableItem
                                 key={`${accountTask.task_id}-sortable-item`}

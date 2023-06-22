@@ -58,7 +58,8 @@ export function SortableItem(props: SortableItemProps) {
     );
 
     function handleTaskIconClick(event: SyntheticEvent) {
-        console.log({handleTaskIconClick: event});
+        // BUG: The icons can get out-of-sync with the tasks (will mark wrong task as [in]complete)
+        console.log({ handleTaskIconClick: event });
         // We can only toggle a tasks completion status if it's the current task.
         if (props.activeTask?.split("|")[0] !== props.accountTask.task_id) {
             // Task isn't active, so make it active (but don't change completion status)
@@ -132,7 +133,8 @@ export function SortableItem(props: SortableItemProps) {
                             }
                         }
                         if (canToggle)
-                            userTask.completed_at = typeof userTask.completed_at === "number" ? null : getUTCTime();
+                            userTask.completed_at =
+                                typeof userTask.completed_at === "number" ? null : getUTCTime();
                     }
                 }
                 newTasks.push(userTask);

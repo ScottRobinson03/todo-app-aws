@@ -242,6 +242,7 @@ export default function App(props: AppProps) {
     }
 
     async function createTask() {
+        // TODO: Create a form for entering task data (title/description)
         if (!account) throw new Error(`Attempted to create a task without an account set in state`);
 
         const taskId = uuid4();
