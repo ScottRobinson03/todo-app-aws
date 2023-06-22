@@ -301,8 +301,6 @@ export default function App(props: AppProps) {
     }
 
     async function deleteTask(input: DeleteTaskInput, callUpdateAccount: boolean = true) {
-        // FIXME: When a task is deleted, the positions of other tasks needs to be recalculated
-
         if (!account)
             throw new Error(`Attempted to delete task ${input.id} without an account set.`);
 
@@ -310,6 +308,8 @@ export default function App(props: AppProps) {
         const variables: DeleteTaskMutationVariables = { input: exactInput };
         const response = await executeGraphQLOperation(deleteTaskMutation, variables);
         console.log(`Deleted task ${exactInput.id}: ${JSON.stringify(response, null, 2)}`);
+
+        // TODO: Delete any outstanding reminders
 
         const deletedAccountTask = tasksOfAccount.find(
             taskOfAccount => taskOfAccount.task_id === exactInput.id
@@ -397,6 +397,7 @@ export default function App(props: AppProps) {
             "taskCreated_bySub" | "taskCreated_byId"
         >
     ) {
+        // TODO: If updating the task title, then update the content of any pending reminders
         const variables: UpdateTaskMutationVariables = { input: options };
         const response = await executeGraphQLOperation(updateTaskMutation, variables);
         if (!response.data?.updateTask)
