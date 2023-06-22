@@ -173,7 +173,7 @@ export class TodoCDKStack extends Stack {
             identityPoolId: identityPool.ref,
             identityPoolName: identityPool.identityPoolName!,
             nativeClientId: webClient.userPoolClientId, // web client is also the native client id
-            reminderStack: this.reminderStack.stackId,
+            reminderStackName: this.reminderStack.stackName,
             unauthRoleArn: unauthenticatedRole.roleArn,
             unauthRoleName: unauthenticatedRole.roleName,
             userPoolArn: userPool.userPoolArn,
