@@ -20,6 +20,10 @@ export interface ReminderPayload {
     send_to: string[];
 }
 
+type SetState<T> = Dispatch<SetStateAction<T>>;
+
+type DeleteTask = (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+type UpdateAccount = (options: UpdateAccountOptions, acc?: GraphQLAccount) => Promise<void>;
 type UpdateTask = (
     options: Omit<
         {
@@ -30,6 +34,7 @@ type UpdateTask = (
         "taskCreated_bySub" | "taskCreated_byId"
     >
 ) => Promise<NonNullable<UpdateTaskMutation["updateTask"]>>;
+type UserTask = Omit<GraphQLTask, "__typename">;
 
 export type ActiveTaskState = string | null;
 
@@ -37,21 +42,21 @@ export interface SortableItemProps {
     accountSignedIn: GraphQLAccount;
     accountTask: AccountTask;
     accountTasks: AccountTask[];
-    userTask: Omit<GraphQLTask, "__typename">;
+    userTask: UserTask;
     key: AccountTask["task_id"];
     activeTask: ActiveTaskState;
-    setActiveTask: Dispatch<SetStateAction<ActiveTaskState>>;
-    userTasks: Omit<GraphQLTask, "__typename">[];
-    setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
-    setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
-    deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+    setActiveTask: SetState<ActiveTaskState>;
+    userTasks: UserTask[];
+    setAccountTasks: SetState<AccountTask[]>;
+    setUserTasks: SetState<UserTask[]>;
+    deleteTask: DeleteTask;
     updateTask: UpdateTask;
 }
 
 export interface TaskContainerProps {
     accountSignedIn: GraphQLAccount;
     activeTask: ActiveTaskState;
-    userTask: Omit<GraphQLTask, "__typename"> | Omit<GraphQLSubtask, "__typename">;
+    userTask: UserTask | Omit<GraphQLSubtask, "__typename">;
     subtasks?: GraphQLSubtask[];
     containerId: string;
     containerStyle: React.CSSProperties;
@@ -69,17 +74,17 @@ export interface TaskContainerProps {
     typographyStylePosition?: React.CSSProperties;
     typographyTextPosition?: string;
     typographyStyleTitle: React.CSSProperties;
-    deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+    deleteTask: DeleteTask;
     updateTask: UpdateTask;
 }
 
 export interface TaskViewProps {
     accountSignedIn: GraphQLAccount;
     accountTasks: AccountTask[];
-    setAccountTasks: Dispatch<SetStateAction<AccountTask[]>>;
-    userTasks: Omit<GraphQLTask, "__typename">[];
-    setUserTasks: Dispatch<SetStateAction<Omit<GraphQLTask, "__typename">[]>>;
-    updateAccount: (options: UpdateAccountOptions, acc?: GraphQLAccount) => Promise<void>;
-    deleteTask: (input: DeleteTaskInput, callUpdateAccount?: boolean) => Promise<string>;
+    setAccountTasks: SetState<AccountTask[]>;
+    userTasks: UserTask[];
+    setUserTasks: SetState<UserTask[]>;
+    updateAccount: UpdateAccount;
+    deleteTask: DeleteTask;
     updateTask: UpdateTask;
 }
