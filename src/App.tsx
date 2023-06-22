@@ -41,6 +41,8 @@ import {
     removeValuesFromArray,
     userTaskToAccountTask,
 } from "./utils";
+import { arrayMove } from "@dnd-kit/sortable";
+import { NatRounded } from "@mui/icons-material";
 
 interface AppProps {
     signOut: ((data?: AuthEventData | undefined) => void) | undefined;
@@ -311,11 +313,31 @@ export default function App(props: AppProps) {
         const response = await executeGraphQLOperation(deleteTaskMutation, variables);
         console.log(`Deleted task ${exactInput.id}: ${JSON.stringify(response, null, 2)}`);
 
-        if (callUpdateAccount) await updateAccount({ taskIdsToRemove: [exactInput.id] });
-        setTasks(prevTasks => prevTasks.filter(task => task.id !== exactInput.id));
-        setTasksOfAccount(prevAccountTasks =>
-            prevAccountTasks.filter(accountTask => accountTask.task_id !== exactInput.id)
+        const deletedAccountTask = tasksOfAccount.find(
+            taskOfAccount => taskOfAccount.task_id === exactInput.id
         );
+        if (!deletedAccountTask) {
+            console.log(
+                "WARNING: Failed to find account task for the deleted task, so unable to recalculate position of remaining tasks"
+            );
+            if (callUpdateAccount) {
+                await updateAccount({ taskIdsToRemove: [exactInput.id] });
+            }
+            return exactInput.id;
+        }
+
+        setTasks(prevTasks => prevTasks.filter(task => task.id !== exactInput.id));
+        setTasksOfAccount(prevAccountTasks => {
+            const newAccountTasks = prevAccountTasks.filter(
+                accountTask => accountTask.task_id !== exactInput.id
+            );
+            newAccountTasks.forEach(
+                accountTask =>
+                    (accountTask.position -= +(accountTask.position > deletedAccountTask.position))
+            );
+            if (callUpdateAccount) updateAccount({ tasks: newAccountTasks });
+            return newAccountTasks;
+        });
         return exactInput.id;
     }
 

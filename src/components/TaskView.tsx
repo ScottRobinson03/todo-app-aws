@@ -59,9 +59,12 @@ export default function TaskView(props: TaskViewProps) {
                             );
                             if (!userTask)
                                 return (
-                                    <p key={`${accountTask.task_id}-usertask-not-found`}>
+                                    <Typography
+                                        sx={{ textAlign: "center" }}
+                                        key={`${accountTask.task_id}-usertask-not-found`}
+                                    >
                                         Failed to find user task {`${accountTask.task_id}`}
-                                    </p>
+                                    </Typography>
                                 );
                             return (
                                 <SortableItem
