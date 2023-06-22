@@ -205,9 +205,10 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
             ? `${taskPosition}-${subtaskId}`
             : taskPosition.toString();
 
+        const reminderDueAt = selectedDatetime.toISOString().slice(0, -8);
         const reminderPayload = {
             content: `Don't forget about your task: ${props.userTask.title}`,
-            due_at: selectedDatetime.toISOString().slice(0, -8), // converts to UTC
+            due_at: reminderDueAt, // converts to UTC
             reminder_id: uuid4(),
             task_id: formattedTaskId,
             send_to: [props.accountSignedIn.email], // TODO: Use id instead
@@ -216,7 +217,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
 
         await createReminderSchedule(reminderPayload);
         setActiveModal(null);
-        // TODO: Add feedback stating the reminder has been scheduled
+        alert(`Successfully scheduled reminder for ${reminderDueAt}`);
     }
 
     const taskIsComplete = typeof props.userTask.completed_at === "number";
