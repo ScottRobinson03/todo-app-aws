@@ -1,4 +1,4 @@
-import awsmobile from "../src/aws-exports";
+import awsmobile from "../src/aws-exports.js";
 import fs from "fs";
 import path from "path";
 import fetch from "node-fetch";
