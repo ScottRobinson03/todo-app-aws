@@ -47,10 +47,10 @@ export async function handler(event: SQSEvent, context: Context) {
 
     console.log(JSON.stringify(messages));
 
-    const reminderStackArn = await getCfnOutput("TodoCDKStack", "reminderStack");
+    const reminderStackName = await getCfnOutput("TodoCDKStack", "reminderStackName");
     const result = await snsClient.send(
         new PublishBatchCommand({
-            TopicArn: await getCfnOutput(reminderStackArn.split("/")[1], "reminderTopicArn"),
+            TopicArn: await getCfnOutput(reminderStackName, "reminderTopicArn"),
             PublishBatchRequestEntries: messages,
         })
     );

@@ -139,7 +139,7 @@ export function SortableItem(props: SortableItemProps) {
     }
 
     function handleChange(e: SyntheticEvent, isExpanded: boolean) {
-        console.log({handleChange: e});
+        console.log({ handleChange: e });
         if (!props.activeTask) {
             const newActiveTask = isExpanded ? props.accountTask.task_id : null;
             props.setActiveTask(newActiveTask);
@@ -152,14 +152,16 @@ export function SortableItem(props: SortableItemProps) {
         if (!taskPosition) {
             // Couldn't find the root task, so ignore
             console.log("Couldn't find root task so ignoring");
-            return; 
+            return;
         }
 
+        // FIXME: Assume I have to loop over array and match `position` attr
+        // *Might* be able to just use `props.accountTask`/`props.userTask`
         const taskId = props.accountTasks[taskPosition - 1].task_id;
 
         const newActiveTask = isExpanded
             ? subtaskId
-                ? `${taskId}-${subtaskId}`
+                ? `${taskId}|${subtaskId}`
                 : taskId
             : subtaskId
             ? taskId

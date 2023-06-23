@@ -77,7 +77,7 @@ export function getTaskAndSubtaskOf(element: Element): [number, string | null] {
         if (!subtaskId) {
             // Haven't already found the subtask, so see if this is the subtask icon container
             const subtaskMatch = element.id.match(
-                /^subtask-(\d+)-(?:(?:icon|accordion|reminder)-)?container/
+                /^subtask-(\d+)-(?:(?:icon|accordion|reminder)-)?container/ // FIXME: Regex should be matching UUID4
             );
 
             if (subtaskMatch) {

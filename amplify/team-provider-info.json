@@ -40,7 +40,7 @@
         },
         "todoappreminderschedules": {
           "deploymentBucketName": "amplify-todoapp-dev-134741-deployment",
-          "s3Key": "amplify-builds/todoappreminderschedules-45334e685539544e646a-build.zip"
+          "s3Key": "amplify-builds/todoappreminderschedules-424863554d6874443548-build.zip"
         }
       }
     }

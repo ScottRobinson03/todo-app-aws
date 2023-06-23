@@ -201,9 +201,13 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
             return;
         }
         const [taskPosition, subtaskId] = getTaskAndSubtaskOf(event.target as Element);
-        const formattedTaskId = subtaskId
-            ? `${taskPosition}-${subtaskId}`
-            : taskPosition.toString();
+        if (!taskPosition) {
+            alert("Failed to find the task to create a reminder for");
+            return;
+        }
+
+        // TODO: Confirm tasks & subtasks can use `props.userTask` instead of checking `props.accountTasks` for matching position
+        const formattedTaskId = subtaskId ? `${props.userTask.id}|${subtaskId}` : props.userTask.id;
 
         const reminderDueAt = selectedDatetime.toISOString().slice(0, -8);
         const reminderPayload = {

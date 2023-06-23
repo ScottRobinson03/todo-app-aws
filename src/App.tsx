@@ -41,6 +41,7 @@ import {
     removeValuesFromArray,
     userTaskToAccountTask,
 } from "./utils";
+import { deleteReminderSchedules } from "./utils/scheduler";
 
 interface AppProps {
     signOut: ((data?: AuthEventData | undefined) => void) | undefined;
@@ -309,8 +310,6 @@ export default function App(props: AppProps) {
         const response = await executeGraphQLOperation(deleteTaskMutation, variables);
         console.log(`Deleted task ${exactInput.id}: ${JSON.stringify(response, null, 2)}`);
 
-        // TODO: Delete any outstanding reminders
-
         const deletedAccountTask = tasksOfAccount.find(
             taskOfAccount => taskOfAccount.task_id === exactInput.id
         );
@@ -321,6 +320,8 @@ export default function App(props: AppProps) {
             if (callUpdateAccount) {
                 await updateAccount({ taskIdsToRemove: [exactInput.id] });
             }
+            // Delete any outstanding reminders for this task
+            await deleteReminderSchedules(exactInput.id);
             return exactInput.id;
         }
 
@@ -334,6 +335,8 @@ export default function App(props: AppProps) {
                     (accountTask.position -= +(accountTask.position > deletedAccountTask.position))
             );
             if (callUpdateAccount) updateAccount({ tasks: newAccountTasks });
+            // Delete any outstanding reminders for this task
+            deleteReminderSchedules(exactInput.id);
             return newAccountTasks;
         });
         return exactInput.id;

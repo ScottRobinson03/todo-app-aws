@@ -1,4 +1,5 @@
 import { Auth } from "aws-amplify";
+import { Task as GraphQLTask } from "../API";
 import awsmobile from "../aws-exports";
 import { ReminderPayload } from "../types";
 
@@ -16,4 +17,29 @@ export async function createReminderSchedule(reminderPayload: ReminderPayload) {
         method: "POST",
     });
     console.log(resp);
+}
+
+export async function deleteReminderSchedules(task_id?: GraphQLTask["id"]) {
+    const resp = await fetch(`${rootUrl}/reminders`, {
+        body: JSON.stringify({ task_id }),
+        headers: {
+            Authorization: (await Auth.currentSession()).getIdToken().getJwtToken(),
+            "Content-Type": "application/json",
+        },
+        method: "DELETE",
+    });
+    console.log(resp);
+
+    const json = await resp.json();
+    console.log(JSON.stringify(json, null, 2));
+    const totalReminders = json.deleted.length + json.failed.length;
+    if (json.failed.length) {
+        console.log(
+            `WARNING: Failed to delete ${json.failed.length}/${totalReminders} reminders linked to task ${task_id}.`
+        );
+    } else {
+        console.log(
+            `Successfully deleted all ${totalReminders} reminders linked to task ${task_id}.`
+        );
+    }
 }
