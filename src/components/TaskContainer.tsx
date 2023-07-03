@@ -97,10 +97,12 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
 
             await props.updateTask({
                 id: parentTaskId,
-                subtasks: parentTask.subtasks.toSpliced(
-                    parentTask.subtasks.findIndex(subtask => subtask.id === props.userTask.id),
-                    1
-                ),
+                subtasks: parentTask.subtasks
+                    .toSpliced(
+                        parentTask.subtasks.findIndex(subtask => subtask.id === props.userTask.id),
+                        1
+                    )
+                    .map(removeTypenameFromObject),
             });
         }
 
@@ -316,7 +318,13 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
             >
                 {taskIsComplete ? <CompletedTaskIcon /> : <IncompleteTaskIcon />}
             </div>
-            <div id={props.accordionContainerId} style={props.accordionContainerStyle}>
+            <div
+                id={props.accordionContainerId}
+                style={{
+                    ...props.accordionContainerStyle,
+                    border: taskOrSubtask === "subtask" ? "1px #184e57 solid" : undefined,
+                }}
+            >
                 <Accordion
                     // @ts-ignore
                     sx={props.accordionStyle}
