@@ -147,7 +147,7 @@ describe("AWS Todo Stack", () => {
 
         describe("TodoAppUserPoolClient", () => {
             const matching = mainTemplate.findResources("AWS::Cognito::UserPoolClient", {
-                Properties: { ClientName: "web-app-client" },
+                Properties: { ClientName: "todoapp-web-client" },
             });
             const keys = Object.keys(matching);
             test("Exists", () => {
