@@ -2,8 +2,9 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SyntheticEvent } from "react";
 import { SortableItemProps } from "../types";
-import { getTaskAndSubtaskOf, getUTCTime } from "../utils";
+import { getTaskAndSubtaskOf, getUTCTime, removeTypenameFromObject } from "../utils";
 import TaskContainer from "./TaskContainer";
+import { Subtask } from "../API";
 
 export function SortableItem(props: SortableItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -22,7 +23,7 @@ export function SortableItem(props: SortableItemProps) {
             activeTask={props.activeTask}
             accountSignedIn={props.accountSignedIn}
             userTask={props.userTask}
-            subtasks={props.userTask.subtasks}
+            userTasks={props.userTasks}
             containerId={`task-${props.accountTask.position || props.userTask.id}-container`}
             containerStyle={style}
             containerRef={setNodeRef}
@@ -57,7 +58,6 @@ export function SortableItem(props: SortableItemProps) {
     );
 
     async function handleTaskIconClick(event: SyntheticEvent) {
-        // BUG: The icons can get out-of-sync with the tasks (will mark wrong task as [in]complete)
         console.log({ handleTaskIconClick: event });
         // We can only toggle a tasks completion status if it's the current task.
         if (props.activeTask?.split("|")[0] !== props.accountTask.task_id) {
@@ -88,12 +88,15 @@ export function SortableItem(props: SortableItemProps) {
 
         if (subtaskId) {
             // Toggling completion status of a subtask
-            let updatedSubtask = null;
+            let updatedSubtask: Subtask | null = null;
             for (const subtask of props.userTask.subtasks) {
                 if (subtask.id === subtaskId) {
                     subtask.completed_at =
                         typeof subtask.completed_at === "number" ? null : getUTCTime();
                     updatedSubtask = subtask;
+                    console.log(
+                        `Set completed_at of subtask ${subtask.id} to ${subtask.completed_at}`
+                    );
                     break;
                 }
             }
@@ -101,11 +104,22 @@ export function SortableItem(props: SortableItemProps) {
                 console.log("Couldn't find subtask to toggle its completion status");
                 return;
             }
-            // TODO: See whether we need to update task within props.userTasks (shouldn't need to)
-            console.log(props.userTask);
-            console.log(props.userTasks);
 
-            // TODO: Update task in database
+            if (updatedSubtask.completed_at === null && props.userTask.completed_at !== null) {
+                // Update subtasks and mark parent as incomplete
+                props.userTask.completed_at = null;
+                await props.updateTask({
+                    id: props.userTask.id,
+                    completed_at: null,
+                    subtasks: props.userTask.subtasks.map(removeTypenameFromObject),
+                });
+            } else {
+                // Only need to update the subtasks
+                await props.updateTask({
+                    id: props.userTask.id,
+                    subtasks: props.userTask.subtasks.map(removeTypenameFromObject),
+                });
+            }
         } else {
             // Toggling completion status of a root task
             const newCompletedAtValue =
@@ -138,10 +152,9 @@ export function SortableItem(props: SortableItemProps) {
         }
     }
 
-    function handleChange(e: SyntheticEvent, isExpanded: boolean) {
-        console.log({ handleChange: e });
+    function handleChange(e: SyntheticEvent, shouldExpand: boolean) {
         if (!props.activeTask) {
-            const newActiveTask = isExpanded ? props.accountTask.task_id : null;
+            const newActiveTask = shouldExpand ? props.accountTask.task_id : null;
             props.setActiveTask(newActiveTask);
             console.log(`Set ${newActiveTask} to the new active task`);
             return;
@@ -155,17 +168,22 @@ export function SortableItem(props: SortableItemProps) {
             return;
         }
 
-        // FIXME: Assume I have to loop over array and match `position` attr
-        // *Might* be able to just use `props.accountTask`/`props.userTask`
-        const taskId = props.accountTasks[taskPosition - 1].task_id;
+        const taskId = props.accountTasks.find(
+            accountTask => accountTask.position === taskPosition
+        )?.task_id;
+        if (!taskId) {
+            console.log("ERROR: Couldn't find task id to toggle open status");
+            return;
+        }
 
-        const newActiveTask = isExpanded
-            ? subtaskId
-                ? `${taskId}|${subtaskId}`
-                : taskId
-            : subtaskId
-            ? taskId
-            : null;
+        let newActiveTask = null;
+        if (shouldExpand) {
+            // Open the subtask/task
+            newActiveTask = subtaskId ? `${taskId}|${subtaskId}` : taskId;
+        } else {
+            // Close the active subtask/task
+            newActiveTask = subtaskId ? taskId : null;
+        }
         props.setActiveTask(newActiveTask);
     }
 }

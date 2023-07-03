@@ -402,6 +402,7 @@ export default function App(props: AppProps) {
     ) {
         // TODO: If updating the task title, then update the content of any pending reminders
         const variables: UpdateTaskMutationVariables = { input: options };
+        console.log(variables);
         const response = await executeGraphQLOperation(updateTaskMutation, variables);
         if (!response.data?.updateTask)
             throw new Error(

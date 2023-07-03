@@ -57,7 +57,7 @@ export interface TaskContainerProps {
     accountSignedIn: GraphQLAccount;
     activeTask: ActiveTaskState;
     userTask: UserTask | Omit<GraphQLSubtask, "__typename">;
-    subtasks?: GraphQLSubtask[];
+    userTasks: UserTask[];
     containerId: string;
     containerStyle: React.CSSProperties;
     containerRef?: (node: HTMLElement | null) => void;

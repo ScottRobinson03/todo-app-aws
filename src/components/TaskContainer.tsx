@@ -13,14 +13,15 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { FocusEvent, PropsWithChildren, SyntheticEvent, useState } from "react";
 import uuid4 from "uuid4";
-import { UpdateTaskInput } from "../API";
+import { Subtask, UpdateTaskInput } from "../API";
 import { TaskContainerProps } from "../types";
-import { getTaskAndSubtaskOf } from "../utils";
+import { removeTypenameFromObject } from "../utils";
 import { createReminderSchedule } from "../utils/scheduler";
 const { ReactComponent: CompletedTaskIcon } = require("../assets/completed-task.svg");
 const { ReactComponent: DeleteIcon } = require("../assets/delete.svg");
 const { ReactComponent: EditIcon } = require("../assets/edit.svg");
 const { ReactComponent: IncompleteTaskIcon } = require("../assets/incomplete-task.svg");
+const { ReactComponent: PlusIcon } = require("../assets/plus.svg");
 const { ReactComponent: ReminderIcon } = require("../assets/reminder.svg");
 
 export default function TaskContainer(props: PropsWithChildren<TaskContainerProps>) {
@@ -43,6 +44,8 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     const [selectedDatetime, setSelectedDatetime] = useState<Dayjs | null>(
         dayjs(currentDatetime.setHours(currentDatetime.getHours() + 24))
     );
+
+    const taskOrSubtask = "subtasks" in props.userTask ? "task" : "subtask";
 
     async function handleDeleteClick(event: SyntheticEvent) {
         let target = event.target as Element;
@@ -74,9 +77,33 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     }
 
     async function handleDeleteConfirm(event: SyntheticEvent) {
+        if (!props.activeTask) {
+            console.log("WARNING: Somehow called handleDeleteConfirm without an active task");
+            return;
+        }
         console.log({ handleDeleteClick: event });
 
-        await props.deleteTask({ id: props.userTask.id });
+        if ("subtasks" in props.userTask) {
+            // Delete a root task
+            await props.deleteTask({ id: props.userTask.id });
+        } else {
+            // Deleting a subtask
+            const parentTaskId = props.activeTask.split("|")[0];
+            const parentTask = props.userTasks.find(userTask => userTask.id === parentTaskId);
+            if (!parentTask) {
+                console.log("ERROR: Active task doesn't correlate to a valid root task");
+                return;
+            }
+
+            await props.updateTask({
+                id: parentTaskId,
+                subtasks: parentTask.subtasks.toSpliced(
+                    parentTask.subtasks.findIndex(subtask => subtask.id === props.userTask.id),
+                    1
+                ),
+            });
+        }
+
         setActiveModal(null);
     }
 
@@ -144,6 +171,11 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     }
 
     async function handleEditSave(event: SyntheticEvent) {
+        if (!props.activeTask) {
+            console.log("WARNING: Somehow triggered handleEditSave without an active task");
+            return;
+        }
+
         console.log({ handleEditSave: event });
         const toChange: Partial<UpdatableTaskValues> = {};
         let hasChanges = false;
@@ -160,7 +192,27 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         }
 
         console.log(`Task data to update: ${JSON.stringify(toChange)}`);
-        await props.updateTask({ id: props.userTask.id, ...toChange });
+
+        if ("subtasks" in props.userTask) {
+            // Updating a root task
+            await props.updateTask({ id: props.userTask.id, ...toChange });
+        } else {
+            // Updating a subtask
+            const parentTaskId = props.activeTask.split("|")[0];
+            const parentTask = props.userTasks.find(userTask => userTask.id === parentTaskId);
+            if (!parentTask) {
+                console.log("ERROR: Active task doesn't correlate to a valid root task");
+                return;
+            }
+
+            const updatedSubtasks = parentTask.subtasks.map(subtask =>
+                subtask.id === props.userTask.id ? { ...subtask, ...toChange } : subtask
+            );
+            await props.updateTask({
+                id: parentTaskId,
+                subtasks: updatedSubtasks.map(removeTypenameFromObject),
+            });
+        }
         setActiveModal(null);
     }
 
@@ -195,26 +247,24 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
     }
 
     async function createReminder(event: SyntheticEvent) {
+        if (!props.activeTask) {
+            console.log("WARNING: Somehow called createReminder without an active task");
+            return;
+        }
+        console.log({ createReminder: event });
+
         // TODO: Have user account subscribe to the reminders topic if they haven't already
+
         if (!selectedDatetime) {
             alert("Missing date and time for the reminder to be sent.");
             return;
         }
-        const [taskPosition, subtaskId] = getTaskAndSubtaskOf(event.target as Element);
-        if (!taskPosition) {
-            alert("Failed to find the task to create a reminder for");
-            return;
-        }
-
-        // TODO: Confirm tasks & subtasks can use `props.userTask` instead of checking `props.accountTasks` for matching position
-        const formattedTaskId = subtaskId ? `${props.userTask.id}|${subtaskId}` : props.userTask.id;
-
         const reminderDueAt = selectedDatetime.toISOString().slice(0, -8);
         const reminderPayload = {
-            content: `Don't forget about your task: ${props.userTask.title}`,
+            content: `Don't forget about your ${taskOrSubtask}: ${props.userTask.title}`,
             due_at: reminderDueAt, // converts to UTC
             reminder_id: uuid4(),
-            task_id: formattedTaskId,
+            task_id: props.activeTask,
             send_to: [props.accountSignedIn.email], // TODO: Use id instead
         };
         console.log("Reminder Payload:\n" + JSON.stringify(reminderPayload, null, 2));
@@ -222,6 +272,30 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
         await createReminderSchedule(reminderPayload);
         setActiveModal(null);
         alert(`Successfully scheduled reminder for ${reminderDueAt}`);
+    }
+
+    async function createSubtask(event: SyntheticEvent) {
+        console.log({ createSubtask: event });
+
+        if (!("subtasks" in props.userTask)) {
+            console.log("Already on a subtask, so can't add one");
+            return;
+        }
+        const newSubtask: Subtask = {
+            __typename: "Subtask",
+            id: uuid4(),
+            title: "Test Subtask",
+            reminder_ids: [],
+            created_by_id: props.accountSignedIn.sub,
+            subscriber_ids: [props.accountSignedIn.sub],
+        };
+        props.userTask.subtasks.push(newSubtask);
+        console.log(props.userTask.subtasks);
+
+        await props.updateTask({
+            id: props.userTask.id,
+            subtasks: props.userTask.subtasks.map(removeTypenameFromObject),
+        });
     }
 
     const taskIsComplete = typeof props.userTask.completed_at === "number";
@@ -342,7 +416,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                                 textAlign: "center",
                                             }}
                                         >
-                                            Are you sure you want to delete this task?
+                                            Are you sure you want to delete this {taskOrSubtask}?
                                         </Typography>
                                         <Button onClick={handleDeleteConfirm}>Yes</Button>
                                         <Button onClick={() => setActiveModal(null)}>Cancel</Button>
@@ -491,6 +565,9 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                         </LocalizationProvider>
                                     </div>
                                 </div>
+                                {"subtasks" in props.userTask && (
+                                    <PlusIcon onClick={createSubtask} />
+                                )}
                             </div>
                         )}
                         {"subtasks" in props.userTask && props.userTask.subtasks.length > 0 && (
@@ -505,14 +582,15 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                 >
                                     Subtasks
                                 </Typography>
-                                {props.subtasks &&
-                                    props.subtasks.map(subtask => {
+                                {props.userTask.subtasks &&
+                                    props.userTask.subtasks.map(subtask => {
                                         return (
                                             <TaskContainer
                                                 key={`${subtask.id}-subtask-task-container`}
                                                 accountSignedIn={props.accountSignedIn}
                                                 activeTask={props.activeTask}
                                                 userTask={subtask}
+                                                userTasks={props.userTasks}
                                                 containerId={`subtask-${subtask.id}-container`}
                                                 containerStyle={{ display: "flex" }}
                                                 iconContainerId={`subtask-${subtask.id}-icon-container`}
@@ -529,8 +607,7 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                                     paddingBottom: "5px",
                                                 }}
                                                 accordionIsExpanded={
-                                                    props.activeTask?.split("-")[1] ===
-                                                    subtask.id.toString()
+                                                    props.activeTask?.split("|")[1] === subtask.id
                                                 }
                                                 accordionOnChange={props.accordionOnChange}
                                                 typographyStyleTitle={{
