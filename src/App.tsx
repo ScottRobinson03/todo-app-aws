@@ -14,10 +14,10 @@ import {
     DeleteTaskInput,
     DeleteTaskMutationVariables,
     Account as GraphQLAccount,
+    Subtask as GraphQLSubtask,
     Task as GraphQLTask,
     ListAccountsQueryVariables,
     ListTasksQueryVariables,
-    Subtask as GraphQLSubtask,
     UpdateAccountInput,
     UpdateAccountMutationVariables,
     UpdateTaskInput,
@@ -485,11 +485,10 @@ export default function App(props: AppProps) {
                 accountSignedIn={account}
                 accountTasks={tasksOfAccount}
                 setAccountTasks={setTasksOfAccount}
-                userTasks={tasks}
-                setUserTasks={setTasks}
-                updateAccount={updateAccount}
                 deleteTask={deleteTask}
+                updateAccount={updateAccount}
                 updateTask={updateTask}
+                userTasks={tasks}
             />
         </>
     );

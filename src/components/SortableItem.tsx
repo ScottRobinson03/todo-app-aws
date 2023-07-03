@@ -1,10 +1,10 @@
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { SyntheticEvent } from "react";
+import { Subtask } from "../API";
 import { SortableItemProps } from "../types";
 import { getTaskAndSubtaskOf, getUTCTime, removeTypenameFromObject } from "../utils";
 import TaskContainer from "./TaskContainer";
-import { Subtask } from "../API";
 
 export function SortableItem(props: SortableItemProps) {
     const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
@@ -20,31 +20,29 @@ export function SortableItem(props: SortableItemProps) {
 
     return (
         <TaskContainer
-            activeTask={props.activeTask}
-            accountSignedIn={props.accountSignedIn}
-            userTask={props.userTask}
-            userTasks={props.userTasks}
-            containerId={`task-${props.accountTask.position || props.userTask.id}-container`}
-            containerStyle={style}
-            containerRef={setNodeRef}
-            containerListeners={listeners}
-            containerAttributes={attributes}
-            iconContainerId={`task-${
-                props.accountTask.position || props.userTask.id
-            }-icon-container`}
-            iconContainerClass={`task-icon-container ${
-                typeof props.userTask.completed_at === "number" ? "completed" : "incomplete"
-            }-task`}
-            iconContainerOnClick={handleTaskIconClick}
             accordionContainerId={`task-${
                 props.accountTask.position || props.userTask.id
             }-accordion-container`}
             accordionContainerStyle={{ flexGrow: 2, paddingRight: "32px" }}
-            accordionStyle={{ backgroundColor: "#1e5a68", paddingBottom: "5px" }}
             accordionIsExpanded={props.activeTask?.split("|")[0] === props.userTask.id}
             accordionOnChange={handleChange}
+            accordionStyle={{ backgroundColor: "#1e5a68", paddingBottom: "5px" }}
+            accountSignedIn={props.accountSignedIn}
+            activeTask={props.activeTask}
+            containerAttributes={attributes}
+            containerId={`task-${props.accountTask.position || props.userTask.id}-container`}
+            containerListeners={listeners}
+            containerRef={setNodeRef}
+            containerStyle={style}
+            deleteTask={props.deleteTask}
+            iconContainerClass={`task-icon-container ${
+                typeof props.userTask.completed_at === "number" ? "completed" : "incomplete"
+            }-task`}
+            iconContainerId={`task-${
+                props.accountTask.position || props.userTask.id
+            }-icon-container`}
+            iconContainerOnClick={handleTaskIconClick}
             typographyStylePosition={{ color: "#cfd0b1e2", textAlign: "center", width: "5%" }}
-            typographyTextPosition={`#${props.accountTask.position || props.userTask.id}`}
             typographyStyleTitle={{
                 color: "#e0e1c1",
                 fontSize: "1.1em",
@@ -52,8 +50,10 @@ export function SortableItem(props: SortableItemProps) {
                 textAlign: "center",
                 width: "100%",
             }}
-            deleteTask={props.deleteTask}
+            typographyTextPosition={`#${props.accountTask.position || props.userTask.id}`}
             updateTask={props.updateTask}
+            userTask={props.userTask}
+            userTasks={props.userTasks}
         />
     );
 

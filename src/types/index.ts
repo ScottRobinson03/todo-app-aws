@@ -2,9 +2,9 @@ import { DraggableAttributes } from "@dnd-kit/core";
 import { SyntheticListenerMap } from "@dnd-kit/core/dist/hooks/utilities";
 import { Dispatch, SetStateAction, SyntheticEvent } from "react";
 import {
-    Account as GraphQLAccount,
     AccountTask,
     DeleteTaskInput,
+    Account as GraphQLAccount,
     Subtask as GraphQLSubtask,
     Task as GraphQLTask,
     UpdateTaskInput,
@@ -42,49 +42,46 @@ export interface SortableItemProps {
     accountSignedIn: GraphQLAccount;
     accountTask: AccountTask;
     accountTasks: AccountTask[];
-    userTask: UserTask;
-    key: AccountTask["task_id"];
     activeTask: ActiveTaskState;
     setActiveTask: SetState<ActiveTaskState>;
-    userTasks: UserTask[];
-    setAccountTasks: SetState<AccountTask[]>;
-    setUserTasks: SetState<UserTask[]>;
     deleteTask: DeleteTask;
+    key: string;
+    userTask: UserTask;
+    userTasks: UserTask[];
     updateTask: UpdateTask;
 }
 
 export interface TaskContainerProps {
-    accountSignedIn: GraphQLAccount;
-    activeTask: ActiveTaskState;
-    userTask: UserTask | Omit<GraphQLSubtask, "__typename">;
-    userTasks: UserTask[];
-    containerId: string;
-    containerStyle: React.CSSProperties;
-    containerRef?: (node: HTMLElement | null) => void;
-    containerListeners?: SyntheticListenerMap | undefined;
-    containerAttributes?: DraggableAttributes;
-    iconContainerId: string;
-    iconContainerClass: string;
-    iconContainerOnClick: (event: SyntheticEvent) => void;
     accordionContainerId: string;
     accordionContainerStyle: React.CSSProperties;
     accordionStyle: React.CSSProperties;
     accordionIsExpanded: boolean;
     accordionOnChange: (e: SyntheticEvent, isExpanded: boolean) => void;
-    typographyStylePosition?: React.CSSProperties;
-    typographyTextPosition?: string;
-    typographyStyleTitle: React.CSSProperties;
+    accountSignedIn: GraphQLAccount;
+    activeTask: ActiveTaskState;
+    containerAttributes?: DraggableAttributes;
+    containerId: string;
+    containerListeners?: SyntheticListenerMap | undefined;
+    containerRef?: (node: HTMLElement | null) => void;
+    containerStyle: React.CSSProperties;
     deleteTask: DeleteTask;
+    iconContainerClass: string;
+    iconContainerId: string;
+    iconContainerOnClick: (event: SyntheticEvent) => void;
+    typographyStylePosition?: React.CSSProperties;
+    typographyStyleTitle: React.CSSProperties;
+    typographyTextPosition?: string;
     updateTask: UpdateTask;
+    userTask: UserTask | Omit<GraphQLSubtask, "__typename">;
+    userTasks: UserTask[];
 }
 
 export interface TaskViewProps {
     accountSignedIn: GraphQLAccount;
     accountTasks: AccountTask[];
     setAccountTasks: SetState<AccountTask[]>;
-    userTasks: UserTask[];
-    setUserTasks: SetState<UserTask[]>;
-    updateAccount: UpdateAccount;
     deleteTask: DeleteTask;
+    updateAccount: UpdateAccount;
     updateTask: UpdateTask;
+    userTasks: UserTask[];
 }

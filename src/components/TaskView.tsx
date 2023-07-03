@@ -9,21 +9,14 @@ import {
 } from "@dnd-kit/core";
 import { restrictToParentElement, restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { useState } from "react";
-import { SortableItem } from "./SortableItem";
-import { ActiveTaskState, TaskViewProps } from "../types";
 import { Typography } from "@mui/material";
+import { useState } from "react";
+import { ActiveTaskState, TaskViewProps } from "../types";
+import { SortableItem } from "./SortableItem";
 
 export default function TaskView(props: TaskViewProps) {
-    const {
-        accountSignedIn,
-        accountTasks,
-        setAccountTasks,
-        userTasks,
-        setUserTasks,
-        deleteTask,
-        updateTask,
-    } = props;
+    const { accountSignedIn, accountTasks, setAccountTasks, userTasks, deleteTask, updateTask } =
+        props;
     const [changedPos, setChangedPos] = useState<boolean>(false);
     const [activeTask, setActiveTask] = useState<ActiveTaskState>(null);
 
@@ -73,13 +66,11 @@ export default function TaskView(props: TaskViewProps) {
                                         accountSignedIn,
                                         accountTask,
                                         accountTasks,
-                                        setAccountTasks,
                                         activeTask,
                                         setActiveTask,
+                                        deleteTask,
                                         userTask,
                                         userTasks,
-                                        setUserTasks,
-                                        deleteTask,
                                         updateTask,
                                     }}
                                 />

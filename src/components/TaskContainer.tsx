@@ -595,37 +595,37 @@ export default function TaskContainer(props: PropsWithChildren<TaskContainerProp
                                         return (
                                             <TaskContainer
                                                 key={`${subtask.id}-subtask-task-container`}
+                                                accordionContainerId={`subtask-${subtask.id}-accordion-container`}
+                                                accordionContainerStyle={{ flexGrow: 2 }}
+                                                accordionIsExpanded={
+                                                    props.activeTask?.split("|")[1] === subtask.id
+                                                }
+                                                accordionOnChange={props.accordionOnChange}
+                                                accordionStyle={{
+                                                    backgroundColor: "#1c5260",
+                                                    paddingBottom: "5px",
+                                                }}
                                                 accountSignedIn={props.accountSignedIn}
                                                 activeTask={props.activeTask}
-                                                userTask={subtask}
-                                                userTasks={props.userTasks}
                                                 containerId={`subtask-${subtask.id}-container`}
                                                 containerStyle={{ display: "flex" }}
-                                                iconContainerId={`subtask-${subtask.id}-icon-container`}
+                                                deleteTask={props.deleteTask}
                                                 iconContainerClass={`subtask-icon-container ${
                                                     typeof subtask.completed_at === "number"
                                                         ? "completed"
                                                         : "incomplete"
                                                 }-subtask`}
+                                                iconContainerId={`subtask-${subtask.id}-icon-container`}
                                                 iconContainerOnClick={props.iconContainerOnClick}
-                                                accordionContainerId={`subtask-${subtask.id}-accordion-container`}
-                                                accordionContainerStyle={{ flexGrow: 2 }}
-                                                accordionStyle={{
-                                                    backgroundColor: "#1c5260",
-                                                    paddingBottom: "5px",
-                                                }}
-                                                accordionIsExpanded={
-                                                    props.activeTask?.split("|")[1] === subtask.id
-                                                }
-                                                accordionOnChange={props.accordionOnChange}
                                                 typographyStyleTitle={{
                                                     color: "#e0e1c1",
                                                     fontSize: "1.1em",
                                                     marginRight: "3%",
                                                     width: "100%",
                                                 }}
-                                                deleteTask={props.deleteTask}
                                                 updateTask={props.updateTask}
+                                                userTask={subtask}
+                                                userTasks={props.userTasks}
                                             />
                                         );
                                     })}
